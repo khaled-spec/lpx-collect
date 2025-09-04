@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/custom/button-variants';
 import { SearchInput } from '@/components/custom/input-variants';
 import { Badge } from '@/components/ui/badge';
 import { CategoryBadge } from '@/components/custom/badge-variants';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import {
   NavigationMenu,
@@ -34,7 +36,11 @@ import {
   Package, 
   Heart,
   Bell,
-  LogIn
+  LogIn,
+  LogOut,
+  Settings,
+  Store,
+  ShoppingBag
 } from 'lucide-react';
 
 const categories = [
@@ -50,7 +56,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [cartCount] = useState(3);
-  const [isLoggedIn] = useState(false);
+  const { isAuthenticated, user, logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-border">
@@ -137,44 +143,91 @@ export default function Header() {
               <Link href="/vendors" className="text-gray-700 dark:text-gray-300 hover:text-primary transition">
                 Vendors
               </Link>
-              {isLoggedIn ? (
+              {isAuthenticated ? (
                 <>
-                  <IconButton>
-                    <Heart className="h-5 w-5" />
+                  <IconButton asChild>
+                    <Link href="/wishlist">
+                      <Heart className="h-5 w-5" />
+                    </Link>
                   </IconButton>
-                  <IconButton>
-                    <Bell className="h-5 w-5" />
+                  <IconButton asChild>
+                    <Link href="/notifications">
+                      <Bell className="h-5 w-5" />
+                    </Link>
                   </IconButton>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <IconButton>
-                        <User className="h-5 w-5" />
-                      </IconButton>
+                      <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={user?.avatar} alt={user?.name} />
+                          <AvatarFallback>
+                            {user?.name?.charAt(0).toUpperCase() || 'U'}
+                          </AvatarFallback>
+                        </Avatar>
+                      </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuContent align="end" className="w-56">
+                      <DropdownMenuLabel className="font-normal">
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-medium leading-none">{user?.name}</p>
+                          <p className="text-xs leading-none text-muted-foreground">
+                            {user?.email}
+                          </p>
+                        </div>
+                      </DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
-                        <Link href="/dashboard">Dashboard</Link>
+                        <Link href="/dashboard" className="cursor-pointer">
+                          <ShoppingBag className="mr-2 h-4 w-4" />
+                          Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      {user?.role === 'vendor' && (
+                        <DropdownMenuItem asChild>
+                          <Link href="/vendor/dashboard" className="cursor-pointer">
+                            <Store className="mr-2 h-4 w-4" />
+                            Vendor Dashboard
+                          </Link>
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuItem asChild>
+                        <Link href="/orders" className="cursor-pointer">
+                          <Package className="mr-2 h-4 w-4" />
+                          My Orders
+                        </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link href="/orders">My Orders</Link>
+                        <Link href="/wishlist" className="cursor-pointer">
+                          <Heart className="mr-2 h-4 w-4" />
+                          Wishlist
+                        </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link href="/settings">Settings</Link>
+                        <Link href="/settings" className="cursor-pointer">
+                          <Settings className="mr-2 h-4 w-4" />
+                          Settings
+                        </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem>Logout</DropdownMenuItem>
+                      <DropdownMenuItem onClick={logout} className="cursor-pointer">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </>
               ) : (
-                <Button variant="ghost" asChild>
-                  <Link href="/login" className="flex items-center gap-2">
-                    <LogIn className="h-5 w-5" />
-                    <span>Login</span>
-                  </Link>
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button variant="ghost" asChild>
+                    <Link href="/login" className="flex items-center gap-2">
+                      <LogIn className="h-4 w-4" />
+                      <span>Login</span>
+                    </Link>
+                  </Button>
+                  <Button asChild>
+                    <Link href="/register">Sign Up</Link>
+                  </Button>
+                </div>
               )}
             </nav>
 
@@ -230,22 +283,57 @@ export default function Header() {
                     <Link href="/vendors" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
                       Vendors
                     </Link>
-                    {!isLoggedIn && (
-                      <Link href="/login" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
-                        Login / Sign Up
-                      </Link>
-                    )}
-                    {isLoggedIn && (
+                    {!isAuthenticated && (
                       <>
+                        <Link href="/login" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
+                          Login
+                        </Link>
+                        <Link href="/register" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
+                          Sign Up
+                        </Link>
+                      </>
+                    )}
+                    {isAuthenticated && (
+                      <>
+                        <Separator className="my-2" />
+                        <div className="flex items-center gap-3 py-2">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={user?.avatar} alt={user?.name} />
+                            <AvatarFallback>
+                              {user?.name?.charAt(0).toUpperCase() || 'U'}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium">{user?.name}</p>
+                            <p className="text-xs text-muted-foreground">{user?.email}</p>
+                          </div>
+                        </div>
+                        <Separator className="my-2" />
                         <Link href="/dashboard" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
                           My Dashboard
                         </Link>
-                        <Link href="/favorites" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
-                          Favorites
+                        <Link href="/orders" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
+                          Orders
+                        </Link>
+                        <Link href="/wishlist" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
+                          Wishlist
                         </Link>
                         <Link href="/notifications" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
                           Notifications
                         </Link>
+                        <Link href="/settings" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
+                          Settings
+                        </Link>
+                        <Separator className="my-2" />
+                        <button 
+                          onClick={() => {
+                            logout();
+                            setIsMenuOpen(false);
+                          }}
+                          className="py-2 text-left hover:text-primary transition w-full"
+                        >
+                          Logout
+                        </button>
                       </>
                     )}
                   </nav>
