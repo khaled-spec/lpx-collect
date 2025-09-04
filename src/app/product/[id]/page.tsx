@@ -6,16 +6,15 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProductImageGallery from '@/components/product/ProductImageGallery';
 import ProductInfo from '@/components/product/ProductInfo';
-import VendorWidget from '@/components/product/VendorWidget';
-import ProductActions from '@/components/product/ProductActions';
-import ProductTabs from '@/components/product/ProductTabs';
+import ProductPurchaseCard from '@/components/product/ProductPurchaseCardOptimized';
+import ProductDetailsTabbed from '@/components/product/ProductDetailsTabbed';
 import RelatedProducts from '@/components/product/RelatedProducts';
-import ShippingInfo from '@/components/product/ShippingInfo';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Badge } from '@/components/ui/badge';
-import { Shield, Award, TrendingUp } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Shield, Award, TrendingUp, Star } from 'lucide-react';
 
-// Mock product data
+// Mock product data (same as before)
 const mockProduct = {
   id: '1',
   title: '1999 Pokémon Base Set Charizard Holo #4/102 PSA 9 MINT',
@@ -33,17 +32,7 @@ const mockProduct = {
     'https://images.unsplash.com/photo-1679678691250-a14e09c004c7?w=800&q=80',
     'https://images.unsplash.com/photo-1679678691328-54929d271c3f?w=800&q=80',
   ],
-  description: `This is an authentic 1999 Pokémon Base Set Charizard holographic card, professionally graded PSA 9 MINT condition. This iconic card is one of the most sought-after cards in the entire Pokémon Trading Card Game.
-
-Key Features:
-• Card Number: 4/102
-• Set: Base Set (1999)
-• Rarity: Holographic Rare
-• Condition: PSA 9 MINT
-• Language: English
-• Manufacturer: Wizards of the Coast
-
-This Charizard features the original artwork by Mitsuhiro Arita and showcases the powerful Fire Spin attack. The card has been authenticated and encapsulated by PSA, the leading third-party grading service.`,
+  description: `This is an authentic 1999 Pokémon Base Set Charizard holographic card, professionally graded PSA 9 MINT condition. This iconic card is one of the most sought-after cards in the entire Pokémon Trading Card Game.`,
   specifications: {
     'Card Number': '4/102',
     'Set': 'Base Set',
@@ -183,6 +172,20 @@ export default function ProductDetailsPage({ params }: { params: { id: string } 
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
 
+  const handleShare = () => {
+    // Share functionality
+    if (navigator.share) {
+      navigator.share({
+        title: mockProduct.title,
+        text: `Check out this ${mockProduct.title}`,
+        url: window.location.href,
+      });
+    } else {
+      // Fallback to copying URL
+      navigator.clipboard.writeText(window.location.href);
+    }
+  };
+
   const discountPercentage = Math.round(
     ((mockProduct.originalPrice - mockProduct.price) / mockProduct.originalPrice) * 100
   );
@@ -191,10 +194,10 @@ export default function ProductDetailsPage({ params }: { params: { id: string } 
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="container py-6">
-        {/* Breadcrumb */}
-        <Breadcrumb className="mb-6">
-          <BreadcrumbList>
+      <main className="container py-4">
+        {/* Breadcrumb - Smaller */}
+        <Breadcrumb className="mb-3">
+          <BreadcrumbList className="text-xs">
             <BreadcrumbItem>
               <BreadcrumbLink href="/">Home</BreadcrumbLink>
             </BreadcrumbItem>
@@ -215,64 +218,95 @@ export default function ProductDetailsPage({ params }: { params: { id: string } 
           </BreadcrumbList>
         </Breadcrumb>
 
-        {/* Trust Badges */}
-        <div className="flex flex-wrap gap-4 mb-6">
-          <Badge variant="outline" className="gap-2">
-            <Shield className="h-4 w-4" />
-            Authenticity Guaranteed
-          </Badge>
-          <Badge variant="outline" className="gap-2">
-            <Award className="h-4 w-4" />
-            Professional Grading
-          </Badge>
-          <Badge variant="outline" className="gap-2">
-            <TrendingUp className="h-4 w-4" />
-            Investment Grade
-          </Badge>
-        </div>
-
-        {/* Main Product Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {/* Left Column - Images */}
-          <div>
-            <ProductImageGallery 
-              images={mockProduct.images}
-              title={mockProduct.title}
-              selectedImage={selectedImage}
-              onImageSelect={setSelectedImage}
-            />
-          </div>
-
-          {/* Right Column - Product Info */}
-          <div className="space-y-6">
-            <ProductInfo 
-              product={mockProduct}
-              discountPercentage={discountPercentage}
-            />
-            
-            <VendorWidget vendor={mockProduct.vendor} />
-            
-            <ProductActions
-              product={mockProduct}
-              quantity={quantity}
-              setQuantity={setQuantity}
-              isWishlisted={isWishlisted}
-              setIsWishlisted={setIsWishlisted}
-            />
-            
-            <ShippingInfo 
-              shipping={mockProduct.shipping}
-              returns={mockProduct.returns}
-            />
+        {/* Page Title */}
+        <div className="my-6">
+          <h1 className="text-3xl font-bold">{mockProduct.title}</h1>
+          <div className="flex items-center gap-2 mt-2">
+            <span className="text-muted-foreground">by</span>
+            <span className="font-medium">{mockProduct.vendor.name}</span>
+            <div className="flex items-center gap-0.5">
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+              <span className="text-sm">{mockProduct.vendor.rating}</span>
+              <span className="text-sm text-muted-foreground">({mockProduct.vendor.reviewCount})</span>
+            </div>
           </div>
         </div>
 
-        {/* Product Details Tabs */}
-        <ProductTabs
-          product={mockProduct}
-          reviews={mockReviews}
-          questions={mockQuestions}
-        />
+        {/* 3-Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-8">
+          {/* Left: Product Images - 4 cols */}
+          <div className="lg:col-span-4">
+            <div className="sticky top-4">
+              <ProductImageGallery 
+                images={mockProduct.images}
+                title={mockProduct.title}
+                selectedImage={selectedImage}
+                onImageSelect={setSelectedImage}
+                isWishlisted={isWishlisted}
+                onWishlistToggle={() => setIsWishlisted(!isWishlisted)}
+                onShare={handleShare}
+              />
+            </div>
+          </div>
+
+          {/* Middle: Checkout Card - 4 cols */}
+          <div className="lg:col-span-4">
+            <div className="sticky top-4">
+              <ProductPurchaseCard
+                product={mockProduct}
+                quantity={quantity}
+                setQuantity={setQuantity}
+                discountPercentage={discountPercentage}
+              />
+            </div>
+          </div>
+
+          {/* Right: Product Info and Details Tabs - 4 cols */}
+          <div className="lg:col-span-4">
+            <Card className="sticky top-4">
+              <CardContent className="p-6 space-y-4">
+                {/* Badges and Description */}
+                <div>
+                  {/* Badges */}
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    <Badge variant="secondary" className="text-xs">
+                      {mockProduct.condition}
+                    </Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      {mockProduct.rarity}
+                    </Badge>
+                    {mockProduct.authenticity.verified && (
+                      <Badge variant="outline" className="text-xs gap-1">
+                        <Shield className="h-3 w-3" />
+                        Verified Authentic
+                      </Badge>
+                    )}
+                    {mockProduct.authenticity.certificate && (
+                      <Badge variant="outline" className="text-xs gap-1">
+                        <Award className="h-3 w-3" />
+                        Certified
+                      </Badge>
+                    )}
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-sm text-muted-foreground">
+                    {mockProduct.description}
+                  </p>
+                </div>
+
+                {/* Details Tabs */}
+                <ProductDetailsTabbed
+                  vendor={mockProduct.vendor}
+                  details={mockProduct.specifications}
+                  returns={mockProduct.returns}
+                  authenticity={mockProduct.authenticity}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
 
         {/* Related Products */}
         <RelatedProducts products={mockRelatedProducts} />

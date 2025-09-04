@@ -6,7 +6,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight, Expand, ZoomIn } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Expand, ZoomIn, Heart, Share2 } from 'lucide-react';
 import {
   Carousel,
   CarouselContent,
@@ -20,6 +20,9 @@ interface ProductImageGalleryProps {
   title: string;
   selectedImage: number;
   onImageSelect: (index: number) => void;
+  isWishlisted: boolean;
+  onWishlistToggle: () => void;
+  onShare: () => void;
 }
 
 export default function ProductImageGallery({
@@ -27,6 +30,9 @@ export default function ProductImageGallery({
   title,
   selectedImage,
   onImageSelect,
+  isWishlisted,
+  onWishlistToggle,
+  onShare,
 }: ProductImageGalleryProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -50,10 +56,11 @@ export default function ProductImageGallery({
   return (
     <>
       <div className="space-y-4">
-        {/* Main Image */}
-        <Card className="relative overflow-hidden bg-gray-50 dark:bg-gray-900">
+        {/* Main Image - Constrained height for viewport */}
+        <Card className="relative overflow-hidden bg-muted">
           <div 
-            className="relative aspect-square cursor-zoom-in"
+            className="relative cursor-zoom-in"
+            style={{ height: 'min(60vh, 500px)' }}
             onMouseEnter={() => setIsZoomed(true)}
             onMouseLeave={() => setIsZoomed(false)}
             onMouseMove={handleMouseMove}
@@ -76,17 +83,40 @@ export default function ProductImageGallery({
               priority
             />
             
-            {/* Zoom Indicator */}
+            {/* Action Buttons */}
             <div className="absolute top-4 right-4 flex gap-2">
               <Button
                 size="icon"
                 variant="secondary"
-                className="bg-white/90 backdrop-blur-sm hover:bg-white"
+                className={cn(
+                  "bg-background/90 backdrop-blur-sm hover:bg-background",
+                  isWishlisted && "text-destructive"
+                )}
+                onClick={onWishlistToggle}
+              >
+                <Heart className={cn("h-4 w-4", isWishlisted && "fill-current")} />
+              </Button>
+              <Button
+                size="icon"
+                variant="secondary"
+                className="bg-background/90 backdrop-blur-sm hover:bg-background"
+                onClick={onShare}
+              >
+                <Share2 className="h-4 w-4" />
+              </Button>
+              <Button
+                size="icon"
+                variant="secondary"
+                className="bg-background/90 backdrop-blur-sm hover:bg-background"
                 onClick={() => setIsFullscreen(true)}
               >
                 <Expand className="h-4 w-4" />
               </Button>
-              <div className="bg-white/90 backdrop-blur-sm rounded-md px-3 py-2 text-sm">
+            </div>
+            
+            {/* Zoom Indicator */}
+            <div className="absolute top-4 left-4">
+              <div className="bg-background/90 backdrop-blur-sm rounded-md px-3 py-2 text-sm">
                 <ZoomIn className="h-4 w-4 inline mr-2" />
                 Hover to zoom
               </div>
@@ -98,7 +128,7 @@ export default function ProductImageGallery({
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-sm hover:bg-white"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm hover:bg-background"
                   onClick={handlePrevious}
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -106,7 +136,7 @@ export default function ProductImageGallery({
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-sm hover:bg-white"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm hover:bg-background"
                   onClick={handleNext}
                 >
                   <ChevronRight className="h-4 w-4" />
@@ -128,7 +158,7 @@ export default function ProductImageGallery({
             >
               <CarouselContent className="-ml-2">
                 {images.map((image, index) => (
-                  <CarouselItem key={index} className="pl-2 basis-1/4 sm:basis-1/5">
+                  <CarouselItem key={index} className="pl-2 basis-1/5 sm:basis-1/6">
                     <button
                       onClick={() => onImageSelect(index)}
                       className={cn(
@@ -143,12 +173,13 @@ export default function ProductImageGallery({
                         alt={`${title} - Thumbnail ${index + 1}`}
                         fill
                         className="object-cover"
+                        sizes="(max-width: 640px) 80px, 100px"
                       />
                     </button>
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              {images.length > 5 && (
+              {images.length > 6 && (
                 <>
                   <CarouselPrevious className="-left-3" />
                   <CarouselNext className="-right-3" />
@@ -176,7 +207,7 @@ export default function ProductImageGallery({
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white hover:bg-black/70"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-background/50 backdrop-blur-sm hover:bg-background/70"
                   onClick={handlePrevious}
                 >
                   <ChevronLeft className="h-6 w-6" />
@@ -184,7 +215,7 @@ export default function ProductImageGallery({
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white hover:bg-black/70"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-background/50 backdrop-blur-sm hover:bg-background/70"
                   onClick={handleNext}
                 >
                   <ChevronRight className="h-6 w-6" />
@@ -193,7 +224,7 @@ export default function ProductImageGallery({
             )}
             
             {/* Image Counter */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-full">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-background/50 backdrop-blur-sm px-4 py-2 rounded-full">
               {selectedImage + 1} / {images.length}
             </div>
           </div>
