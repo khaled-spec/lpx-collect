@@ -19,9 +19,9 @@ export const productStyles = {
     hover: "group-hover:bg-muted/80",
     // Fixed heights for image area (roughly 60% of card height)
     height: {
-      default: "h-[240px]",
-      compact: "h-[200px]",
-      large: "h-[280px]"
+      default: "h-[200px]",  // Reduced from 240px
+      compact: "h-[160px]",  // Reduced from 200px
+      large: "h-[240px]"     // Reduced from 280px
     }
   },
   
@@ -43,18 +43,18 @@ export const productStyles = {
     base: "p-4 space-y-2 flex flex-col",
     compact: "p-3 space-y-1.5 flex flex-col",
     large: "p-5 space-y-2.5 flex flex-col",
-    // Fixed heights for content area to prevent flexing
+    // Min heights for content area
     height: {
-      default: "h-[180px]", // 420px - 240px image = 180px
-      compact: "h-[160px]", // 360px - 200px image = 160px
-      large: "h-[200px]"    // 480px - 280px image = 200px
+      default: "min-h-[160px]", // Adjusted for smaller image
+      compact: "min-h-[140px]", // Adjusted for smaller image
+      large: "min-h-[180px]"    // Adjusted for smaller image
     }
   },
   
   // Typography hierarchy
   typography: {
     category: "text-xs font-medium text-muted-foreground uppercase tracking-wide",
-    title: "font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors",
+    title: "text-sm font-semibold text-foreground group-hover:text-primary transition-colors",
     vendor: "text-sm text-muted-foreground",
     price: {
       current: "text-lg font-bold text-foreground",

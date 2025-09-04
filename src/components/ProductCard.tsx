@@ -36,6 +36,9 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [imageError, setImageError] = useState(false);
+  
+  // Debug: Log the product title to console
+  console.log('Product title:', product.title, 'Typography classes:', productStyles.typography.title);
 
   const discountPercentage = product.compareAtPrice
     ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
