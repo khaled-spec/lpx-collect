@@ -305,8 +305,17 @@ export default function ProductDetailsPage({ params }: { params: { id: string } 
 
                     {/* Details Tabs */}
                     <ProductDetailsTabbed
-                      vendor={mockProduct.vendor}
-                      details={mockProduct.specifications}
+                      vendor={{
+                        id: mockProduct.vendor.id,
+                        name: mockProduct.vendor.storeName,
+                        rating: mockProduct.vendor.rating,
+                        totalSales: mockProduct.vendor.totalSales,
+                        verified: mockProduct.vendor.verified,
+                        responseTime: mockProduct.vendor.responseTime,
+                        joinedDate: mockProduct.vendor.createdAt.toISOString(),
+                        avatar: mockProduct.vendor.logo || '/images/vendors/default.jpg'
+                      }}
+                      details={mockProduct.specifications || {}}
                       returns={mockProductExtended.returns}
                       authenticity={mockProductExtended.authenticity}
                     />
