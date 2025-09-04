@@ -135,7 +135,8 @@ export default function BrowsePage() {
       <Header />
       
       <main className="flex-grow bg-gray-50 dark:bg-gray-900">
-        <div className="container py-8">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="bg-card rounded-xl border border-border shadow-lg p-8">
           {/* Page Header */}
           <div className="mb-6">
             <h1 className="text-3xl font-bold mb-2">Browse Collectibles</h1>
@@ -529,9 +530,8 @@ export default function BrowsePage() {
             )}
           </div>
 
-          <div className="">
-            {/* Main Content */}
-            <div className="w-full">
+          {/* Main Content */}
+          <div className="w-full">
               {/* Results Count */}
               <div className="mb-4">
                 <p className="text-sm text-muted-foreground">

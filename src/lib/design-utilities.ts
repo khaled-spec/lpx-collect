@@ -161,7 +161,7 @@ export const visual = {
       return radiusMap[size];
     },
     width: (size: keyof typeof tokens.borders.width) => {
-      if (size === '0') return 'border-0';
+      if (size === 0) return 'border-0';
       if (size === 'DEFAULT') return 'border';
       return `border-${size}`;
     },

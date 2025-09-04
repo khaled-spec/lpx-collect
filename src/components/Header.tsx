@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/custom/button-variants';
 import { SearchInput } from '@/components/custom/input-variants';
@@ -55,8 +56,8 @@ const categories = [
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [cartCount] = useState(3);
   const { isAuthenticated, user, logout } = useAuth();
+  const { itemCount } = useCart();
 
   return (
     <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-border">
@@ -235,9 +236,9 @@ export default function Header() {
             <IconButton asChild className="relative">
               <Link href="/cart">
                 <ShoppingCart className="h-6 w-6" />
-                {cartCount > 0 && (
+                {itemCount > 0 && (
                   <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center">
-                    {cartCount}
+                    {itemCount}
                   </Badge>
                 )}
               </Link>

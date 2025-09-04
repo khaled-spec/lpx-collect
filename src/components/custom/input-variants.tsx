@@ -1,9 +1,11 @@
 'use client';
 
 import * as React from "react";
-import { Input, InputProps } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+type InputProps = React.ComponentProps<typeof Input>;
 
 // Search Input
 export const SearchInput = React.forwardRef<HTMLInputElement, InputProps>(

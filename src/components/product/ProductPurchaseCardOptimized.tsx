@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,15 +13,18 @@ import {
   Truck,
   Minus,
   Plus,
-  CheckCircle
+  CheckCircle,
+  Check
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { productStyles } from '@/components/custom/product-styles';
+import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
+import { Product } from '@/types';
 
 interface ProductPurchaseCardProps {
-  product: {
-    id: string;
-    price: number;
+  product: Product;
+  productExtended?: {
     originalPrice: number;
     inStock: boolean;
     stockQuantity: number;
@@ -41,25 +45,51 @@ interface ProductPurchaseCardProps {
 
 export default function ProductPurchaseCardOptimized({
   product,
+  productExtended,
   quantity,
   setQuantity,
   discountPercentage,
 }: ProductPurchaseCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [justAdded, setJustAdded] = useState(false);
+  const { addToCart, isInCart } = useCart();
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  // Use extended props if available, otherwise use Product props
+  const inStock = productExtended?.inStock ?? product.stock > 0;
+  const stockQuantity = productExtended?.stockQuantity ?? product.stock;
+  const originalPrice = productExtended?.originalPrice ?? product.compareAtPrice ?? product.price;
+  const shipping = productExtended?.shipping ?? {
+    price: 19.99,
+    freeShippingThreshold: 100,
+    estimatedDays: '3-5',
+  };
+  const returns = productExtended?.returns ?? {
+    accepted: true,
+    period: '30 days',
+  };
 
   const handleQuantityChange = (change: number) => {
     const newQuantity = quantity + change;
-    if (newQuantity >= 1 && newQuantity <= product.stockQuantity) {
+    if (newQuantity >= 1 && newQuantity <= stockQuantity) {
       setQuantity(newQuantity);
     }
   };
 
   const handleAddToCart = () => {
-    console.log('Added to cart:', { productId: product.id, quantity });
+    addToCart(product, quantity);
+    setJustAdded(true);
+    setTimeout(() => setJustAdded(false), 2000);
   };
 
   const handleBuyNow = () => {
-    console.log('Buy now:', { productId: product.id, quantity });
+    addToCart(product, quantity);
+    if (isAuthenticated) {
+      router.push('/checkout');
+    } else {
+      router.push('/login?redirect=/checkout');
+    }
   };
 
   return (
@@ -74,7 +104,7 @@ export default function ProductPurchaseCardOptimized({
             {discountPercentage > 0 && (
               <>
                 <span className="text-lg text-muted-foreground line-through">
-                  ${product.originalPrice.toLocaleString()}
+                  ${originalPrice.toLocaleString()}
                 </span>
                 <Badge variant="destructive">
                   Save {discountPercentage}%
@@ -84,16 +114,16 @@ export default function ProductPurchaseCardOptimized({
           </div>
 
           {/* Stock Status and Delivery - Integrated */}
-          {product.inStock ? (
+          {inStock ? (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <CheckCircle className={cn(productStyles.forms.icon.md, "text-success")} />
                 <span className={cn(productStyles.typography.meta, "font-medium text-success")}>
                   In Stock
                 </span>
-                {product.stockQuantity <= 5 && (
+                {stockQuantity <= 5 && (
                   <Badge variant="outline" className="border-warning text-warning">
-                    Only {product.stockQuantity} left
+                    Only {stockQuantity} left
                   </Badge>
                 )}
               </div>
@@ -102,11 +132,11 @@ export default function ProductPurchaseCardOptimized({
               <div className={cn("flex items-center gap-2", productStyles.typography.meta)}>
                 <Truck className={cn(productStyles.forms.icon.md, "text-muted-foreground")} />
                 <span className="text-muted-foreground">Delivery:</span>
-                <span className="font-medium">{product.shipping.estimatedDays} days</span>
+                <span className="font-medium">{shipping.estimatedDays} days</span>
               </div>
-              {product.shipping.freeShippingThreshold && (
+              {shipping.freeShippingThreshold && (
                 <p className={cn(productStyles.typography.meta, "text-success ml-6")}>
-                  FREE shipping on orders over ${product.shipping.freeShippingThreshold}
+                  FREE shipping on orders over ${shipping.freeShippingThreshold}
                 </p>
               )}
             </div>
@@ -122,7 +152,7 @@ export default function ProductPurchaseCardOptimized({
         <Separator />
 
         {/* Quantity Selector - Clean design */}
-        {product.inStock && (
+        {inStock && (
           <div className="space-y-2">
             <label className={cn(productStyles.typography.meta, "font-medium")}>Quantity:</label>
             <div className="flex items-center gap-2">
@@ -142,7 +172,7 @@ export default function ProductPurchaseCardOptimized({
                 variant="outline"
                 size="icon"
                 onClick={() => handleQuantityChange(1)}
-                disabled={quantity >= product.stockQuantity}
+                disabled={quantity >= stockQuantity}
                 aria-label="Increase quantity"
               >
                 <Plus className={productStyles.forms.icon.md} />
@@ -152,7 +182,7 @@ export default function ProductPurchaseCardOptimized({
         )}
 
         {/* Primary Actions - Clear hierarchy */}
-        {product.inStock && (
+        {inStock && (
           <div className="space-y-2">
             <Button 
               className="w-full" 
@@ -163,13 +193,23 @@ export default function ProductPurchaseCardOptimized({
             </Button>
             
             <Button 
-              variant="secondary" 
-              className="w-full" 
+              variant={isInCart(product.id) ? "outline" : "secondary"} 
+              className={cn("w-full", justAdded && "bg-green-50 border-green-500")} 
               size="lg"
               onClick={handleAddToCart}
+              disabled={isInCart(product.id) && !justAdded}
             >
-              <ShoppingCart className={cn(productStyles.forms.icon.md, "mr-2")} />
-              Add to Cart
+              {isInCart(product.id) && !justAdded ? (
+                <>
+                  <Check className={cn(productStyles.forms.icon.md, "mr-2")} />
+                  Added to Cart
+                </>
+              ) : (
+                <>
+                  <ShoppingCart className={cn(productStyles.forms.icon.md, "mr-2")} />
+                  {justAdded ? 'Adding...' : 'Add to Cart'}
+                </>
+              )}
             </Button>
           </div>
         )}

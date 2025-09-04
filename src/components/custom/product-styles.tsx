@@ -1,9 +1,9 @@
 // Standardized product container design tokens
 export const productStyles = {
-  // Container styles for consistent product cards
+  // Container styles for consistent product cards with defined shadows
   container: {
-    base: "overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group bg-card rounded-lg border border-border flex flex-col",
-    hover: "hover:border-primary/20 hover:shadow-xl hover:scale-[1.02]",
+    base: "overflow-hidden shadow-md transition-all duration-300 cursor-pointer group bg-card rounded-lg border border-border flex flex-col",
+    hover: "hover:border-primary/30 hover:shadow-xl hover:scale-[1.02]",
     active: "active:scale-[0.98]",
     // Fixed heights for different variants
     height: {

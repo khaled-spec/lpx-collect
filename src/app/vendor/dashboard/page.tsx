@@ -175,7 +175,7 @@ export default function VendorDashboardPage() {
                     <div className="p-2 bg-purple-100 dark:bg-purple-900/20 rounded-lg">
                       <Package className="h-6 w-6 text-purple-600" />
                     </div>
-                    <OutlineButton size="xs" asChild>
+                    <OutlineButton size="sm" asChild>
                       <Link href="/vendor/products">
                         Manage
                       </Link>

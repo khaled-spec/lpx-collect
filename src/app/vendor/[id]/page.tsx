@@ -6,7 +6,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { extendedVendors } from '@/data/vendorData';
 import { products } from '@/data/mockData';
-import { Container } from '@/components/layout/Container';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
@@ -149,115 +148,117 @@ export default function VendorStorefrontPage() {
       <Header />
       
       <main className="flex-grow bg-gray-50 dark:bg-gray-900">
-        <Container className="py-4">
-          {/* Breadcrumb - matching product page style */}
-          <Breadcrumb className="mb-4">
-            <BreadcrumbList className={productStyles.typography.meta}>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/">Home</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/vendors">Vendors</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>{vendor.storeName}</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="bg-card rounded-xl border border-border shadow-lg p-8">
+            {/* Breadcrumb - matching product page style */}
+            <Breadcrumb className="mb-6">
+              <BreadcrumbList className={productStyles.typography.meta}>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/" className="hover:text-primary transition-colors">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/vendors" className="hover:text-primary transition-colors">Vendors</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="text-foreground font-medium">{vendor.storeName}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
 
-          {/* Vendor Header Card - Improved Layout */}
-          <Card className="mb-6 bg-white dark:bg-gray-800">
-            <CardContent className="p-6">
-              {/* Top Section: Logo, Name, and Action Buttons */}
-              <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between mb-6">
-                <div className="flex items-center gap-4">
-                  {/* Logo */}
-                  <div className="w-20 h-20 bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl flex items-center justify-center border border-primary/20">
-                    <Store className="h-10 w-10 text-primary" />
-                  </div>
-                  
-                  {/* Name and Verification */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <h1 className="text-3xl font-bold">{vendor.storeName}</h1>
-                      {vendor.verified && (
-                        <VerifiedBadge className="text-sm">
-                          <CheckCircle className="h-3.5 w-3.5 mr-1" />
-                          Verified
-                        </VerifiedBadge>
-                      )}
+            {/* Vendor Header Card - Improved Layout */}
+            <Card className="mb-8 border-0 shadow-none">
+              <CardContent className="p-0 space-y-6">
+                {/* Top Section: Logo, Name, and Action Buttons */}
+                <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+                  <div className="flex items-center gap-6">
+                    {/* Logo */}
+                    <div className="w-24 h-24 bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl flex items-center justify-center border border-primary/20 shadow-md">
+                      <Store className="h-12 w-12 text-primary" />
                     </div>
-                    <div className="flex items-center gap-3 text-sm">
-                      <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                        <span className="font-semibold">{vendor.rating}</span>
-                        <span className="text-muted-foreground">({vendor.totalSales} sales)</span>
+                    
+                    {/* Name and Verification */}
+                    <div>
+                      <div className="flex items-center gap-3 mb-2">
+                        <h1 className="text-4xl font-bold tracking-tight">{vendor.storeName}</h1>
+                        {vendor.verified && (
+                          <VerifiedBadge className={cn(productStyles.badges.size.md, productStyles.badges.base)}>
+                            <CheckCircle className={cn(productStyles.forms.icon.sm, "mr-1")} />
+                            Verified
+                          </VerifiedBadge>
+                        )}
                       </div>
-                      <span className="text-muted-foreground">•</span>
-                      <span className="text-muted-foreground">{vendor.totalProducts} products</span>
-                      <span className="text-muted-foreground">•</span>
-                      <span className="text-muted-foreground">Joined {vendor.createdAt.toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</span>
+                      <div className="flex items-center gap-4 flex-wrap">
+                        <div className="flex items-center gap-1">
+                          <div className={productStyles.rating.container}>
+                            <Star className={productStyles.rating.star} />
+                            <span className={cn(productStyles.rating.text, "text-base font-semibold")}>{vendor.rating}</span>
+                          </div>
+                          <span className={cn(productStyles.typography.meta, "ml-1")}>({vendor.totalSales.toLocaleString()} sales)</span>
+                        </div>
+                        <span className={productStyles.typography.meta}>•</span>
+                        <span className={productStyles.typography.meta}>{vendor.totalProducts} products</span>
+                        <span className={productStyles.typography.meta}>•</span>
+                        <span className={productStyles.typography.meta}>Joined {vendor.createdAt.toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</span>
+                      </div>
                     </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex items-center gap-3">
+                    <SecondaryButton
+                      onClick={() => setIsFollowing(!isFollowing)}
+                      size="default"
+                      className="min-w-[120px]"
+                    >
+                      <Heart className={cn(productStyles.forms.icon.md, `mr-2 ${isFollowing ? 'fill-current text-red-500' : ''}`)}/>
+                      {isFollowing ? 'Following' : 'Follow'}
+                    </SecondaryButton>
+                    <IconButton variant="outline" size="default">
+                      <Share2 className={productStyles.forms.icon.md} />
+                    </IconButton>
+                    <PrimaryButton size="default">
+                      <MessageCircle className={cn(productStyles.forms.icon.md, "mr-2")} />
+                      Contact
+                    </PrimaryButton>
                   </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex items-center gap-2">
-                  <SecondaryButton
-                    onClick={() => setIsFollowing(!isFollowing)}
-                    size="sm"
-                  >
-                    <Heart className={`h-4 w-4 mr-1.5 ${isFollowing ? 'fill-current text-red-500' : ''}`} />
-                    {isFollowing ? 'Following' : 'Follow'}
-                  </SecondaryButton>
-                  <IconButton variant="outline" size="sm">
-                    <Share2 className="h-4 w-4" />
-                  </IconButton>
-                  <PrimaryButton size="sm">
-                    <MessageCircle className="h-4 w-4 mr-1.5" />
-                    Contact
-                  </PrimaryButton>
+                {/* Stats Section */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-6 border-t border-b border-border">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-primary mb-1">{vendor.stats.responseRate}%</div>
+                    <div className={cn(productStyles.typography.meta, "font-medium")}>Response Rate</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-green-600 mb-1">{vendor.stats.shipOnTime}%</div>
+                    <div className={cn(productStyles.typography.meta, "font-medium")}>Ships On Time</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-blue-600 mb-1">{vendor.stats.positiveReviews}%</div>
+                    <div className={cn(productStyles.typography.meta, "font-medium")}>Positive Reviews</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-orange-600 mb-1">{vendor.responseTime}</div>
+                    <div className={cn(productStyles.typography.meta, "font-medium")}>Avg Response</div>
+                  </div>
                 </div>
-              </div>
 
-              {/* Stats Section */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4 border-t border-b">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">{vendor.stats.responseRate}%</div>
-                  <div className="text-xs text-muted-foreground mt-1">Response Rate</div>
+                {/* Quick Navigation */}
+                <div className="flex items-center justify-center gap-8 pt-4">
+                  <a href="#products" className={cn(productStyles.typography.meta, "text-base font-medium hover:text-primary transition-colors")}>Products</a>
+                  <a href="#about" className={cn(productStyles.typography.meta, "text-base font-medium hover:text-primary transition-colors")}>About</a>
+                  <a href="#policies" className={cn(productStyles.typography.meta, "text-base font-medium hover:text-primary transition-colors")}>Policies</a>
+                  <a href="#reviews" className={cn(productStyles.typography.meta, "text-base font-medium hover:text-primary transition-colors")}>Reviews</a>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">{vendor.stats.shipOnTime}%</div>
-                  <div className="text-xs text-muted-foreground mt-1">Ships On Time</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">{vendor.stats.positiveReviews}%</div>
-                  <div className="text-xs text-muted-foreground mt-1">Positive Reviews</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-600">{vendor.responseTime}</div>
-                  <div className="text-xs text-muted-foreground mt-1">Avg Response</div>
-                </div>
-              </div>
+              </CardContent>
+            </Card>
 
-              {/* Quick Navigation */}
-              <div className="flex items-center justify-center gap-6 pt-4">
-                <a href="#products" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Products</a>
-                <a href="#about" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">About</a>
-                <a href="#policies" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Policies</a>
-                <a href="#reviews" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Reviews</a>
-              </div>
-            </CardContent>
-          </Card>
-        </Container>
-
-        {/* Products Section */}
-        <Container className="mb-8">
-          <Card id="products" className="bg-white dark:bg-gray-800">
-            <CardContent className="p-6">
-              <h2 className="text-2xl font-bold mb-6">Products</h2>
+            {/* Products Section */}
+            <Card id="products" className="border-0 shadow-none mb-8">
+              <CardContent className="p-0 space-y-6">
+                <h2 className="text-3xl font-bold tracking-tight">Products</h2>
               {/* Compact Filter Bar - Matching Browse Page */}
               <div className="mb-6">
                 {/* Filter Toggle & Quick Actions */}
@@ -478,15 +479,13 @@ export default function VendorStorefrontPage() {
                   ))}
                 </div>
               )}
-            </CardContent>
-          </Card>
-        </Container>
+              </CardContent>
+            </Card>
 
-        {/* About Section */}
-        <Container className="mb-8">
-          <Card id="about" className="bg-white dark:bg-gray-800">
-            <CardContent className="p-6">
-              <h2 className="text-2xl font-bold mb-6">About {vendor.storeName}</h2>
+            {/* About Section */}
+            <Card id="about" className="border-0 shadow-none mb-8">
+              <CardContent className="p-0 space-y-6">
+                <h2 className="text-3xl font-bold tracking-tight">About {vendor.storeName}</h2>
               <div className="space-y-6">
                   <div>
                     <h4 className="font-semibold mb-2">Description</h4>
@@ -527,21 +526,21 @@ export default function VendorStorefrontPage() {
                         <h4 className="font-semibold mb-3">Connect With Us</h4>
                         <div className="flex gap-3">
                           {vendor.socialLinks.twitter && (
-                            <IconButton variant="outline" size="md" asChild>
+                            <IconButton variant="outline" size="default" asChild>
                               <a href={`https://twitter.com/${vendor.socialLinks.twitter}`} target="_blank" rel="noopener noreferrer">
                                 <Twitter className="h-4 w-4" />
                               </a>
                             </IconButton>
                           )}
                           {vendor.socialLinks.instagram && (
-                            <IconButton variant="outline" size="md" asChild>
+                            <IconButton variant="outline" size="default" asChild>
                               <a href={`https://instagram.com/${vendor.socialLinks.instagram}`} target="_blank" rel="noopener noreferrer">
                                 <Instagram className="h-4 w-4" />
                               </a>
                             </IconButton>
                           )}
                           {vendor.socialLinks.facebook && (
-                            <IconButton variant="outline" size="md" asChild>
+                            <IconButton variant="outline" size="default" asChild>
                               <a href={`https://facebook.com/${vendor.socialLinks.facebook}`} target="_blank" rel="noopener noreferrer">
                                 <Facebook className="h-4 w-4" />
                               </a>
@@ -552,15 +551,13 @@ export default function VendorStorefrontPage() {
                     </>
                   )}
               </div>
-            </CardContent>
-          </Card>
-        </Container>
+              </CardContent>
+            </Card>
 
-        {/* Policies Section */}
-        <Container className="mb-8">
-          <Card id="policies" className="bg-white dark:bg-gray-800">
-            <CardContent className="p-6">
-              <h2 className="text-2xl font-bold mb-6">Store Policies</h2>
+            {/* Policies Section */}
+            <Card id="policies" className="border-0 shadow-none mb-8">
+              <CardContent className="p-0 space-y-6">
+                <h2 className="text-3xl font-bold tracking-tight">Store Policies</h2>
               <div className="grid gap-6">
                 <Card>
                   <CardHeader>
@@ -598,15 +595,13 @@ export default function VendorStorefrontPage() {
                   </CardContent>
                 </Card>
               </div>
-            </CardContent>
-          </Card>
-        </Container>
+              </CardContent>
+            </Card>
 
-        {/* Reviews Section */}
-        <Container className="mb-8">
-          <Card id="reviews" className="bg-white dark:bg-gray-800">
-            <CardContent className="p-6">
-              <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
+            {/* Reviews Section */}
+            <Card id="reviews" className="border-0 shadow-none mb-8">
+              <CardContent className="p-0 space-y-6">
+                <h2 className="text-3xl font-bold tracking-tight">Customer Reviews</h2>
               <p className="text-muted-foreground mb-6">Based on {vendor.totalSales} verified purchases</p>
               <div className="space-y-6">
                   {/* Overall Rating */}
@@ -662,7 +657,8 @@ export default function VendorStorefrontPage() {
               </div>
             </CardContent>
           </Card>
-        </Container>
+          </div>
+        </div>
       </main>
 
       <Footer />

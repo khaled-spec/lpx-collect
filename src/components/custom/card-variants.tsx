@@ -15,7 +15,7 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
       <Card
         ref={ref}
         className={cn(
-          "overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group",
+          "overflow-hidden border border-border shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group",
           className
         )}
         {...props}

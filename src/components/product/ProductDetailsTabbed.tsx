@@ -27,10 +27,9 @@ interface ProductDetailsTabbedProps {
     id: string;
     name: string;
     rating: number;
-    reviewCount: number;
+    totalSales: number;
     verified: boolean;
     responseTime: string;
-    salesCount: number;
     joinedDate: string;
     avatar: string;
   };
@@ -98,7 +97,7 @@ export default function ProductDetailsTabbed({
                 <Star className="h-4 w-4 fill-warning text-warning" />
                 <span className="font-medium">{vendor.rating}</span>
                 <span className="text-sm text-muted-foreground">
-                  ({vendor.reviewCount.toLocaleString()} reviews)
+                  ({vendor.totalSales.toLocaleString()} sales)
                 </span>
               </div>
             </div>
@@ -107,7 +106,7 @@ export default function ProductDetailsTabbed({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
             <div>
               <p className="text-xs text-muted-foreground">Sales</p>
-              <p className="font-medium">{vendor.salesCount.toLocaleString()}</p>
+              <p className="font-medium">{vendor.totalSales.toLocaleString()}</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Response</p>
