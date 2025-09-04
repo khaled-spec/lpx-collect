@@ -5,31 +5,26 @@ import { Badge, BadgeProps } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 // Status Badge
-export const StatusBadge = React.forwardRef<HTMLDivElement, BadgeProps>(
-  ({ className, ...props }, ref) => {
-    return (
-      <Badge
-        ref={ref}
-        className={cn(
-          "font-medium",
-          className
-        )}
-        {...props}
-      />
-    );
-  }
-);
-StatusBadge.displayName = "StatusBadge";
+export const StatusBadge = ({ className, ...props }: BadgeProps) => {
+  return (
+    <Badge
+      className={cn(
+        "font-medium",
+        className
+      )}
+      {...props}
+    />
+  );
+};
 
 // Featured Badge
 export const FeaturedBadge = React.forwardRef<HTMLDivElement, BadgeProps>(
   ({ className, ...props }, ref) => {
     return (
       <Badge
-        ref={ref}
         variant="default"
         className={cn(
-          "bg-primary text-primary-foreground font-semibold",
+          "w-fit bg-primary text-primary-foreground font-semibold",
           className
         )}
         {...props}
@@ -44,10 +39,9 @@ export const DiscountBadge = React.forwardRef<HTMLDivElement, BadgeProps>(
   ({ className, ...props }, ref) => {
     return (
       <Badge
-        ref={ref}
         variant="destructive"
         className={cn(
-          "font-bold",
+          "w-fit font-bold",
           className
         )}
         {...props}
@@ -65,9 +59,9 @@ export const StockBadge = React.forwardRef<HTMLDivElement, BadgeProps & { stock:
     
     return (
       <Badge
-        ref={ref}
         variant={variant}
         className={cn(
+          "w-fit",
           stock <= 5 && stock > 0 && "text-orange-600 border-orange-600",
           className
         )}
@@ -85,10 +79,9 @@ export const VerifiedBadge = React.forwardRef<HTMLDivElement, BadgeProps>(
   ({ className, ...props }, ref) => {
     return (
       <Badge
-        ref={ref}
         variant="secondary"
         className={cn(
-          "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
+          "w-fit bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
           className
         )}
         {...props}
@@ -105,7 +98,6 @@ export const CategoryBadge = React.forwardRef<HTMLDivElement, BadgeProps>(
   ({ className, ...props }, ref) => {
     return (
       <Badge
-        ref={ref}
         variant="outline"
         className={cn(
           "text-xs",
@@ -123,9 +115,8 @@ export const NewBadge = React.forwardRef<HTMLDivElement, BadgeProps>(
   ({ className, ...props }, ref) => {
     return (
       <Badge
-        ref={ref}
         className={cn(
-          "bg-green-500 text-white hover:bg-green-600",
+          "w-fit bg-green-500 text-white hover:bg-green-600",
           className
         )}
         {...props}

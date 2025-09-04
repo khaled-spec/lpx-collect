@@ -304,7 +304,12 @@ export default function BrowsePage() {
                     : 'space-y-4'
                 }>
                   {filteredProducts.map(product => (
-                    <ProductCard key={product.id} product={product} />
+                    <ProductCard 
+                      key={product.id} 
+                      product={product} 
+                      viewMode={viewMode}
+                      variant="default"
+                    />
                   ))}
                 </div>
               ) : (

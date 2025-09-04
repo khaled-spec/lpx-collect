@@ -4,19 +4,36 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Heart, ShoppingCart, Eye, Star, Package } from 'lucide-react';
-import { ProductCard as ProductCardVariant } from '@/components/custom/card-variants';
-import { CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { FeaturedBadge, DiscountBadge, StockBadge, CategoryBadge, VerifiedBadge } from '@/components/custom/badge-variants';
 import { IconButton, CartButton } from '@/components/custom/button-variants';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { 
+  productStyles, 
+  getProductClasses, 
+  getContentClasses,
+  getImageContainerClasses,
+  getImageClasses 
+} from '@/components/custom/product-styles';
+import { cn } from '@/lib/utils';
 import type { Product } from '@/types';
 
 interface ProductCardProps {
   product: Product;
+  variant?: 'default' | 'compact' | 'large';
+  viewMode?: 'grid' | 'list';
+  imageMode?: 'contain' | 'cover' | 'fill' | 'scale';
+  className?: string;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ 
+  product, 
+  variant = 'default',
+  viewMode = 'grid',
+  imageMode = 'contain',
+  className 
+}: ProductCardProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [imageError, setImageError] = useState(false);
 
@@ -34,18 +51,106 @@ export default function ProductCard({ product }: ProductCardProps) {
     setIsLiked(!isLiked);
   };
 
+  if (viewMode === 'list') {
+    return (
+      <Link href={`/product/${product.slug}`} className="group block">
+        <div className={cn(productStyles.list.container, className)}>
+          {/* Image */}
+          <div className={cn(productStyles.list.imageContainer, "flex items-center justify-center")}>
+            {!imageError && product.images[0] ? (
+              <Image
+                src={product.images[0]}
+                alt={product.title}
+                width={128}
+                height={128}
+                className="w-full h-full object-contain"
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <Package className="h-12 w-12 text-muted-foreground/30" />
+            )}
+          </div>
+          
+          {/* Content */}
+          <div className={productStyles.list.content}>
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <p className={productStyles.typography.category}>
+                  {product.category.name} • {product.condition}
+                </p>
+                <h3 className={cn(productStyles.typography.title, "text-base")}>
+                  {product.title}
+                </h3>
+                <div className="flex items-center gap-2 mt-1">
+                  <p className={productStyles.typography.vendor}>
+                    {product.vendor.storeName}
+                  </p>
+                  {product.vendor.verified && <VerifiedBadge className="h-4" />}
+                </div>
+              </div>
+              <div className="text-right">
+                <span className={productStyles.typography.price.current}>
+                  ${product.price.toFixed(2)}
+                </span>
+                {product.compareAtPrice && (
+                  <span className={cn(productStyles.typography.price.original, "block")}>
+                    ${product.compareAtPrice.toFixed(2)}
+                  </span>
+                )}
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between mt-2">
+              <div className="flex items-center gap-4">
+                {product.vendor.rating > 0 && (
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <span className={productStyles.typography.meta}>
+                      {product.vendor.rating.toFixed(1)}
+                    </span>
+                  </div>
+                )}
+                <span className={productStyles.typography.meta}>
+                  {product.sold} sold
+                </span>
+                {product.stock <= 5 && product.stock > 0 && (
+                  <StockBadge stock={product.stock} />
+                )}
+              </div>
+              <div className={productStyles.list.actions}>
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleToggleLike}
+                >
+                  <Heart className={cn(
+                    "h-4 w-4",
+                    isLiked && "fill-red-500 text-red-500"
+                  )} />
+                </IconButton>
+                <CartButton size="sm" onClick={handleAddToCart}>
+                  <ShoppingCart className="h-4 w-4" />
+                </CartButton>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Link>
+    );
+  }
+
   return (
-    <Link href={`/product/${product.slug}`} className="group">
-      <ProductCardVariant>
-        {/* Image Container */}
-        <div className="relative aspect-square bg-gray-100 dark:bg-gray-800">
+    <Link href={`/product/${product.slug}`} className="group block">
+      <Card className={getProductClasses(variant, className)}>
+        {/* Image Container with fixed dimensions */}
+        <div className={getImageContainerClasses(variant)}>
           {product.featured && (
-            <FeaturedBadge className="absolute top-2 left-2 z-10">
+            <FeaturedBadge className={productStyles.badges.topLeft}>
               Featured
             </FeaturedBadge>
           )}
           {discountPercentage > 0 && (
-            <DiscountBadge className="absolute top-2 right-2 z-10">
+            <DiscountBadge className={productStyles.badges.topRight}>
               -{discountPercentage}%
             </DiscountBadge>
           )}
@@ -55,24 +160,25 @@ export default function ProductCard({ product }: ProductCardProps) {
               src={product.images[0]}
               alt={product.title}
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className={getImageClasses(imageMode)}
               onError={() => setImageError(true)}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
-              <Package className="h-16 w-16" />
+            <div className="w-full h-full flex items-center justify-center">
+              <Package className="h-20 w-20 text-muted-foreground/30" />
             </div>
           )}
 
           {/* Hover Actions */}
-          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300">
-            <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className={productStyles.actions.container}>
+            <div className={productStyles.actions.buttonGroup}>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <IconButton
                       variant="secondary"
-                      className="bg-white dark:bg-gray-800"
+                      className={productStyles.actions.button}
                       onClick={handleToggleLike}
                     >
                       <Heart
@@ -90,7 +196,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                   <TooltipTrigger asChild>
                     <IconButton
                       variant="secondary"
-                      className="bg-white dark:bg-gray-800"
+                      className={productStyles.actions.button}
                     >
                       <Eye className="h-4 w-4" />
                     </IconButton>
@@ -104,27 +210,27 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
 
-        {/* Content */}
-        <CardContent className="p-4">
+        {/* Content with flex-grow to push elements to consistent positions */}
+        <div className={getContentClasses(variant)}>
           {/* Category & Condition */}
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs text-gray-500 dark:text-gray-400">
+          <div className="flex items-center gap-2">
+            <span className={productStyles.typography.category}>
               {product.category.name}
             </span>
-            <span className="text-xs text-gray-400">•</span>
-            <span className="text-xs text-gray-500 dark:text-gray-400 capitalize">
+            <span className="text-xs text-muted-foreground/50">•</span>
+            <span className={cn(productStyles.typography.category, "capitalize")}>
               {product.condition}
             </span>
           </div>
 
           {/* Title */}
-          <h3 className="font-medium text-gray-900 dark:text-white mb-1 line-clamp-2 group-hover:text-primary transition">
+          <h3 className={productStyles.typography.title}>
             {product.title}
           </h3>
 
           {/* Vendor */}
-          <div className="flex items-center gap-2 mb-2">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex items-center gap-2">
+            <p className={productStyles.typography.vendor}>
               by {product.vendor.storeName}
             </p>
             {product.vendor.verified && (
@@ -134,12 +240,14 @@ export default function ProductCard({ product }: ProductCardProps) {
 
           {/* Rating */}
           {product.vendor.rating > 0 && (
-            <div className="flex items-center gap-1 mb-2">
-              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {product.vendor.rating.toFixed(1)}
-              </span>
-              <span className="text-sm text-gray-400">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
+                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                <span className={productStyles.typography.meta}>
+                  {product.vendor.rating.toFixed(1)}
+                </span>
+              </div>
+              <span className={productStyles.typography.meta}>
                 ({product.sold} sold)
               </span>
             </div>
@@ -148,11 +256,11 @@ export default function ProductCard({ product }: ProductCardProps) {
           {/* Price */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-lg font-bold text-gray-900 dark:text-white">
+              <span className={productStyles.typography.price.current}>
                 ${product.price.toFixed(2)}
               </span>
               {product.compareAtPrice && (
-                <span className="text-sm text-gray-400 line-through">
+                <span className={productStyles.typography.price.original}>
                   ${product.compareAtPrice.toFixed(2)}
                 </span>
               )}
@@ -164,6 +272,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 <TooltipTrigger asChild>
                   <CartButton
                     onClick={handleAddToCart}
+                    size="sm"
                   >
                     <ShoppingCart className="h-4 w-4" />
                   </CartButton>
@@ -179,8 +288,8 @@ export default function ProductCard({ product }: ProductCardProps) {
           {(product.stock <= 5 || product.stock === 0) && (
             <StockBadge stock={product.stock} className="mt-2" />
           )}
-        </CardContent>
-      </ProductCardVariant>
+        </div>
+      </Card>
     </Link>
   );
 }
