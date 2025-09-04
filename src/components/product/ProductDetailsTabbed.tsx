@@ -4,6 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { productStyles } from '@/components/custom/product-styles';
+import { cn } from '@/lib/utils';
 import { 
   Truck, 
   Package, 
@@ -61,6 +63,9 @@ export default function ProductDetailsTabbed({
         <TabsTrigger value="returns">Returns</TabsTrigger>
         <TabsTrigger value="protection">Protection</TabsTrigger>
       </TabsList>
+      
+      {/* Tab Content Container with fixed height */}
+      <div className="min-h-[400px]">
 
       {/* Details Tab */}
       <TabsContent value="details" className="mt-4">
@@ -166,18 +171,15 @@ export default function ProductDetailsTabbed({
 
           {returns.accepted ? (
             <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <Shield className="h-4 w-4 text-muted-foreground mt-0.5" />
-                <div className="flex-1">
-                  <p className="font-medium">Hassle-Free Returns</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Return within {returns.period} for a full refund
-                  </p>
-                </div>
+              <div>
+                <p className="font-medium">Hassle-Free Returns</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Return within {returns.period} for a full refund
+                </p>
               </div>
 
               <div className="bg-warning/10 border border-warning/20 rounded-lg p-3">
-                <p className="text-sm text-warning-foreground">
+                <p className={cn(productStyles.typography.meta, "text-foreground")}>
                   <strong>Return Condition:</strong> {returns.condition}
                 </p>
               </div>
@@ -209,59 +211,47 @@ export default function ProductDetailsTabbed({
 
       {/* Buyer Protection Tab */}
       <TabsContent value="protection" className="mt-4">
-        <div className="flex items-start gap-3">
-          <Shield className="h-6 w-6 text-primary mt-0.5" />
-          <div className="flex-1">
-            <h3 className="font-semibold text-lg mb-3">Buyer Protection Program</h3>
-            <p className="text-sm text-muted-foreground mb-4">
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <Shield className="h-5 w-5 text-primary" />
+            <h3 className="font-semibold text-lg">Buyer Protection Program</h3>
+          </div>
+
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
               Your purchase is protected by our comprehensive buyer protection program. 
               Shop with confidence knowing that we guarantee authenticity and condition as described.
             </p>
 
-            {/* Authenticity Information */}
-            {authenticity.verified && (
-              <div className="bg-info/10 border border-info/20 rounded-lg p-4 mb-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Award className="h-5 w-5 text-info" />
-                  <p className="font-medium text-info-foreground">Authenticity Guaranteed</p>
-                </div>
-                <p className="text-sm text-info-foreground">
-                  Verified by {authenticity.verifiedBy}
-                </p>
-                <p className="text-xs text-info-foreground/80 mt-1">
-                  Certificate: {authenticity.certificateNumber}
-                </p>
-              </div>
-            )}
 
             <div className="grid grid-cols-2 gap-3">
               <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-primary" />
-                <span className="text-sm">Money-back guarantee</span>
+                <CheckCircle className="h-4 w-4 text-success" />
+                <span className={productStyles.typography.meta}>Money-back guarantee</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-primary" />
-                <span className="text-sm">Secure payments</span>
+                <CheckCircle className="h-4 w-4 text-success" />
+                <span className={productStyles.typography.meta}>Secure payments</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-primary" />
-                <span className="text-sm">24/7 support</span>
+                <CheckCircle className="h-4 w-4 text-success" />
+                <span className={productStyles.typography.meta}>24/7 support</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-primary" />
-                <span className="text-sm">Dispute resolution</span>
+                <CheckCircle className="h-4 w-4 text-success" />
+                <span className={productStyles.typography.meta}>Dispute resolution</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-primary" />
-                <span className="text-sm">Item as described</span>
+                <CheckCircle className="h-4 w-4 text-success" />
+                <span className={productStyles.typography.meta}>Item as described</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-primary" />
-                <span className="text-sm">Fast resolution</span>
+                <CheckCircle className="h-4 w-4 text-success" />
+                <span className={productStyles.typography.meta}>Fast resolution</span>
               </div>
             </div>
 
-            <div className="mt-4 p-3 bg-background rounded-lg">
+            <div className="p-3 bg-background rounded-lg">
               <p className="text-xs text-muted-foreground">
                 If you encounter any issues with your purchase, our dedicated support team is available 24/7 to assist you. 
                 We'll work to resolve any problems quickly and fairly.
@@ -270,6 +260,8 @@ export default function ProductDetailsTabbed({
           </div>
         </div>
       </TabsContent>
+      
+      </div>
     </Tabs>
   );
 }

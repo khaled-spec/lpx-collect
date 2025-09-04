@@ -130,8 +130,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/authenticity" className="text-gray-400 hover:text-white transition">
-                  Authenticity Guarantee
+                <Link href="/verification" className="text-gray-400 hover:text-white transition">
+                  Verification Process
                 </Link>
               </li>
             </ul>

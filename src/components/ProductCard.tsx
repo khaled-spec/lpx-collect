@@ -93,11 +93,11 @@ export default function ProductCard({
                   {product.title}
                 </h3>
                 <div className="flex items-center gap-2 mt-1">
-                  <Badge variant="outline" className={cn(productStyles.badges.size.sm, productStyles.badges.base)}>
+                  <Badge variant="outline" className={cn(productStyles.badges.size.md, productStyles.badges.base)}>
                     {product.condition}
                   </Badge>
                   {product.rarity && (
-                    <Badge variant="secondary" className={cn(productStyles.badges.size.sm, productStyles.badges.base)}>
+                    <Badge variant="secondary" className={cn(productStyles.badges.size.md, productStyles.badges.base)}>
                       {product.rarity}
                     </Badge>
                   )}
@@ -114,7 +114,7 @@ export default function ProductCard({
                       </span>
                     </div>
                   )}
-                  {product.vendor.verified && <VerifiedBadge className={cn(productStyles.badges.size.sm, productStyles.badges.base)} />}
+                  {product.vendor.verified && <VerifiedBadge className={cn(productStyles.badges.size.md, productStyles.badges.base)} />}
                 </div>
               </div>
               <div className="text-right">
@@ -226,11 +226,11 @@ export default function ProductCard({
 
           {/* Badges - Fixed height */}
           <div className="flex items-center gap-1.5 h-5">
-            <Badge variant="outline" className={cn(productStyles.badges.size.sm, productStyles.badges.base)}>
+            <Badge variant="outline" className={cn(productStyles.badges.size.md, productStyles.badges.base)}>
               {product.condition}
             </Badge>
             {product.rarity && (
-              <Badge variant="secondary" className={cn(productStyles.badges.size.sm, productStyles.badges.base)}>
+              <Badge variant="secondary" className={cn(productStyles.badges.size.md, productStyles.badges.base)}>
                 {product.rarity}
               </Badge>
             )}
@@ -250,7 +250,7 @@ export default function ProductCard({
               </div>
             )}
             {product.vendor.verified && (
-              <VerifiedBadge className={cn(productStyles.badges.size.sm, productStyles.badges.base)} />
+              <VerifiedBadge className={cn(productStyles.badges.size.md, productStyles.badges.base)} />
             )}
           </div>
 

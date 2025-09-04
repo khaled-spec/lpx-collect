@@ -67,18 +67,6 @@ export default function ProductInfo({ product, discountPercentage }: ProductInfo
           <Star className="h-3 w-3 mr-1" />
           {product.rarity}
         </Badge>
-        {product.authenticity.verified && (
-          <Badge variant="outline" className="font-medium bg-emerald-50 text-emerald-700 border-emerald-300">
-            <Shield className="h-3 w-3 mr-1" />
-            Verified Authentic
-          </Badge>
-        )}
-        {product.authenticity.certificate && (
-          <Badge variant="outline" className="font-medium bg-amber-50 text-amber-700 border-amber-300">
-            <Award className="h-3 w-3 mr-1" />
-            Certified
-          </Badge>
-        )}
       </div>
 
       {/* Price */}
@@ -130,9 +118,6 @@ export default function ProductInfo({ product, discountPercentage }: ProductInfo
           <div className="flex items-start gap-3">
             <Shield className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mt-0.5" />
             <div className="flex-1">
-              <p className="font-semibold text-emerald-900 dark:text-emerald-100">
-                Authenticity Guaranteed
-              </p>
               <p className="text-sm text-emerald-700 dark:text-emerald-300 mt-1">
                 Verified by {product.authenticity.verifiedBy}
               </p>

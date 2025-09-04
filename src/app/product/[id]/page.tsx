@@ -13,6 +13,8 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Shield, Award, TrendingUp, Star } from 'lucide-react';
+import { productStyles } from '@/components/custom/product-styles';
+import { cn } from '@/lib/utils';
 
 // Mock product data (same as before)
 const mockProduct = {
@@ -195,9 +197,9 @@ export default function ProductDetailsPage({ params }: { params: { id: string } 
       <Header />
       
       <main className="container py-4">
-        {/* Breadcrumb - Smaller */}
-        <Breadcrumb className="mb-3">
-          <BreadcrumbList className="text-xs">
+        {/* Breadcrumb */}
+        <Breadcrumb className="mb-4">
+          <BreadcrumbList className={productStyles.typography.meta}>
             <BreadcrumbItem>
               <BreadcrumbLink href="/">Home</BreadcrumbLink>
             </BreadcrumbItem>
@@ -219,24 +221,24 @@ export default function ProductDetailsPage({ params }: { params: { id: string } 
         </Breadcrumb>
 
         {/* Page Title */}
-        <div className="my-6">
-          <h1 className="text-3xl font-bold">{mockProduct.title}</h1>
-          <div className="flex items-center gap-2 mt-2">
-            <span className="text-muted-foreground">by</span>
-            <span className="font-medium">{mockProduct.vendor.name}</span>
-            <div className="flex items-center gap-0.5">
-              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-              <span className="text-sm">{mockProduct.vendor.rating}</span>
-              <span className="text-sm text-muted-foreground">({mockProduct.vendor.reviewCount})</span>
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold mb-2">{mockProduct.title}</h1>
+          <div className="flex items-center gap-2">
+            <span className={productStyles.typography.meta}>by</span>
+            <span className={cn(productStyles.typography.vendor, "text-base")}>{mockProduct.vendor.name}</span>
+            <div className={productStyles.rating.container}>
+              <Star className={productStyles.rating.star} />
+              <span className={productStyles.rating.text}>{mockProduct.vendor.rating}</span>
+              <span className={cn(productStyles.typography.meta, "ml-0.5")}>({mockProduct.vendor.reviewCount})</span>
             </div>
           </div>
         </div>
 
         {/* 3-Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-8">
-          {/* Left: Product Images - 4 cols */}
-          <div className="lg:col-span-4">
-            <div className="sticky top-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* Left: Product Images */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-20">
               <ProductImageGallery 
                 images={mockProduct.images}
                 title={mockProduct.title}
@@ -249,9 +251,9 @@ export default function ProductDetailsPage({ params }: { params: { id: string } 
             </div>
           </div>
 
-          {/* Middle: Checkout Card - 4 cols */}
-          <div className="lg:col-span-4">
-            <div className="sticky top-4">
+          {/* Middle: Checkout Card */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-20">
               <ProductPurchaseCard
                 product={mockProduct}
                 quantity={quantity}
@@ -261,36 +263,27 @@ export default function ProductDetailsPage({ params }: { params: { id: string } 
             </div>
           </div>
 
-          {/* Right: Product Info and Details Tabs - 4 cols */}
-          <div className="lg:col-span-4">
-            <Card className="sticky top-4">
+          {/* Right: Product Info and Details Tabs */}
+          <div className="lg:col-span-1">
+            <Card className="sticky top-20 border-0 shadow-none">
               <CardContent className="p-6 space-y-4">
                 {/* Badges and Description */}
                 <div>
                   {/* Badges */}
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    <Badge variant="secondary" className="text-xs">
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <Badge variant="secondary" className={productStyles.badges.size.md}>
                       {mockProduct.condition}
                     </Badge>
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="secondary" className={productStyles.badges.size.md}>
                       {mockProduct.rarity}
                     </Badge>
-                    {mockProduct.authenticity.verified && (
-                      <Badge variant="outline" className="text-xs gap-1">
-                        <Shield className="h-3 w-3" />
-                        Verified Authentic
-                      </Badge>
-                    )}
-                    {mockProduct.authenticity.certificate && (
-                      <Badge variant="outline" className="text-xs gap-1">
-                        <Award className="h-3 w-3" />
-                        Certified
-                      </Badge>
-                    )}
+                    <Badge variant="secondary" className={productStyles.badges.size.md}>
+                      {mockProduct.category}
+                    </Badge>
                   </div>
 
                   {/* Description */}
-                  <p className="text-sm text-muted-foreground">
+                  <p className={cn(productStyles.typography.meta, "text-sm leading-relaxed")}>
                     {mockProduct.description}
                   </p>
                 </div>

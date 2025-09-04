@@ -15,6 +15,7 @@ import {
   CheckCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { productStyles } from '@/components/custom/product-styles';
 
 interface ProductPurchaseCardProps {
   product: {
@@ -62,7 +63,7 @@ export default function ProductPurchaseCardOptimized({
   };
 
   return (
-    <Card className="w-full sticky top-4 shadow-sm">
+    <Card className="w-full sticky top-20 border-0 shadow-none">
       <CardContent className="p-6 space-y-4">
         {/* Price Section - Clean and prominent */}
         <div className="space-y-2">
@@ -86,8 +87,8 @@ export default function ProductPurchaseCardOptimized({
           {product.inStock ? (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-success" />
-                <span className="text-sm font-medium text-success">
+                <CheckCircle className={cn(productStyles.forms.icon.md, "text-success")} />
+                <span className={cn(productStyles.typography.meta, "font-medium text-success")}>
                   In Stock
                 </span>
                 {product.stockQuantity <= 5 && (
@@ -98,20 +99,20 @@ export default function ProductPurchaseCardOptimized({
               </div>
               
               {/* Delivery info - inline without container */}
-              <div className="flex items-center gap-2 text-sm">
-                <Truck className="h-4 w-4 text-muted-foreground" />
+              <div className={cn("flex items-center gap-2", productStyles.typography.meta)}>
+                <Truck className={cn(productStyles.forms.icon.md, "text-muted-foreground")} />
                 <span className="text-muted-foreground">Delivery:</span>
                 <span className="font-medium">{product.shipping.estimatedDays} days</span>
               </div>
               {product.shipping.freeShippingThreshold && (
-                <p className="text-xs text-success ml-6">
+                <p className={cn(productStyles.typography.meta, "text-success ml-6")}>
                   FREE shipping on orders over ${product.shipping.freeShippingThreshold}
                 </p>
               )}
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-destructive">
+              <span className={cn(productStyles.typography.meta, "font-medium text-destructive")}>
                 Out of Stock
               </span>
             </div>
@@ -123,7 +124,7 @@ export default function ProductPurchaseCardOptimized({
         {/* Quantity Selector - Clean design */}
         {product.inStock && (
           <div className="space-y-2">
-            <label className="text-sm font-medium">Quantity:</label>
+            <label className={cn(productStyles.typography.meta, "font-medium")}>Quantity:</label>
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
@@ -132,7 +133,7 @@ export default function ProductPurchaseCardOptimized({
                 disabled={quantity <= 1}
                 aria-label="Decrease quantity"
               >
-                <Minus className="h-4 w-4" />
+                <Minus className={productStyles.forms.icon.md} />
               </Button>
               <div className="px-4 py-2 border rounded-md min-w-[5rem] text-center font-medium bg-background">
                 {quantity}
@@ -144,7 +145,7 @@ export default function ProductPurchaseCardOptimized({
                 disabled={quantity >= product.stockQuantity}
                 aria-label="Increase quantity"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className={productStyles.forms.icon.md} />
               </Button>
             </div>
           </div>
@@ -167,7 +168,7 @@ export default function ProductPurchaseCardOptimized({
               size="lg"
               onClick={handleAddToCart}
             >
-              <ShoppingCart className="h-4 w-4 mr-2" />
+              <ShoppingCart className={cn(productStyles.forms.icon.md, "mr-2")} />
               Add to Cart
             </Button>
           </div>
