@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Heart, ShoppingCart, Eye, Star, Package } from 'lucide-react';
+import { Heart, ShoppingCart, Package, Star } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { FeaturedBadge, DiscountBadge, StockBadge, CategoryBadge, VerifiedBadge } from '@/components/custom/badge-variants';
+import { DiscountBadge, StockBadge, VerifiedBadge } from '@/components/custom/badge-variants';
 import { IconButton, CartButton } from '@/components/custom/button-variants';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
@@ -26,6 +26,14 @@ interface ProductCardProps {
   imageMode?: 'contain' | 'cover' | 'fill' | 'scale';
   className?: string;
 }
+
+// Format number with thousand separators
+const formatPrice = (num: number) => {
+  return num.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+};
 
 export default function ProductCard({ 
   product, 
@@ -79,25 +87,43 @@ export default function ProductCard({
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <p className={productStyles.typography.category}>
-                  {product.category.name} • {product.condition}
+                  {product.category.name}
                 </p>
                 <h3 className={cn(productStyles.typography.title, "text-base")}>
                   {product.title}
                 </h3>
                 <div className="flex items-center gap-2 mt-1">
+                  <Badge variant="outline" className={cn(productStyles.badges.size.sm, productStyles.badges.base)}>
+                    {product.condition}
+                  </Badge>
+                  {product.rarity && (
+                    <Badge variant="secondary" className={cn(productStyles.badges.size.sm, productStyles.badges.base)}>
+                      {product.rarity}
+                    </Badge>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 mt-1">
                   <p className={productStyles.typography.vendor}>
                     {product.vendor.storeName}
                   </p>
-                  {product.vendor.verified && <VerifiedBadge className="h-4" />}
+                  {product.vendor.rating > 0 && (
+                    <div className={productStyles.rating.container}>
+                      <Star className={productStyles.rating.star} />
+                      <span className={productStyles.rating.text}>
+                        {product.vendor.rating.toFixed(1)}
+                      </span>
+                    </div>
+                  )}
+                  {product.vendor.verified && <VerifiedBadge className={cn(productStyles.badges.size.sm, productStyles.badges.base)} />}
                 </div>
               </div>
               <div className="text-right">
                 <span className={productStyles.typography.price.current}>
-                  ${product.price.toFixed(2)}
+                  ${formatPrice(product.price)}
                 </span>
                 {product.compareAtPrice && (
                   <span className={cn(productStyles.typography.price.original, "block")}>
-                    ${product.compareAtPrice.toFixed(2)}
+                    ${formatPrice(product.compareAtPrice)}
                   </span>
                 )}
               </div>
@@ -105,17 +131,6 @@ export default function ProductCard({
             
             <div className="flex items-center justify-between mt-2">
               <div className="flex items-center gap-4">
-                {product.vendor.rating > 0 && (
-                  <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className={productStyles.typography.meta}>
-                      {product.vendor.rating.toFixed(1)}
-                    </span>
-                  </div>
-                )}
-                <span className={productStyles.typography.meta}>
-                  {product.sold} sold
-                </span>
                 {product.stock <= 5 && product.stock > 0 && (
                   <StockBadge stock={product.stock} />
                 )}
@@ -131,8 +146,8 @@ export default function ProductCard({
                     isLiked && "fill-red-500 text-red-500"
                   )} />
                 </IconButton>
-                <CartButton size="sm" onClick={handleAddToCart}>
-                  <ShoppingCart className="h-4 w-4" />
+                <CartButton className={productStyles.actions.cartButton.sm} onClick={handleAddToCart}>
+                  <ShoppingCart className={productStyles.actions.icon.sm} />
                 </CartButton>
               </div>
             </div>
@@ -147,13 +162,8 @@ export default function ProductCard({
       <Card className={getProductClasses(variant, className)}>
         {/* Image Container with fixed dimensions */}
         <div className={getImageContainerClasses(variant)}>
-          {product.featured && (
-            <FeaturedBadge className={productStyles.badges.topLeft}>
-              Featured
-            </FeaturedBadge>
-          )}
           {discountPercentage > 0 && (
-            <DiscountBadge className={productStyles.badges.topRight}>
+            <DiscountBadge className={productStyles.badges.position.topRight}>
               -{discountPercentage}%
             </DiscountBadge>
           )}
@@ -195,19 +205,6 @@ export default function ProductCard({
                     <p>{isLiked ? 'Remove from favorites' : 'Add to favorites'}</p>
                   </TooltipContent>
                 </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <IconButton
-                      variant="secondary"
-                      className={productStyles.actions.button}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </IconButton>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Quick view</p>
-                  </TooltipContent>
-                </Tooltip>
               </TooltipProvider>
             </div>
           </div>
@@ -215,56 +212,57 @@ export default function ProductCard({
 
         {/* Content with flex-grow to push elements to consistent positions */}
         <div className={getContentClasses(variant)}>
-          {/* Category & Condition */}
-          <div className="flex items-center gap-2">
+          {/* Category */}
+          <div className="flex items-center gap-2 h-4">
             <span className={productStyles.typography.category}>
               {product.category.name}
             </span>
-            <span className="text-xs text-muted-foreground/50">•</span>
-            <span className={cn(productStyles.typography.category, "capitalize")}>
-              {product.condition}
-            </span>
           </div>
 
-          {/* Title */}
+          {/* Title - Fixed height with line clamp */}
           <h3 className={productStyles.typography.title}>
             {product.title}
           </h3>
 
-          {/* Vendor */}
-          <div className="flex items-center gap-2">
-            <p className={productStyles.typography.vendor}>
-              by {product.vendor.storeName}
-            </p>
-            {product.vendor.verified && (
-              <VerifiedBadge className="h-4" />
+          {/* Badges - Fixed height */}
+          <div className="flex items-center gap-1.5 h-5">
+            <Badge variant="outline" className={cn(productStyles.badges.size.sm, productStyles.badges.base)}>
+              {product.condition}
+            </Badge>
+            {product.rarity && (
+              <Badge variant="secondary" className={cn(productStyles.badges.size.sm, productStyles.badges.base)}>
+                {product.rarity}
+              </Badge>
             )}
           </div>
 
-          {/* Rating */}
-          {product.vendor.rating > 0 && (
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1">
-                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                <span className={productStyles.typography.meta}>
+          {/* Vendor with Rating - Fixed height */}
+          <div className="flex items-center gap-1.5 h-5">
+            <p className={productStyles.typography.vendor}>
+              by {product.vendor.storeName}
+            </p>
+            {product.vendor.rating > 0 && (
+              <div className={productStyles.rating.container}>
+                <Star className={productStyles.rating.star} />
+                <span className={productStyles.rating.text}>
                   {product.vendor.rating.toFixed(1)}
                 </span>
               </div>
-              <span className={productStyles.typography.meta}>
-                ({product.sold} sold)
-              </span>
-            </div>
-          )}
+            )}
+            {product.vendor.verified && (
+              <VerifiedBadge className={cn(productStyles.badges.size.sm, productStyles.badges.base)} />
+            )}
+          </div>
 
-          {/* Price */}
-          <div className="flex items-center justify-between">
+          {/* Price - Fixed height */}
+          <div className="flex items-center justify-between h-8">
             <div className="flex items-center gap-2">
               <span className={productStyles.typography.price.current}>
-                ${product.price.toFixed(2)}
+                ${formatPrice(product.price)}
               </span>
               {product.compareAtPrice && (
                 <span className={productStyles.typography.price.original}>
-                  ${product.compareAtPrice.toFixed(2)}
+                  ${formatPrice(product.compareAtPrice)}
                 </span>
               )}
             </div>
@@ -275,9 +273,9 @@ export default function ProductCard({
                 <TooltipTrigger asChild>
                   <CartButton
                     onClick={handleAddToCart}
-                    size="sm"
+                    className={productStyles.actions.cartButton.md}
                   >
-                    <ShoppingCart className="h-4 w-4" />
+                    <ShoppingCart className={productStyles.actions.icon.md} />
                   </CartButton>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -287,9 +285,12 @@ export default function ProductCard({
             </TooltipProvider>
           </div>
 
+          {/* Spacer to push stock badge to bottom */}
+          <div className="flex-grow" />
+
           {/* Stock Status */}
           {(product.stock <= 5 || product.stock === 0) && (
-            <StockBadge stock={product.stock} className="mt-2" />
+            <StockBadge stock={product.stock} className="mt-auto" />
           )}
         </div>
       </Card>

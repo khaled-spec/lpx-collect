@@ -2,7 +2,7 @@
 export const productStyles = {
   // Container styles for consistent product cards
   container: {
-    base: "overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group bg-card rounded-lg border border-border",
+    base: "overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group bg-card rounded-lg border border-border flex flex-col",
     hover: "hover:border-primary/20 hover:shadow-xl hover:scale-[1.02]",
     active: "active:scale-[0.98]",
     // Fixed heights for different variants
@@ -40,43 +40,74 @@ export const productStyles = {
   
   // Content padding and spacing
   content: {
-    base: "p-4 space-y-2 flex flex-col",
-    compact: "p-3 space-y-1.5 flex flex-col",
-    large: "p-5 space-y-2.5 flex flex-col",
+    base: "p-3 space-y-1.5 flex flex-col flex-1",
+    compact: "p-2.5 space-y-1 flex flex-col flex-1",
+    large: "p-4 space-y-2 flex flex-col flex-1",
     // Min heights for content area
     height: {
-      default: "min-h-[160px]", // Adjusted for smaller image
-      compact: "min-h-[140px]", // Adjusted for smaller image
-      large: "min-h-[180px]"    // Adjusted for smaller image
+      default: "min-h-[180px]", // Increased for better spacing
+      compact: "min-h-[160px]", // Increased for better spacing
+      large: "min-h-[200px]"    // Increased for better spacing
     }
   },
   
-  // Typography hierarchy
+  // Typography hierarchy with text truncation
   typography: {
-    category: "text-xs font-medium text-muted-foreground uppercase tracking-wide",
-    title: "text-sm font-semibold text-foreground group-hover:text-primary transition-colors",
-    vendor: "text-sm text-muted-foreground",
+    category: "text-xs font-medium text-muted-foreground uppercase tracking-wide truncate",
+    title: "text-sm font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 h-10",
+    vendor: "text-xs text-muted-foreground truncate",
     price: {
-      current: "text-lg font-bold text-foreground",
-      original: "text-sm text-muted-foreground line-through",
-      sale: "text-lg font-bold text-destructive"
+      current: "text-base font-bold text-foreground",
+      original: "text-xs text-muted-foreground line-through",
+      sale: "text-base font-bold text-destructive"
     },
-    meta: "text-xs text-muted-foreground"
+    meta: "text-xs text-muted-foreground",
+    rating: "text-xs font-medium text-muted-foreground"
   },
   
-  // Badge positioning
+  // Rating display
+  rating: {
+    container: "flex items-center gap-0.5",
+    star: "h-3 w-3 fill-yellow-400 text-yellow-400",
+    text: "text-xs font-medium text-muted-foreground ml-1"
+  },
+  
+  // Badge design tokens
   badges: {
-    topLeft: "absolute top-2 left-2 z-10",
-    topRight: "absolute top-2 right-2 z-10",
-    bottomLeft: "absolute bottom-2 left-2 z-10",
-    bottomRight: "absolute bottom-2 right-2 z-10"
+    // Positioning
+    position: {
+      topLeft: "absolute top-2 left-2 z-10",
+      topRight: "absolute top-2 right-2 z-10",
+      bottomLeft: "absolute bottom-2 left-2 z-10",
+      bottomRight: "absolute bottom-2 right-2 z-10"
+    },
+    // Sizing
+    size: {
+      sm: "text-[10px] px-1.5 py-0 h-5",
+      md: "text-xs px-2 py-0.5 h-6",
+      lg: "text-sm px-2.5 py-1 h-7"
+    },
+    // Common styles
+    base: "capitalize font-medium"
   },
   
   // Interactive elements
   actions: {
     container: "absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300",
     buttonGroup: "absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0",
-    button: "bg-background/95 backdrop-blur-sm border border-border shadow-lg hover:bg-background hover:shadow-xl transition-all duration-200"
+    button: "bg-background/95 backdrop-blur-sm border border-border shadow-lg hover:bg-background hover:shadow-xl transition-all duration-200",
+    // Cart button sizes
+    cartButton: {
+      sm: "h-7 w-7 p-0",
+      md: "h-8 w-8 p-0",
+      lg: "h-9 w-9 p-0"
+    },
+    // Icon sizes
+    icon: {
+      sm: "h-3.5 w-3.5",
+      md: "h-4 w-4",
+      lg: "h-5 w-5"
+    }
   },
   
   // Overlay effects
@@ -121,6 +152,46 @@ export const productStyles = {
     sale: "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20",
     soldOut: "bg-gray-500/10 text-gray-600 dark:text-gray-400 border-gray-500/20",
     limited: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20"
+  },
+  
+  // Form controls design tokens
+  forms: {
+    // Input sizes
+    input: {
+      sm: "h-8 px-3 text-xs rounded-md",
+      md: "h-9 px-3.5 text-sm rounded-md",
+      lg: "h-10 px-4 text-base rounded-md"
+    },
+    // Button sizes (matching input heights)
+    button: {
+      sm: "h-8 px-3 text-xs font-medium rounded-md",
+      md: "h-9 px-4 text-sm font-medium rounded-md",
+      lg: "h-10 px-6 text-base font-medium rounded-md"
+    },
+    // Icon button sizes
+    iconButton: {
+      sm: "h-8 w-8 p-0 rounded-md",
+      md: "h-9 w-9 p-0 rounded-md",
+      lg: "h-10 w-10 p-0 rounded-md"
+    },
+    // Select/Dropdown
+    select: {
+      sm: "h-8 px-3 text-xs rounded-md",
+      md: "h-9 px-3.5 text-sm rounded-md", 
+      lg: "h-10 px-4 text-base rounded-md"
+    },
+    // Label
+    label: {
+      sm: "text-xs font-medium text-muted-foreground",
+      md: "text-sm font-medium text-muted-foreground",
+      lg: "text-base font-medium text-muted-foreground"
+    },
+    // Form icons
+    icon: {
+      sm: "h-3.5 w-3.5",
+      md: "h-4 w-4",
+      lg: "h-5 w-5"
+    }
   }
 };
 

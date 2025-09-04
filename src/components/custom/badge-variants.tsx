@@ -76,17 +76,17 @@ StockBadge.displayName = "StockBadge";
 
 // Verified Badge
 export const VerifiedBadge = React.forwardRef<HTMLDivElement, BadgeProps>(
-  ({ className, ...props }, ref) => {
+  ({ className, children, ...props }, ref) => {
     return (
       <Badge
         variant="secondary"
         className={cn(
-          "w-fit bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
+          "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
           className
         )}
         {...props}
       >
-        ✓ Verified
+        {children || "Verified"}
       </Badge>
     );
   }

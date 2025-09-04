@@ -4,6 +4,8 @@ import { useState, useMemo } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
+import { productStyles } from '@/components/custom/product-styles';
+import { cn } from '@/lib/utils';
 import { 
   Filter, 
   X, 
@@ -40,6 +42,8 @@ export default function BrowsePage() {
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [isConditionOpen, setIsConditionOpen] = useState(false);
+  const [isRarityOpen, setIsRarityOpen] = useState(false);
 
   // Filter and sort products
   const filteredProducts = useMemo(() => {
@@ -142,35 +146,44 @@ export default function BrowsePage() {
 
           {/* Compact Filter Bar */}
           <div className="mb-6">
-            <div className="rounded-lg border border-border">
-              {/* Filter Toggle & Quick Actions */}
-              <div className="p-4 flex items-center justify-between">
-                <div className="flex items-center gap-4">
+            {/* Filter Toggle & Quick Actions */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-4">
                   <button
                     onClick={() => setIsFilterExpanded(!isFilterExpanded)}
-                    className="btn btn-outline btn-sm flex items-center gap-2"
+                    className={cn(
+                      productStyles.forms.button.md,
+                      "flex items-center gap-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+                    )}
                   >
-                    <SlidersHorizontal className="h-4 w-4" />
+                    <SlidersHorizontal className={productStyles.forms.icon.md} />
                     <span>Filters</span>
                     {activeFilterCount > 0 && (
                       <span className="badge badge-primary">{activeFilterCount}</span>
                     )}
                     {isFilterExpanded ? (
-                      <ChevronUp className="h-4 w-4" />
+                      <ChevronUp className={productStyles.forms.icon.md} />
                     ) : (
-                      <ChevronDown className="h-4 w-4" />
+                      <ChevronDown className={productStyles.forms.icon.md} />
                     )}
                   </button>
 
                   {/* Quick Search */}
                   <div className="relative hidden sm:block">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Search className={cn(
+                      productStyles.forms.icon.md,
+                      "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                    )} />
                     <input
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Quick search..."
-                      className="input input-sm pl-10 w-64"
+                      className={cn(
+                        productStyles.forms.input.md,
+                        "pl-10 w-64 border border-input bg-background",
+                        "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                      )}
                     />
                   </div>
 
@@ -208,10 +221,13 @@ export default function BrowsePage() {
                     <button 
                       onClick={() => setIsSortOpen(!isSortOpen)}
                       onBlur={() => setTimeout(() => setIsSortOpen(false), 200)}
-                      className="input input-sm flex items-center justify-between w-[180px]"
+                      className={cn(
+                        productStyles.forms.select.md,
+                        "flex items-center justify-between gap-2 w-48 border border-input bg-background hover:bg-accent transition-colors"
+                      )}
                     >
                       <span className="flex items-center gap-2 truncate">
-                        <ArrowUpDown className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                        <ArrowUpDown className={cn(productStyles.forms.icon.md, "text-muted-foreground flex-shrink-0")} />
                         <span className="truncate">{sortOptions.find(o => o.value === sortBy)?.label}</span>
                       </span>
                     </button>
@@ -236,48 +252,59 @@ export default function BrowsePage() {
                   </div>
 
                   {/* View Mode */}
-                  <div className="flex border border-input rounded-[var(--radius)] overflow-hidden">
+                  <div className="flex items-center border border-input rounded-md overflow-hidden">
                     <button
                       onClick={() => setViewMode('grid')}
-                      className={`p-2 transition-colors ${
+                      className={cn(
+                        "h-9 px-3 flex items-center justify-center",
+                        "rounded-none border-0 transition-colors",
                         viewMode === 'grid'
                           ? 'bg-primary text-primary-foreground'
                           : 'bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                      }`}
+                      )}
                       aria-label="Grid view"
                     >
-                      <Grid3x3 className="h-4 w-4" />
+                      <Grid3x3 className={productStyles.forms.icon.md} />
                     </button>
+                    <div className="w-px h-6 bg-input" />
                     <button
                       onClick={() => setViewMode('list')}
-                      className={`p-2 transition-colors border-l border-input ${
+                      className={cn(
+                        "h-9 px-3 flex items-center justify-center",
+                        "rounded-none border-0 transition-colors",
                         viewMode === 'list'
                           ? 'bg-primary text-primary-foreground'
                           : 'bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                      }`}
+                      )}
                       aria-label="List view"
                     >
-                      <LayoutList className="h-4 w-4" />
+                      <LayoutList className={productStyles.forms.icon.md} />
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* Expandable Filter Content */}
-              {isFilterExpanded && (
-                <div className="border-t border-border p-4 bg-background animate-slide-up">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Expandable Filter Content */}
+            {isFilterExpanded && (
+              <div className="border-t border-border animate-slide-up grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-4">
                     {/* Search (Mobile) */}
                     <div className="sm:hidden">
                       <label className="block text-xs font-medium text-muted-foreground mb-1.5">Search</label>
                       <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Search className={cn(
+                          productStyles.forms.icon.md,
+                          "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                        )} />
                         <input
                           type="text"
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           placeholder="Search items..."
-                          className="input input-sm pl-10 w-full"
+                          className={cn(
+                            productStyles.forms.input.md,
+                            "pl-10 w-full border border-input bg-background",
+                            "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                          )}
                         />
                       </div>
                     </div>
@@ -289,7 +316,11 @@ export default function BrowsePage() {
                         <button 
                           onClick={() => setIsCategoryOpen(!isCategoryOpen)}
                           onBlur={() => setTimeout(() => setIsCategoryOpen(false), 200)}
-                          className="input input-sm w-full text-left flex items-center justify-between"
+                          className={cn(
+                            productStyles.forms.select.md,
+                            "w-full text-left flex items-center justify-between",
+                            "border border-input bg-background hover:bg-accent transition-colors"
+                          )}
                         >
                           <span>
                             {selectedCategory 
@@ -297,7 +328,11 @@ export default function BrowsePage() {
                               : 'All Categories'
                             }
                           </span>
-                          <ChevronDown className={`h-3 w-3 text-muted-foreground transition-transform ${isCategoryOpen ? 'rotate-180' : ''}`} />
+                          <ChevronDown className={cn(
+                            productStyles.forms.icon.md,
+                            "text-muted-foreground transition-transform",
+                            isCategoryOpen && "rotate-180"
+                          )} />
                         </button>
                         {isCategoryOpen && (
                           <div className="dropdown-menu left-0 right-0">
@@ -340,7 +375,11 @@ export default function BrowsePage() {
                           placeholder="Min"
                           value={priceRange.min}
                           onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
-                          className="input input-sm w-full"
+                          className={cn(
+                            productStyles.forms.input.md,
+                            "w-full border border-input bg-background",
+                            "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                          )}
                         />
                         <span className="text-muted-foreground text-xs">to</span>
                         <input
@@ -348,7 +387,11 @@ export default function BrowsePage() {
                           placeholder="Max"
                           value={priceRange.max}
                           onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
-                          className="input input-sm w-full"
+                          className={cn(
+                            productStyles.forms.input.md,
+                            "w-full border border-input bg-background",
+                            "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                          )}
                         />
                       </div>
                     </div>
@@ -356,84 +399,134 @@ export default function BrowsePage() {
                     {/* Condition */}
                     <div>
                       <label className="block text-xs font-medium text-muted-foreground mb-1.5">Condition</label>
-                      <div className="relative group">
-                        <button className="input input-sm w-full text-left flex items-center justify-between">
+                      <div className="relative">
+                        <button 
+                          onClick={() => setIsConditionOpen(!isConditionOpen)}
+                          onBlur={() => setTimeout(() => setIsConditionOpen(false), 200)}
+                          className={cn(
+                            productStyles.forms.select.md,
+                            "w-full text-left flex items-center justify-between",
+                            "border border-input bg-background hover:bg-accent transition-colors"
+                          )}
+                        >
                           <span className="capitalize">
                             {selectedConditions.length > 0 
-                              ? `${selectedConditions.length} selected`
-                              : 'Select condition'
+                              ? selectedConditions[0]
+                              : 'Select Condition'
                             }
                           </span>
-                          <ChevronDown className="h-3 w-3 text-muted-foreground" />
+                          <ChevronDown className={cn(
+                            productStyles.forms.icon.md,
+                            "text-muted-foreground transition-transform",
+                            isConditionOpen && "rotate-180"
+                          )} />
                         </button>
-                        <div className="absolute top-full mt-1 left-0 right-0 bg-popover border border-border rounded-[var(--radius)] shadow-lg p-2 hidden group-hover:block z-[9999]">
-                          {conditions.map(condition => (
+                        {isConditionOpen && (
+                          <div className="dropdown-menu left-0 right-0">
                             <button
-                              key={condition}
-                              onClick={() => toggleCondition(condition)}
-                              className={`block w-full text-left px-3 py-1.5 text-xs rounded-[calc(var(--radius)-2px)] capitalize transition-colors ${
-                                selectedConditions.includes(condition)
-                                  ? 'bg-primary/10 text-primary font-medium'
-                                  : 'hover:bg-accent hover:text-accent-foreground'
+                              onClick={() => {
+                                setSelectedConditions([]);
+                                setIsConditionOpen(false);
+                              }}
+                              className={`dropdown-item ${
+                                selectedConditions.length === 0 ? 'dropdown-item-active' : ''
                               }`}
                             >
-                              {condition}
+                              Select Condition
                             </button>
-                          ))}
-                        </div>
+                            {conditions.map(condition => (
+                              <button
+                                key={condition}
+                                onClick={() => {
+                                  setSelectedConditions([condition]);
+                                  setIsConditionOpen(false);
+                                }}
+                                className={`dropdown-item capitalize ${
+                                  selectedConditions.includes(condition) ? 'dropdown-item-active' : ''
+                                }`}
+                              >
+                                {condition}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
 
                     {/* Rarity */}
                     <div>
                       <label className="block text-xs font-medium text-muted-foreground mb-1.5">Rarity</label>
-                      <div className="relative group">
-                        <button className="input input-sm w-full text-left flex items-center justify-between">
+                      <div className="relative">
+                        <button 
+                          onClick={() => setIsRarityOpen(!isRarityOpen)}
+                          onBlur={() => setTimeout(() => setIsRarityOpen(false), 200)}
+                          className={cn(
+                            productStyles.forms.select.md,
+                            "w-full text-left flex items-center justify-between",
+                            "border border-input bg-background hover:bg-accent transition-colors"
+                          )}
+                        >
                           <span className="capitalize">
                             {selectedRarities.length > 0 
-                              ? `${selectedRarities.length} selected`
-                              : 'Select rarity'
+                              ? selectedRarities[0].replace('-', ' ')
+                              : 'Select Rarity'
                             }
                           </span>
-                          <ChevronDown className="h-3 w-3 text-muted-foreground" />
+                          <ChevronDown className={cn(
+                            productStyles.forms.icon.md,
+                            "text-muted-foreground transition-transform",
+                            isRarityOpen && "rotate-180"
+                          )} />
                         </button>
-                        <div className="absolute top-full mt-1 left-0 right-0 bg-popover border border-border rounded-[var(--radius)] shadow-lg p-2 hidden group-hover:block z-[9999]">
-                          {rarities.map(rarity => (
+                        {isRarityOpen && (
+                          <div className="dropdown-menu left-0 right-0">
                             <button
-                              key={rarity}
-                              onClick={() => toggleRarity(rarity)}
-                              className={`block w-full text-left px-3 py-1.5 text-xs rounded-[calc(var(--radius)-2px)] capitalize transition-colors ${
-                                selectedRarities.includes(rarity)
-                                  ? 'bg-primary/10 text-primary font-medium'
-                                  : 'hover:bg-accent hover:text-accent-foreground'
+                              onClick={() => {
+                                setSelectedRarities([]);
+                                setIsRarityOpen(false);
+                              }}
+                              className={`dropdown-item ${
+                                selectedRarities.length === 0 ? 'dropdown-item-active' : ''
                               }`}
                             >
-                              {rarity.replace('-', ' ')}
+                              Select Rarity
                             </button>
-                          ))}
-                        </div>
+                            {rarities.map(rarity => (
+                              <button
+                                key={rarity}
+                                onClick={() => {
+                                  setSelectedRarities([rarity]);
+                                  setIsRarityOpen(false);
+                                }}
+                                className={`dropdown-item capitalize ${
+                                  selectedRarities.includes(rarity) ? 'dropdown-item-active' : ''
+                                }`}
+                              >
+                                {rarity.replace('-', ' ')}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
-                  </div>
-
-                  {/* Clear Filters */}
-                  {activeFilterCount > 0 && (
-                    <div className="mt-4 pt-4 border-t border-border flex justify-between items-center">
-                      <span className="text-xs text-muted-foreground font-medium">
-                        {activeFilterCount} {activeFilterCount === 1 ? 'filter' : 'filters'} active
-                      </span>
-                      <button
-                        onClick={clearFilters}
-                        className="btn btn-ghost btn-sm text-destructive hover:text-destructive"
-                      >
-                        <X className="h-3 w-3 mr-1" />
-                        Clear All
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+                    
+                    {/* Clear Filters */}
+                    {activeFilterCount > 0 && (
+                      <div className="col-span-full mt-2 pt-4 border-t border-border flex justify-between items-center">
+                        <span className="text-xs text-muted-foreground font-medium">
+                          {activeFilterCount} {activeFilterCount === 1 ? 'filter' : 'filters'} active
+                        </span>
+                        <button
+                          onClick={clearFilters}
+                          className="btn btn-ghost btn-sm text-destructive hover:text-destructive"
+                        >
+                          <X className="h-3 w-3 mr-1" />
+                          Clear All
+                        </button>
+                      </div>
+                    )}
+              </div>
+            )}
           </div>
 
           <div className="">
