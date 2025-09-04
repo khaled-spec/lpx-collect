@@ -29,24 +29,24 @@ export default function Home() {
       
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-r from-primary to-primary-dark text-white">
+        <section className="relative bg-white text-black">
           <div className="container py-20">
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
                   Discover Rare & Authentic Collectibles
                 </h1>
-                <p className="text-xl mb-8 text-gray-100">
+                <p className="text-xl mb-8 text-gray-600">
                   Join thousands of collectors in finding unique treasures from verified vendors worldwide.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <SecondaryButton asChild size="lg" className="bg-white text-primary hover:bg-gray-100">
+                  <SecondaryButton asChild size="lg" className="bg-black text-white hover:bg-gray-800">
                     <Link href="/browse">
                       Start Browsing
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Link>
                   </SecondaryButton>
-                  <OutlineButton asChild size="lg" className="border-white text-white hover:bg-white hover:text-primary">
+                  <OutlineButton asChild size="lg" className="border-black text-black hover:bg-black hover:text-white">
                     <Link href="/sell">
                       Become a Vendor
                     </Link>
@@ -55,28 +55,33 @@ export default function Home() {
                 <div className="mt-8 flex items-center gap-6">
                   <div>
                     <p className="text-3xl font-bold">50K+</p>
-                    <p className="text-sm text-gray-200">Active Collectors</p>
+                    <p className="text-sm text-gray-500">Active Collectors</p>
                   </div>
                   <div>
                     <p className="text-3xl font-bold">10K+</p>
-                    <p className="text-sm text-gray-200">Rare Items</p>
+                    <p className="text-sm text-gray-500">Rare Items</p>
                   </div>
                   <div>
                     <p className="text-3xl font-bold">500+</p>
-                    <p className="text-sm text-gray-200">Verified Vendors</p>
+                    <p className="text-sm text-gray-500">Verified Vendors</p>
                   </div>
                 </div>
               </div>
               <div className="relative h-[400px] hidden md:block">
-                <div className="absolute inset-0 bg-white/10 backdrop-blur-sm rounded-lg"></div>
-                <Package className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-64 w-64 text-white/20" />
+                <Image 
+                  src="/ChatGPT Image Sep 4, 2025, 11_51_28 AM.png"
+                  alt="LPX Collect Package"
+                  width={400}
+                  height={400}
+                  className="object-contain"
+                />
               </div>
             </div>
           </div>
         </section>
 
         {/* Trust Badges */}
-        <section className="py-12 bg-gray-50 dark:bg-gray-800">
+        <section className="py-12 bg-white">
           <div className="container">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <FeatureCard>
@@ -142,7 +147,7 @@ export default function Home() {
         </section>
 
         {/* Categories */}
-        <section className="py-16 bg-gray-50 dark:bg-gray-800">
+        <section className="py-16 bg-white">
           <div className="container">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4">Browse by Category</h2>
@@ -200,7 +205,7 @@ export default function Home() {
         </section>
 
         {/* Top Vendors */}
-        <section className="py-16 bg-gray-50 dark:bg-gray-800">
+        <section className="py-16 bg-white">
           <div className="container">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4">Top Rated Vendors</h2>
@@ -258,7 +263,7 @@ export default function Home() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 bg-primary text-white">
+        <section className="py-20 bg-white text-black">
           <div className="container text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Start Your Collection Today
@@ -267,13 +272,13 @@ export default function Home() {
               Join our community of passionate collectors and discover unique treasures from around the world.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <SecondaryButton asChild size="lg" className="bg-white text-primary hover:bg-gray-100">
+              <SecondaryButton asChild size="lg" className="bg-black text-white hover:bg-gray-800">
                 <Link href="/register">
                   Create Account
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </SecondaryButton>
-              <OutlineButton asChild size="lg" className="border-white text-white hover:bg-white hover:text-primary">
+              <OutlineButton asChild size="lg" className="border-black text-black hover:bg-black hover:text-white">
                 <Link href="/how-it-works">
                   Learn More
                 </Link>
