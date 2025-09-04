@@ -131,10 +131,10 @@ export default function BrowsePage() {
     (priceRange.min || priceRange.max ? 1 : 0);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <Header />
       
-      <main className="flex-grow">
+      <main className="flex-grow bg-gray-50 dark:bg-gray-900">
         <div className="container py-8">
           {/* Page Header */}
           <div className="mb-6">
