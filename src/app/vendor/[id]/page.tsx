@@ -170,97 +170,89 @@ export default function VendorStorefrontPage() {
             {/* Vendor Header Card - Improved Layout */}
             <Card className="mb-8 border-0 shadow-none">
               <CardContent className="p-0 space-y-6">
-                {/* Top Section: Logo, Name, and Action Buttons */}
-                <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
-                  <div className="flex items-center gap-6">
-                    {/* Logo */}
-                    <div className="w-24 h-24 bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl flex items-center justify-center border border-primary/20 shadow-md">
-                      <Store className="h-12 w-12 text-primary" />
-                    </div>
-                    
-                    {/* Name and Verification */}
-                    <div>
-                      <div className="flex items-center gap-3 mb-2">
-                        <h1 className="text-4xl font-bold tracking-tight">{vendor.storeName}</h1>
-                        {vendor.verified && (
-                          <VerifiedBadge className={cn(productStyles.badges.size.md, productStyles.badges.base)}>
-                            <CheckCircle className={cn(productStyles.forms.icon.sm, "mr-1")} />
-                            Verified
-                          </VerifiedBadge>
-                        )}
+                {/* Sidebar-Style Layout */}
+                <div className="flex flex-col lg:flex-row gap-6">
+                  {/* Left Sidebar Info */}
+                  <div className="lg:w-64 w-full space-y-4 lg:sticky lg:top-4 lg:self-start">
+                    {/* Vendor Card */}
+                    <div className="text-center">
+                      <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Store className="h-10 w-10 text-muted-foreground" />
                       </div>
-                      <div className="flex items-center gap-4 flex-wrap">
-                        <div className="flex items-center gap-1">
-                          <div className={productStyles.rating.container}>
-                            <Star className={productStyles.rating.star} />
-                            <span className={cn(productStyles.rating.text, "text-base font-semibold")}>{vendor.rating}</span>
-                          </div>
-                          <span className={cn(productStyles.typography.meta, "ml-1")}>({vendor.totalSales.toLocaleString()} sales)</span>
+                      <h1 className="text-xl font-bold">{vendor.storeName}</h1>
+                      {vendor.verified && (
+                        <div className="inline-flex items-center gap-1 text-xs text-green-600 mt-1">
+                          <CheckCircle className="h-3 w-3" />
+                          <span>Verified Seller</span>
                         </div>
-                        <span className={productStyles.typography.meta}>•</span>
-                        <span className={productStyles.typography.meta}>{vendor.totalProducts} products</span>
-                        <span className={productStyles.typography.meta}>•</span>
-                        <span className={productStyles.typography.meta}>Joined {vendor.createdAt.toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</span>
+                      )}
+                      <div className="mt-3 space-y-1">
+                        <div className="flex items-center justify-center gap-1 text-sm">
+                          <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                          <span className="font-semibold">{vendor.rating}</span>
+                          <span className="text-muted-foreground">rating</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {vendor.totalSales.toLocaleString()} sales • {vendor.totalProducts} items
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Member since {vendor.createdAt.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                        </div>
                       </div>
                     </div>
+
+                    {/* Quick Stats */}
+                    <div className="border rounded-lg p-3 space-y-2">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-muted-foreground">Response Rate</span>
+                        <span className="font-semibold">{vendor.stats.responseRate}%</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-muted-foreground">Ships On Time</span>
+                        <span className="font-semibold text-green-600">{vendor.stats.shipOnTime}%</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-muted-foreground">Positive Reviews</span>
+                        <span className="font-semibold text-blue-600">{vendor.stats.positiveReviews}%</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-muted-foreground">Avg Response</span>
+                        <span className="font-semibold">{vendor.responseTime}</span>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="space-y-2">
+                      <PrimaryButton className="w-full" size="sm">
+                        <MessageCircle className="h-4 w-4 mr-2" />
+                        Contact Seller
+                      </PrimaryButton>
+                      <SecondaryButton
+                        onClick={() => setIsFollowing(!isFollowing)}
+                        className="w-full"
+                        size="sm"
+                      >
+                        <Heart className={cn("h-4 w-4 mr-2", isFollowing ? 'fill-current text-red-500' : '')}/>
+                        {isFollowing ? 'Following' : 'Follow Shop'}
+                      </SecondaryButton>
+                    </div>
+
+                    {/* Navigation */}
+                    <nav className="space-y-1">
+                      <a href="#products" className="block px-3 py-2 text-sm rounded-md hover:bg-muted">Products</a>
+                      <a href="#about" className="block px-3 py-2 text-sm rounded-md hover:bg-muted">About</a>
+                      <a href="#policies" className="block px-3 py-2 text-sm rounded-md hover:bg-muted">Store Policies</a>
+                      <a href="#reviews" className="block px-3 py-2 text-sm rounded-md hover:bg-muted">Reviews</a>
+                    </nav>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex items-center gap-3">
-                    <SecondaryButton
-                      onClick={() => setIsFollowing(!isFollowing)}
-                      size="default"
-                      className="min-w-[120px]"
-                    >
-                      <Heart className={cn(productStyles.forms.icon.md, `mr-2 ${isFollowing ? 'fill-current text-red-500' : ''}`)}/>
-                      {isFollowing ? 'Following' : 'Follow'}
-                    </SecondaryButton>
-                    <IconButton variant="outline" size="default">
-                      <Share2 className={productStyles.forms.icon.md} />
-                    </IconButton>
-                    <PrimaryButton size="default">
-                      <MessageCircle className={cn(productStyles.forms.icon.md, "mr-2")} />
-                      Contact
-                    </PrimaryButton>
-                  </div>
-                </div>
-
-                {/* Stats Section */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-6 border-t border-b border-border">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-primary mb-1">{vendor.stats.responseRate}%</div>
-                    <div className={cn(productStyles.typography.meta, "font-medium")}>Response Rate</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-green-600 mb-1">{vendor.stats.shipOnTime}%</div>
-                    <div className={cn(productStyles.typography.meta, "font-medium")}>Ships On Time</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-blue-600 mb-1">{vendor.stats.positiveReviews}%</div>
-                    <div className={cn(productStyles.typography.meta, "font-medium")}>Positive Reviews</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-orange-600 mb-1">{vendor.responseTime}</div>
-                    <div className={cn(productStyles.typography.meta, "font-medium")}>Avg Response</div>
-                  </div>
-                </div>
-
-                {/* Quick Navigation */}
-                <div className="flex items-center justify-center gap-8 pt-4">
-                  <a href="#products" className={cn(productStyles.typography.meta, "text-base font-medium hover:text-primary transition-colors")}>Products</a>
-                  <a href="#about" className={cn(productStyles.typography.meta, "text-base font-medium hover:text-primary transition-colors")}>About</a>
-                  <a href="#policies" className={cn(productStyles.typography.meta, "text-base font-medium hover:text-primary transition-colors")}>Policies</a>
-                  <a href="#reviews" className={cn(productStyles.typography.meta, "text-base font-medium hover:text-primary transition-colors")}>Reviews</a>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Products Section */}
-            <Card id="products" className="border-0 shadow-none mb-8">
-              <CardContent className="p-0 space-y-6">
-                <h2 className="text-3xl font-bold tracking-tight">Products</h2>
-              {/* Compact Filter Bar - Matching Browse Page */}
-              <div className="mb-6">
+                  {/* Main Content Area - Products */}
+                  <div className="flex-1">
+                    <div id="products" className="space-y-6">
+                      <h2 className="text-2xl font-bold">Products</h2>
+                      
+                      {/* Compact Filter Bar - Matching Browse Page */}
+                      <div className="mb-6">
                 {/* Filter Toggle & Quick Actions */}
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-4">
@@ -462,157 +454,139 @@ export default function VendorStorefrontPage() {
                 )}
               </div>
 
-              {/* Products Grid/List */}
-              {vendorProducts.length === 0 ? (
-                <div className="text-center py-12">
-                  <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No products found</h3>
-                  <p className="text-muted-foreground">Try adjusting your search or filters</p>
+                      {/* Products Grid/List */}
+                      {vendorProducts.length === 0 ? (
+                        <div className="text-center py-12">
+                          <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                          <h3 className="text-lg font-semibold mb-2">No products found</h3>
+                          <p className="text-muted-foreground">Try adjusting your search or filters</p>
+                        </div>
+                      ) : (
+                        <div className={viewMode === 'grid' 
+                          ? `grid grid-cols-2 lg:grid-cols-3 gap-4`
+                          : 'space-y-4'
+                        }>
+                          {vendorProducts.map((product) => (
+                            <ProductCard key={product.id} product={product} viewMode={viewMode} />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                <div className={viewMode === 'grid' 
-                  ? `grid ${designTokens.grid.cols[4]} ${designTokens.spacing.gap.md}`
-                  : 'space-y-4'
-                }>
-                  {vendorProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} viewMode={viewMode} />
-                  ))}
-                </div>
-              )}
               </CardContent>
             </Card>
 
-            {/* About Section */}
-            <Card id="about" className="border-0 shadow-none mb-8">
-              <CardContent className="p-0 space-y-6">
-                <h2 className="text-3xl font-bold tracking-tight">About {vendor.storeName}</h2>
-              <div className="space-y-6">
-                  <div>
-                    <h4 className="font-semibold mb-2">Description</h4>
-                    <p className="text-muted-foreground">{vendor.description}</p>
-                  </div>
-
-                  <Separator />
-
-                  <div>
-                    <h4 className="font-semibold mb-3">Specialties</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {vendor.specialties.map((specialty) => (
-                        <CategoryBadge key={specialty} variant="secondary">
-                          {specialty}
-                        </CategoryBadge>
-                      ))}
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div>
-                    <h4 className="font-semibold mb-3">Achievements</h4>
+            {/* About, Policies & Reviews Section */}
+            <div className="flex flex-col lg:flex-row gap-6 mt-8">
+              {/* Keep sidebar space */}
+              <div className="lg:w-64 w-full" />
+              
+              {/* Main content area for other sections */}
+              <div className="flex-1 space-y-8">
+                {/* About Section */}
+                <div id="about" className="bg-card rounded-lg border p-6">
+                  <h2 className="text-xl font-bold mb-4">About {vendor.storeName}</h2>
+                  
+                  <div className="space-y-4">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {vendor.description}
+                    </p>
+                    
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {vendor.badges.map((badge) => (
-                        <div key={badge} className="flex items-center gap-3">
-                          <Award className="h-5 w-5 text-primary" />
-                          <span>{badge}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {vendor.socialLinks && (
-                    <>
-                      <Separator />
                       <div>
-                        <h4 className="font-semibold mb-3">Connect With Us</h4>
-                        <div className="flex gap-3">
+                        <h3 className="text-sm font-semibold mb-2 text-muted-foreground uppercase tracking-wider">Specialties</h3>
+                        <div className="flex flex-wrap gap-1">
+                          {vendor.specialties.map((specialty) => (
+                            <span key={specialty} className="text-xs bg-muted px-2 py-1 rounded-md">
+                              {specialty}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <h3 className="text-sm font-semibold mb-2 text-muted-foreground uppercase tracking-wider">Achievements</h3>
+                        <div className="space-y-1">
+                          {vendor.badges.slice(0, 3).map((badge) => (
+                            <div key={badge} className="flex items-center gap-2 text-xs">
+                              <Award className="h-3 w-3 text-primary" />
+                              <span>{badge}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {vendor.socialLinks && (
+                      <div className="pt-4 border-t">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-muted-foreground">Follow us:</span>
                           {vendor.socialLinks.twitter && (
-                            <IconButton variant="outline" size="default" asChild>
-                              <a href={`https://twitter.com/${vendor.socialLinks.twitter}`} target="_blank" rel="noopener noreferrer">
-                                <Twitter className="h-4 w-4" />
-                              </a>
-                            </IconButton>
+                            <a href={`https://twitter.com/${vendor.socialLinks.twitter}`} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                              <Twitter className="h-4 w-4" />
+                            </a>
                           )}
                           {vendor.socialLinks.instagram && (
-                            <IconButton variant="outline" size="default" asChild>
-                              <a href={`https://instagram.com/${vendor.socialLinks.instagram}`} target="_blank" rel="noopener noreferrer">
-                                <Instagram className="h-4 w-4" />
-                              </a>
-                            </IconButton>
+                            <a href={`https://instagram.com/${vendor.socialLinks.instagram}`} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                              <Instagram className="h-4 w-4" />
+                            </a>
                           )}
                           {vendor.socialLinks.facebook && (
-                            <IconButton variant="outline" size="default" asChild>
-                              <a href={`https://facebook.com/${vendor.socialLinks.facebook}`} target="_blank" rel="noopener noreferrer">
-                                <Facebook className="h-4 w-4" />
-                              </a>
-                            </IconButton>
+                            <a href={`https://facebook.com/${vendor.socialLinks.facebook}`} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                              <Facebook className="h-4 w-4" />
+                            </a>
                           )}
                         </div>
                       </div>
-                    </>
-                  )}
-              </div>
-              </CardContent>
-            </Card>
+                    )}
+                  </div>
+                </div>
 
-            {/* Policies Section */}
-            <Card id="policies" className="border-0 shadow-none mb-8">
-              <CardContent className="p-0 space-y-6">
-                <h2 className="text-3xl font-bold tracking-tight">Store Policies</h2>
-              <div className="grid gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Package className="h-5 w-5" />
-                      Shipping Policy
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">{vendor.policies.shipping}</p>
-                  </CardContent>
-                </Card>
+                {/* Store Policies Section */}
+                <div id="policies" className="bg-card rounded-lg border p-6">
+                  <h2 className="text-xl font-bold mb-4">Store Policies</h2>
+                  
+                  <div className="space-y-4">
+                    <div className="pb-4 border-b">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Package className="h-4 w-4 text-muted-foreground" />
+                        <h3 className="text-sm font-semibold">Shipping</h3>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{vendor.policies.shipping}</p>
+                    </div>
+                    
+                    <div className="pb-4 border-b">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Shield className="h-4 w-4 text-muted-foreground" />
+                        <h3 className="text-sm font-semibold">Returns & Refunds</h3>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{vendor.policies.returns}</p>
+                    </div>
+                    
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <CheckCircle className="h-4 w-4 text-muted-foreground" />
+                        <h3 className="text-sm font-semibold">Authenticity</h3>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{vendor.policies.authenticity}</p>
+                    </div>
+                  </div>
+                </div>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Shield className="h-5 w-5" />
-                      Returns & Refunds
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">{vendor.policies.returns}</p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <CheckCircle className="h-5 w-5" />
-                      Authenticity Guarantee
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">{vendor.policies.authenticity}</p>
-                  </CardContent>
-                </Card>
-              </div>
-              </CardContent>
-            </Card>
-
-            {/* Reviews Section */}
-            <Card id="reviews" className="border-0 shadow-none mb-8">
-              <CardContent className="p-0 space-y-6">
-                <h2 className="text-3xl font-bold tracking-tight">Customer Reviews</h2>
-              <p className="text-muted-foreground mb-6">Based on {vendor.totalSales} verified purchases</p>
-              <div className="space-y-6">
-                  {/* Overall Rating */}
-                  <div className="flex items-center gap-6 mb-6">
+                {/* Reviews Section */}
+                <div id="reviews" className="bg-card rounded-lg border p-6">
+                  <h2 className="text-xl font-bold mb-4">Customer Reviews</h2>
+                  
+                  <div className="flex items-start gap-8">
+                    {/* Rating Summary */}
                     <div className="text-center">
-                      <div className="text-4xl font-bold">{vendor.rating}</div>
-                      <div className="flex items-center gap-1 mt-1">
+                      <div className="text-3xl font-bold">{vendor.rating}</div>
+                      <div className="flex items-center gap-0.5 mt-1 mb-1">
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
-                            className={`h-5 w-5 ${
+                            className={`h-4 w-4 ${
                               i < Math.floor(vendor.rating)
                                 ? 'text-yellow-500 fill-current'
                                 : 'text-gray-300'
@@ -620,24 +594,23 @@ export default function VendorStorefrontPage() {
                           />
                         ))}
                       </div>
-                      <div className="text-sm text-muted-foreground mt-1">
+                      <div className="text-xs text-muted-foreground">
                         {vendor.totalSales} reviews
                       </div>
                     </div>
-
-                    {/* Rating Distribution */}
-                    <div className="flex-1 space-y-2">
+                    
+                    {/* Rating Bars */}
+                    <div className="flex-1 space-y-1">
                       {[5, 4, 3, 2, 1].map((rating) => {
                         const percentage = rating === 5 ? 65 : 
                                          rating === 4 ? 25 :
                                          rating === 3 ? 7 :
                                          rating === 2 ? 2 : 1;
                         return (
-                          <div key={rating} className="flex items-center gap-3">
-                            <span className="text-sm w-3">{rating}</span>
-                            <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                            <Progress value={percentage} className="flex-1 h-2" />
-                            <span className="text-sm text-muted-foreground w-10 text-right">
+                          <div key={rating} className="flex items-center gap-2">
+                            <span className="text-xs w-2">{rating}</span>
+                            <Progress value={percentage} className="flex-1 h-1.5" />
+                            <span className="text-xs text-muted-foreground w-8 text-right">
                               {percentage}%
                             </span>
                           </div>
@@ -645,18 +618,15 @@ export default function VendorStorefrontPage() {
                       })}
                     </div>
                   </div>
-
-                  <Separator className="my-6" />
-
-                  {/* Sample Reviews */}
-                  <div className="space-y-4">
-                    <div className="text-sm text-muted-foreground">
-                      Reviews feature coming soon...
-                    </div>
+                  
+                  <div className="mt-6 pt-6 border-t">
+                    <p className="text-xs text-muted-foreground text-center">
+                      Detailed reviews coming soon
+                    </p>
                   </div>
+                </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
           </div>
         </div>
       </main>
