@@ -102,6 +102,35 @@ export default function Header() {
           <div className="flex items-center gap-4">
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-6">
+              {/* Categories Dropdown */}
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-gray-700 dark:text-gray-300 hover:text-primary transition">
+                      Categories
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2">
+                        {categories.map((category) => (
+                          <li key={category.slug}>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href={`/category/${category.slug}`}
+                                className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                              >
+                                <div className="text-sm font-medium leading-none">{category.name}</div>
+                                <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                  Browse our collection of {category.name.toLowerCase()}
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
               <Link href="/browse" className="text-gray-700 dark:text-gray-300 hover:text-primary transition">
                 Browse
               </Link>
@@ -183,6 +212,18 @@ export default function Header() {
 
                   {/* Mobile Navigation */}
                   <nav className="flex flex-col gap-3">
+                    <p className="text-sm font-semibold mb-2">Categories</p>
+                    {categories.map((category) => (
+                      <Link
+                        key={category.slug}
+                        href={`/category/${category.slug}`}
+                        className="block py-2 text-sm hover:text-primary transition"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        {category.name}
+                      </Link>
+                    ))}
+                    <Separator className="my-2" />
                     <Link href="/browse" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
                       Browse All
                     </Link>
@@ -207,67 +248,11 @@ export default function Header() {
                         </Link>
                       </>
                     )}
-                    <Separator className="my-2" />
-                    <p className="text-sm font-semibold mb-2">Categories</p>
-                    {categories.map((category) => (
-                      <Link
-                        key={category.slug}
-                        href={`/category/${category.slug}`}
-                        className="block py-2 text-sm hover:text-primary transition"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        {category.name}
-                      </Link>
-                    ))}
                   </nav>
                 </div>
               </SheetContent>
             </Sheet>
           </div>
-        </div>
-
-        {/* Categories Bar - Desktop */}
-        <div className="hidden md:block py-3 border-t border-border">
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger>Categories</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2">
-                    {categories.map((category) => (
-                      <li key={category.slug}>
-                        <NavigationMenuLink asChild>
-                          <Link
-                            href={`/category/${category.slug}`}
-                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                          >
-                            <div className="text-sm font-medium leading-none">{category.name}</div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              Browse our collection of {category.name.toLowerCase()}
-                            </p>
-                          </Link>
-                        </NavigationMenuLink>
-                      </li>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link href="/browse" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
-                    Browse All
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link href="/vendors" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
-                    Vendors
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
         </div>
       </div>
 
