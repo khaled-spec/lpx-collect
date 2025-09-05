@@ -1,23 +1,48 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { vendorPricingPlans, vendorSuccessStories, vendorFAQ } from '@/data/vendorData';
-import { Container } from '@/components/layout/Container';
-import { PrimaryButton, SecondaryButton, OutlineButton } from '@/components/custom/button-variants';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FeatureCard } from '@/components/custom/card-variants';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Separator } from '@/components/ui/separator';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { designTokens } from '@/lib/design-tokens';
-import { tokens } from '@/lib/design-system';
-import { 
+import { useState } from "react";
+import Link from "next/link";
+import {
+  vendorPricingPlans,
+  vendorSuccessStories,
+  vendorFAQ,
+} from "@/data/vendorData";
+import { Container } from "@/components/layout/Container";
+import {
+  PrimaryButton,
+  SecondaryButton,
+  OutlineButton,
+} from "@/components/custom/button-variants";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { FeatureCard } from "@/components/custom/card-variants";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { designTokens } from "@/lib/design-tokens";
+import { tokens } from "@/lib/design-system";
+import {
   Store,
   TrendingUp,
   Shield,
@@ -39,57 +64,72 @@ import {
   Rocket,
   Target,
   ShieldCheck,
-  DollarSign
-} from 'lucide-react';
+  DollarSign,
+} from "lucide-react";
 
 export default function BecomeVendorPage() {
-  const [selectedPlan, setSelectedPlan] = useState('pro');
+  const [selectedPlan, setSelectedPlan] = useState("pro");
   const [showApplicationForm, setShowApplicationForm] = useState(false);
 
   const features = [
     {
       icon: Globe,
-      title: 'Global Reach',
-      description: 'Access thousands of collectors worldwide and expand your market beyond local boundaries.'
+      title: "Global Reach",
+      description:
+        "Access thousands of collectors worldwide and expand your market beyond local boundaries.",
     },
     {
       icon: Shield,
-      title: 'Secure Transactions',
-      description: 'Built-in payment processing and buyer protection ensures safe transactions for everyone.'
+      title: "Secure Transactions",
+      description:
+        "Built-in payment processing and buyer protection ensures safe transactions for everyone.",
     },
     {
       icon: BarChart3,
-      title: 'Analytics & Insights',
-      description: 'Track your performance with detailed analytics and optimize your sales strategy.'
+      title: "Analytics & Insights",
+      description:
+        "Track your performance with detailed analytics and optimize your sales strategy.",
     },
     {
       icon: HeadphonesIcon,
-      title: 'Dedicated Support',
-      description: '24/7 customer support team to help you succeed and resolve any issues quickly.'
+      title: "Dedicated Support",
+      description:
+        "24/7 customer support team to help you succeed and resolve any issues quickly.",
     },
     {
       icon: BadgeCheck,
-      title: 'Verification Badge',
-      description: 'Get verified to build trust with buyers and stand out from the competition.'
+      title: "Verification Badge",
+      description:
+        "Get verified to build trust with buyers and stand out from the competition.",
     },
     {
       icon: Zap,
-      title: 'Fast Payouts',
-      description: 'Receive your earnings quickly with multiple payout options available.'
-    }
+      title: "Fast Payouts",
+      description:
+        "Receive your earnings quickly with multiple payout options available.",
+    },
   ];
 
   const processSteps = [
-    { title: 'Sign Up', description: 'Create your vendor account in minutes' },
-    { title: 'Get Verified', description: 'Submit documents for quick verification' },
-    { title: 'List Products', description: 'Add your inventory with our easy tools' },
-    { title: 'Start Selling', description: 'Reach thousands of eager collectors' }
+    { title: "Sign Up", description: "Create your vendor account in minutes" },
+    {
+      title: "Get Verified",
+      description: "Submit documents for quick verification",
+    },
+    {
+      title: "List Products",
+      description: "Add your inventory with our easy tools",
+    },
+    {
+      title: "Start Selling",
+      description: "Reach thousands of eager collectors",
+    },
   ];
 
   const handleApplicationSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission
-    console.log('Application submitted');
+    console.log("Application submitted");
   };
 
   return (
@@ -99,7 +139,10 @@ export default function BecomeVendorPage() {
         <div className="absolute inset-0 bg-grid-white/10 bg-[size:20px_20px]" />
         <Container className={`${designTokens.spacing.section.xl} relative`}>
           <div className="text-center max-w-4xl mx-auto text-white">
-            <Badge variant="secondary" className="mb-4 bg-white/20 text-white border-white/30">
+            <Badge
+              variant="secondary"
+              className="mb-4 bg-white/20 text-white border-white/30"
+            >
               <Rocket className="h-3 w-3 mr-1" />
               Join 500+ Successful Vendors
             </Badge>
@@ -107,19 +150,22 @@ export default function BecomeVendorPage() {
               Turn Your Collection Into a Business
             </h1>
             <p className="text-xl md:text-2xl mb-8 text-white/90">
-              Start selling authentic collectibles to thousands of passionate collectors. 
-              No upfront costs, powerful tools, and expert support.
+              Start selling authentic collectibles to thousands of passionate
+              collectors. No upfront costs, powerful tools, and expert support.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <PrimaryButton 
-                size="lg" 
+              <PrimaryButton
+                size="lg"
                 onClick={() => setShowApplicationForm(true)}
                 className="bg-white text-primary hover:bg-white/90"
               >
                 Start Selling Today
                 <ArrowRight className="ml-2 h-5 w-5" />
               </PrimaryButton>
-              <OutlineButton size="lg" className="text-white border-white/50 hover:bg-white/10">
+              <OutlineButton
+                size="lg"
+                className="text-white border-white/50 hover:bg-white/10"
+              >
                 Watch Demo
               </OutlineButton>
             </div>
@@ -155,16 +201,24 @@ export default function BecomeVendorPage() {
               Everything You Need to Succeed
             </h2>
             <p className="text-lg text-muted-foreground">
-              Powerful tools and features designed to help you grow your business
+              Powerful tools and features designed to help you grow your
+              business
             </p>
           </div>
 
-          <div className={`grid ${designTokens.grid.cols[3]} ${designTokens.spacing.gap.lg}`}>
+          <div
+            className={`grid ${designTokens.grid.cols[3]} ${designTokens.spacing.gap.lg}`}
+          >
             {features.map((feature, index) => (
-              <FeatureCard key={index} className={`${tokens.animation.transition.all}`}>
+              <FeatureCard
+                key={index}
+                className={`${tokens.animation.transition.all}`}
+              >
                 <CardContent className="p-6">
                   <feature.icon className="h-10 w-10 text-primary mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
+                  <h3 className="text-lg font-semibold mb-2">
+                    {feature.title}
+                  </h3>
                   <p className="text-muted-foreground">{feature.description}</p>
                 </CardContent>
               </FeatureCard>
@@ -185,15 +239,15 @@ export default function BecomeVendorPage() {
             </p>
           </div>
 
-          <div className={`grid grid-cols-1 md:grid-cols-3 ${designTokens.spacing.gap.lg} max-w-6xl mx-auto`}>
+          <div
+            className={`grid grid-cols-1 md:grid-cols-3 ${designTokens.spacing.gap.lg} max-w-6xl mx-auto`}
+          >
             {vendorPricingPlans.map((plan) => (
               <Card
                 key={plan.id}
                 className={`relative ${
-                  plan.highlighted 
-                    ? 'border-primary shadow-xl scale-105' 
-                    : ''
-                } ${selectedPlan === plan.id ? 'ring-2 ring-primary' : ''}`}
+                  plan.highlighted ? "border-primary shadow-xl scale-105" : ""
+                } ${selectedPlan === plan.id ? "ring-2 ring-primary" : ""}`}
               >
                 {plan.highlighted && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
@@ -202,7 +256,7 @@ export default function BecomeVendorPage() {
                     </Badge>
                   </div>
                 )}
-                
+
                 <CardHeader className="text-center pb-8">
                   <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
                   <div className="flex items-baseline justify-center gap-1">
@@ -212,12 +266,14 @@ export default function BecomeVendorPage() {
                       <>
                         <span className="text-2xl">$</span>
                         <span className="text-4xl font-bold">{plan.price}</span>
-                        <span className="text-muted-foreground">/{plan.interval}</span>
+                        <span className="text-muted-foreground">
+                          /{plan.interval}
+                        </span>
                       </>
                     )}
                   </div>
                 </CardHeader>
-                
+
                 <CardContent>
                   <ul className="space-y-3 mb-6">
                     {plan.features.map((feature, index) => (
@@ -227,10 +283,10 @@ export default function BecomeVendorPage() {
                       </li>
                     ))}
                   </ul>
-                  
+
                   <PrimaryButton
                     className="w-full"
-                    variant={plan.highlighted ? 'default' : 'outline'}
+                    variant={plan.highlighted ? "default" : "outline"}
                     onClick={() => {
                       setSelectedPlan(plan.id);
                       setShowApplicationForm(true);
@@ -253,11 +309,14 @@ export default function BecomeVendorPage() {
               Success Stories
             </h2>
             <p className="text-lg text-muted-foreground">
-              Join hundreds of vendors who have transformed their passion into profit
+              Join hundreds of vendors who have transformed their passion into
+              profit
             </p>
           </div>
 
-          <div className={`grid grid-cols-1 md:grid-cols-3 ${designTokens.spacing.gap.lg}`}>
+          <div
+            className={`grid grid-cols-1 md:grid-cols-3 ${designTokens.spacing.gap.lg}`}
+          >
             {vendorSuccessStories.map((story) => (
               <Card key={story.id} className="relative">
                 <CardContent className="p-6">
@@ -265,7 +324,7 @@ export default function BecomeVendorPage() {
                   <p className="text-muted-foreground mb-6 italic">
                     "{story.quote}"
                   </p>
-                  
+
                   <div className="flex items-center gap-4 mb-4">
                     <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full" />
                     <div>
@@ -275,7 +334,7 @@ export default function BecomeVendorPage() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center justify-between pt-4 border-t">
                     <div className="text-green-600 font-semibold">
                       {story.revenue}
@@ -308,23 +367,29 @@ export default function BecomeVendorPage() {
             <div className="relative">
               {/* Timeline line */}
               <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-border hidden md:block" />
-              
+
               {/* Steps */}
               <div className="space-y-8">
                 {processSteps.map((step, index) => (
                   <div key={index} className="relative flex gap-6 items-center">
-                    <div className={`
+                    <div
+                      className={`
                       w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold
-                      ${index === 0 ? 'bg-primary text-primary-foreground' : 'bg-muted'}
+                      ${index === 0 ? "bg-primary text-primary-foreground" : "bg-muted"}
                       z-10 flex-shrink-0
-                    `}>
+                    `}
+                    >
                       {index + 1}
                     </div>
                     <Card className="flex-1">
                       <CardContent className="p-6 flex items-center justify-between">
                         <div>
-                          <h3 className="text-xl font-semibold mb-1">{step.title}</h3>
-                          <p className="text-muted-foreground">{step.description}</p>
+                          <h3 className="text-xl font-semibold mb-1">
+                            {step.title}
+                          </h3>
+                          <p className="text-muted-foreground">
+                            {step.description}
+                          </p>
                         </div>
                         <ChevronRight className="h-5 w-5 text-muted-foreground" />
                       </CardContent>
@@ -367,18 +432,20 @@ export default function BecomeVendorPage() {
       </section>
 
       {/* CTA Section */}
-      <section className={`${designTokens.spacing.section.xl} bg-gradient-to-br from-primary to-primary/80 text-white`}>
+      <section
+        className={`${designTokens.spacing.section.xl} bg-gradient-to-br from-primary to-primary/80 text-white`}
+      >
         <Container>
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
               Ready to Start Your Journey?
             </h2>
             <p className="text-xl mb-8 text-white/90">
-              Join our community of successful vendors and turn your passion into profit.
-              Start selling today with zero upfront costs.
+              Join our community of successful vendors and turn your passion
+              into profit. Start selling today with zero upfront costs.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <PrimaryButton 
+              <PrimaryButton
                 size="lg"
                 onClick={() => setShowApplicationForm(true)}
                 className="bg-white text-primary hover:bg-white/90"
@@ -386,10 +453,12 @@ export default function BecomeVendorPage() {
                 Apply Now - It's Free
                 <ArrowRight className="ml-2 h-5 w-5" />
               </PrimaryButton>
-              <OutlineButton size="lg" className="text-white border-white/50 hover:bg-white/10" asChild>
-                <Link href="/vendors">
-                  Browse Success Stories
-                </Link>
+              <OutlineButton
+                size="lg"
+                className="text-white border-white/50 hover:bg-white/10"
+                asChild
+              >
+                <Link href="/vendors">Browse Success Stories</Link>
               </OutlineButton>
             </div>
           </div>
@@ -418,22 +487,26 @@ export default function BecomeVendorPage() {
                     <Input id="lastName" required />
                   </div>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="storeName">Store Name</Label>
-                  <Input id="storeName" placeholder="Your store name" required />
+                  <Input
+                    id="storeName"
+                    placeholder="Your store name"
+                    required
+                  />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="email">Email</Label>
                   <Input id="email" type="email" required />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="phone">Phone Number</Label>
                   <Input id="phone" type="tel" />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="category">Primary Category</Label>
                   <Select required>
@@ -441,7 +514,9 @@ export default function BecomeVendorPage() {
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="trading-cards">Trading Cards</SelectItem>
+                      <SelectItem value="trading-cards">
+                        Trading Cards
+                      </SelectItem>
                       <SelectItem value="comics">Comics</SelectItem>
                       <SelectItem value="coins">Coins</SelectItem>
                       <SelectItem value="stamps">Stamps</SelectItem>
@@ -450,23 +525,27 @@ export default function BecomeVendorPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
-                  <Label htmlFor="description">Tell us about your collection</Label>
-                  <Textarea 
-                    id="description" 
+                  <Label htmlFor="description">
+                    Tell us about your collection
+                  </Label>
+                  <Textarea
+                    id="description"
                     placeholder="What types of items do you plan to sell?"
                     className="min-h-[100px]"
                   />
                 </div>
-                
+
                 <div>
                   <Label>Selected Plan</Label>
                   <div className="flex gap-2 mt-2">
                     {vendorPricingPlans.map((plan) => (
                       <Badge
                         key={plan.id}
-                        variant={selectedPlan === plan.id ? 'default' : 'outline'}
+                        variant={
+                          selectedPlan === plan.id ? "default" : "outline"
+                        }
                         className="cursor-pointer"
                         onClick={() => setSelectedPlan(plan.id)}
                       >
@@ -475,7 +554,7 @@ export default function BecomeVendorPage() {
                     ))}
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   <Checkbox id="terms" required />
                   <label
@@ -485,9 +564,12 @@ export default function BecomeVendorPage() {
                     I agree to the terms and conditions
                   </label>
                 </div>
-                
+
                 <div className="flex gap-3 justify-end pt-4">
-                  <OutlineButton type="button" onClick={() => setShowApplicationForm(false)}>
+                  <OutlineButton
+                    type="button"
+                    onClick={() => setShowApplicationForm(false)}
+                  >
                     Cancel
                   </OutlineButton>
                   <PrimaryButton type="submit">

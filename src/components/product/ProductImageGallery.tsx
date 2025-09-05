@@ -1,19 +1,26 @@
-'use client';
+"use client";
 
-import { useState, useCallback } from 'react';
-import Image from 'next/image';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight, Expand, ZoomIn, Heart, Share2 } from 'lucide-react';
+import { useState, useCallback } from "react";
+import Image from "next/image";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Expand,
+  ZoomIn,
+  Heart,
+  Share2,
+} from "lucide-react";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@/components/ui/carousel';
+} from "@/components/ui/carousel";
 
 interface ProductImageGalleryProps {
   images: string[];
@@ -58,9 +65,9 @@ export default function ProductImageGallery({
       <div className="space-y-4">
         {/* Main Image - Constrained height for viewport */}
         <Card className="relative overflow-hidden bg-muted">
-          <div 
+          <div
             className="relative cursor-zoom-in"
-            style={{ height: 'min(60vh, 500px)' }}
+            style={{ height: "min(60vh, 500px)" }}
             onMouseEnter={() => setIsZoomed(true)}
             onMouseLeave={() => setIsZoomed(false)}
             onMouseMove={handleMouseMove}
@@ -71,7 +78,7 @@ export default function ProductImageGallery({
               fill
               className={cn(
                 "object-contain transition-transform duration-300",
-                isZoomed && "scale-150"
+                isZoomed && "scale-150",
               )}
               style={
                 isZoomed
@@ -82,7 +89,7 @@ export default function ProductImageGallery({
               }
               priority
             />
-            
+
             {/* Action Buttons */}
             <div className="absolute top-4 right-4 flex gap-2">
               <Button
@@ -90,11 +97,13 @@ export default function ProductImageGallery({
                 variant="secondary"
                 className={cn(
                   "bg-background/90 backdrop-blur-sm hover:bg-background",
-                  isWishlisted && "text-destructive"
+                  isWishlisted && "text-destructive",
                 )}
                 onClick={onWishlistToggle}
               >
-                <Heart className={cn("h-4 w-4", isWishlisted && "fill-current")} />
+                <Heart
+                  className={cn("h-4 w-4", isWishlisted && "fill-current")}
+                />
               </Button>
               <Button
                 size="icon"
@@ -113,7 +122,7 @@ export default function ProductImageGallery({
                 <Expand className="h-4 w-4" />
               </Button>
             </div>
-            
+
             {/* Zoom Indicator */}
             <div className="absolute top-4 left-4">
               <div className="bg-background/90 backdrop-blur-sm rounded-md px-3 py-2 text-sm">
@@ -158,14 +167,17 @@ export default function ProductImageGallery({
             >
               <CarouselContent className="-ml-2">
                 {images.map((image, index) => (
-                  <CarouselItem key={index} className="pl-2 basis-1/5 sm:basis-1/6">
+                  <CarouselItem
+                    key={index}
+                    className="pl-2 basis-1/5 sm:basis-1/6"
+                  >
                     <button
                       onClick={() => onImageSelect(index)}
                       className={cn(
                         "relative aspect-square w-full overflow-hidden rounded-lg border-2 transition-all",
                         selectedImage === index
                           ? "border-primary ring-2 ring-primary/20"
-                          : "border-border hover:border-primary/50"
+                          : "border-border hover:border-primary/50",
                       )}
                     >
                       <Image
@@ -200,7 +212,7 @@ export default function ProductImageGallery({
               fill
               className="object-contain"
             />
-            
+
             {/* Modal Navigation */}
             {images.length > 1 && (
               <>
@@ -222,7 +234,7 @@ export default function ProductImageGallery({
                 </Button>
               </>
             )}
-            
+
             {/* Image Counter */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-background/50 backdrop-blur-sm px-4 py-2 rounded-full">
               {selectedImage + 1} / {images.length}

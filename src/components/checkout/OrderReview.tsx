@@ -1,39 +1,44 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useCheckout } from '@/context/CheckoutContext';
-import { useCart } from '@/context/CartContext';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { PrimaryButton, SecondaryButton } from '@/components/custom/button-variants';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { 
-  ArrowLeft, 
-  Package, 
-  MapPin, 
-  CreditCard, 
+import { useState } from "react";
+import { useCheckout } from "@/context/CheckoutContext";
+import { useCart } from "@/context/CartContext";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from "@/components/custom/button-variants";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import {
+  ArrowLeft,
+  Package,
+  MapPin,
+  CreditCard,
   Edit,
   Loader2,
-  CheckCircle
-} from 'lucide-react';
-import Image from 'next/image';
-import { cn } from '@/lib/utils';
+  CheckCircle,
+} from "lucide-react";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 export default function OrderReview() {
-  const { 
-    checkoutData, 
-    prevStep, 
+  const {
+    checkoutData,
+    prevStep,
     setCurrentStep,
     setOrderNotes,
     setAcceptTerms,
     setSubscribeNewsletter,
     placeOrder,
-    isProcessing
+    isProcessing,
   } = useCheckout();
   const { items, subtotal, shipping, tax, discount, total } = useCart();
-  const [orderNotes, setLocalOrderNotes] = useState(checkoutData.orderNotes || '');
+  const [orderNotes, setLocalOrderNotes] = useState(
+    checkoutData.orderNotes || "",
+  );
 
   const handlePlaceOrder = async () => {
     setOrderNotes(orderNotes);
@@ -41,26 +46,26 @@ export default function OrderReview() {
   };
 
   const formatAddress = (address: any) => {
-    if (!address) return '';
+    if (!address) return "";
     return `${address.firstName} ${address.lastName}
-${address.address}${address.address2 ? `, ${address.address2}` : ''}
+${address.address}${address.address2 ? `, ${address.address2}` : ""}
 ${address.city}, ${address.state} ${address.postalCode}
 ${address.country}`;
   };
 
   const getPaymentMethodDisplay = () => {
-    if (!checkoutData.paymentMethod) return '';
-    
+    if (!checkoutData.paymentMethod) return "";
+
     switch (checkoutData.paymentMethod.type) {
-      case 'card':
-        const lastFour = checkoutData.paymentMethod.cardNumber?.slice(-4) || '';
+      case "card":
+        const lastFour = checkoutData.paymentMethod.cardNumber?.slice(-4) || "";
         return `Card ending in ${lastFour}`;
-      case 'paypal':
-        return 'PayPal';
-      case 'crypto':
-        return 'Cryptocurrency';
+      case "paypal":
+        return "PayPal";
+      case "crypto":
+        return "Cryptocurrency";
       default:
-        return 'Unknown';
+        return "Unknown";
     }
   };
 
@@ -72,7 +77,7 @@ ${address.country}`;
           <CardTitle className="flex items-center justify-between">
             <span>Order Items</span>
             <span className="text-sm font-normal text-muted-foreground">
-              {items.length} {items.length === 1 ? 'item' : 'items'}
+              {items.length} {items.length === 1 ? "item" : "items"}
             </span>
           </CardTitle>
         </CardHeader>
@@ -94,7 +99,9 @@ ${address.country}`;
                 </p>
               </div>
               <div className="text-right">
-                <p className="font-semibold">${(item.product.price * item.quantity).toFixed(2)}</p>
+                <p className="font-semibold">
+                  ${(item.product.price * item.quantity).toFixed(2)}
+                </p>
               </div>
             </div>
           ))}
@@ -113,7 +120,7 @@ ${address.country}`;
               </span>
               <button
                 type="button"
-                onClick={() => setCurrentStep('shipping')}
+                onClick={() => setCurrentStep("shipping")}
                 className="text-primary hover:underline"
               >
                 <Edit className="h-3 w-3" />
@@ -142,7 +149,7 @@ ${address.country}`;
               </span>
               <button
                 type="button"
-                onClick={() => setCurrentStep('billing')}
+                onClick={() => setCurrentStep("billing")}
                 className="text-primary hover:underline"
               >
                 <Edit className="h-3 w-3" />
@@ -151,7 +158,9 @@ ${address.country}`;
           </CardHeader>
           <CardContent>
             {checkoutData.sameAsShipping ? (
-              <p className="text-sm text-muted-foreground">Same as shipping address</p>
+              <p className="text-sm text-muted-foreground">
+                Same as shipping address
+              </p>
             ) : (
               <p className="text-sm text-muted-foreground whitespace-pre-line">
                 {formatAddress(checkoutData.billingAddress)}
@@ -170,7 +179,7 @@ ${address.country}`;
               </span>
               <button
                 type="button"
-                onClick={() => setCurrentStep('payment')}
+                onClick={() => setCurrentStep("payment")}
                 className="text-primary hover:underline"
               >
                 <Edit className="h-3 w-3" />
@@ -197,7 +206,7 @@ ${address.country}`;
           </div>
           <div className="flex justify-between text-sm">
             <span>Shipping</span>
-            <span>{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
+            <span>{shipping === 0 ? "FREE" : `$${shipping.toFixed(2)}`}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span>Tax</span>
@@ -233,29 +242,39 @@ ${address.country}`;
       {/* Terms and Newsletter */}
       <div className="space-y-3">
         <div className="flex items-start space-x-2">
-          <Checkbox 
+          <Checkbox
             id="acceptTerms"
             checked={checkoutData.acceptTerms}
             onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
             className="mt-0.5"
           />
-          <Label 
-            htmlFor="acceptTerms" 
+          <Label
+            htmlFor="acceptTerms"
             className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
-            I agree to the <a href="/terms" className="text-primary hover:underline">Terms of Service</a> and <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a> *
+            I agree to the{" "}
+            <a href="/terms" className="text-primary hover:underline">
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a href="/privacy" className="text-primary hover:underline">
+              Privacy Policy
+            </a>{" "}
+            *
           </Label>
         </div>
 
         <div className="flex items-start space-x-2">
-          <Checkbox 
+          <Checkbox
             id="subscribeNewsletter"
             checked={checkoutData.subscribeNewsletter}
-            onCheckedChange={(checked) => setSubscribeNewsletter(checked as boolean)}
+            onCheckedChange={(checked) =>
+              setSubscribeNewsletter(checked as boolean)
+            }
             className="mt-0.5"
           />
-          <Label 
-            htmlFor="subscribeNewsletter" 
+          <Label
+            htmlFor="subscribeNewsletter"
             className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
             Send me exclusive offers and updates about new collectibles
@@ -274,18 +293,19 @@ ${address.country}`;
 
       {/* Form Actions */}
       <div className="flex justify-between pt-6 border-t">
-        <SecondaryButton type="button" onClick={prevStep} disabled={isProcessing}>
+        <SecondaryButton
+          type="button"
+          onClick={prevStep}
+          disabled={isProcessing}
+        >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Payment
         </SecondaryButton>
-        <PrimaryButton 
+        <PrimaryButton
           onClick={handlePlaceOrder}
           size="lg"
           disabled={!checkoutData.acceptTerms || isProcessing}
-          className={cn(
-            "min-w-[200px]",
-            isProcessing && "cursor-not-allowed"
-          )}
+          className={cn("min-w-[200px]", isProcessing && "cursor-not-allowed")}
         >
           {isProcessing ? (
             <>

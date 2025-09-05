@@ -1,57 +1,66 @@
-'use client';
+"use client";
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { BillingAddress } from '@/types/checkout';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { PrimaryButton, SecondaryButton } from '@/components/custom/button-variants';
-import { useCheckout } from '@/context/CheckoutContext';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { useEffect } from 'react';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { BillingAddress } from "@/types/checkout";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from "@/components/custom/button-variants";
+import { useCheckout } from "@/context/CheckoutContext";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useEffect } from "react";
 
 const billingSchema = z.object({
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
-  email: z.string().email('Invalid email address'),
-  phone: z.string().min(10, 'Phone number must be at least 10 digits'),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits"),
   company: z.string().optional(),
   vatNumber: z.string().optional(),
-  address: z.string().min(1, 'Address is required'),
+  address: z.string().min(1, "Address is required"),
   address2: z.string().optional(),
-  city: z.string().min(1, 'City is required'),
-  state: z.string().min(1, 'State is required'),
-  postalCode: z.string().min(5, 'Postal code must be at least 5 characters'),
-  country: z.string().min(1, 'Country is required'),
+  city: z.string().min(1, "City is required"),
+  state: z.string().min(1, "State is required"),
+  postalCode: z.string().min(5, "Postal code must be at least 5 characters"),
+  country: z.string().min(1, "Country is required"),
 });
 
 const countries = [
-  { value: 'US', label: 'United States' },
-  { value: 'CA', label: 'Canada' },
-  { value: 'GB', label: 'United Kingdom' },
-  { value: 'AU', label: 'Australia' },
+  { value: "US", label: "United States" },
+  { value: "CA", label: "Canada" },
+  { value: "GB", label: "United Kingdom" },
+  { value: "AU", label: "Australia" },
 ];
 
 const states = [
-  { value: 'CA', label: 'California' },
-  { value: 'NY', label: 'New York' },
-  { value: 'TX', label: 'Texas' },
-  { value: 'FL', label: 'Florida' },
-  { value: 'WA', label: 'Washington' },
+  { value: "CA", label: "California" },
+  { value: "NY", label: "New York" },
+  { value: "TX", label: "Texas" },
+  { value: "FL", label: "Florida" },
+  { value: "WA", label: "Washington" },
 ];
 
 export default function BillingForm() {
-  const { 
-    checkoutData, 
-    updateBillingAddress, 
+  const {
+    checkoutData,
+    updateBillingAddress,
     setSameAsShipping,
     nextStep,
-    prevStep 
+    prevStep,
   } = useCheckout();
-  
+
   const {
     register,
     handleSubmit,
@@ -61,20 +70,21 @@ export default function BillingForm() {
     reset,
   } = useForm<BillingAddress>({
     resolver: zodResolver(billingSchema),
-    defaultValues: checkoutData.billingAddress || checkoutData.shippingAddress || {
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      company: '',
-      vatNumber: '',
-      address: '',
-      address2: '',
-      city: '',
-      state: '',
-      postalCode: '',
-      country: 'US',
-    },
+    defaultValues: checkoutData.billingAddress ||
+      checkoutData.shippingAddress || {
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        company: "",
+        vatNumber: "",
+        address: "",
+        address2: "",
+        city: "",
+        state: "",
+        postalCode: "",
+        country: "US",
+      },
   });
 
   // Update form when same as shipping changes
@@ -103,13 +113,13 @@ export default function BillingForm() {
       {/* Same as Shipping Checkbox */}
       <div className="bg-blue-50 dark:bg-blue-950/30 p-4 rounded-lg">
         <div className="flex items-center space-x-2">
-          <Checkbox 
+          <Checkbox
             id="sameAsShipping"
             checked={checkoutData.sameAsShipping}
             onCheckedChange={handleSameAsShippingChange}
           />
-          <Label 
-            htmlFor="sameAsShipping" 
+          <Label
+            htmlFor="sameAsShipping"
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
             Same as shipping address
@@ -128,49 +138,57 @@ export default function BillingForm() {
                 <Label htmlFor="firstName">First Name *</Label>
                 <Input
                   id="firstName"
-                  {...register('firstName')}
-                  className={errors.firstName ? 'border-red-500' : ''}
+                  {...register("firstName")}
+                  className={errors.firstName ? "border-red-500" : ""}
                 />
                 {errors.firstName && (
-                  <p className="text-sm text-red-500 mt-1">{errors.firstName.message}</p>
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.firstName.message}
+                  </p>
                 )}
               </div>
-              
+
               <div>
                 <Label htmlFor="lastName">Last Name *</Label>
                 <Input
                   id="lastName"
-                  {...register('lastName')}
-                  className={errors.lastName ? 'border-red-500' : ''}
+                  {...register("lastName")}
+                  className={errors.lastName ? "border-red-500" : ""}
                 />
                 {errors.lastName && (
-                  <p className="text-sm text-red-500 mt-1">{errors.lastName.message}</p>
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.lastName.message}
+                  </p>
                 )}
               </div>
-              
+
               <div>
                 <Label htmlFor="email">Email *</Label>
                 <Input
                   id="email"
                   type="email"
-                  {...register('email')}
-                  className={errors.email ? 'border-red-500' : ''}
+                  {...register("email")}
+                  className={errors.email ? "border-red-500" : ""}
                 />
                 {errors.email && (
-                  <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.email.message}
+                  </p>
                 )}
               </div>
-              
+
               <div>
                 <Label htmlFor="phone">Phone Number *</Label>
                 <Input
                   id="phone"
                   type="tel"
-                  {...register('phone')}
-                  className={errors.phone ? 'border-red-500' : ''}
+                  {...register("phone")}
+                  className={errors.phone ? "border-red-500" : ""}
                 />
                 {errors.phone && (
-                  <p className="text-sm text-red-500 mt-1">{errors.phone.message}</p>
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.phone.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -178,22 +196,24 @@ export default function BillingForm() {
 
           {/* Company Information (Optional) */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Company Information (Optional)</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              Company Information (Optional)
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="company">Company Name</Label>
                 <Input
                   id="company"
-                  {...register('company')}
+                  {...register("company")}
                   placeholder="Acme Inc."
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="vatNumber">VAT Number</Label>
                 <Input
                   id="vatNumber"
-                  {...register('vatNumber')}
+                  {...register("vatNumber")}
                   placeholder="GB123456789"
                 />
               </div>
@@ -208,44 +228,52 @@ export default function BillingForm() {
                 <Label htmlFor="address">Street Address *</Label>
                 <Input
                   id="address"
-                  {...register('address')}
+                  {...register("address")}
                   placeholder="123 Main St"
-                  className={errors.address ? 'border-red-500' : ''}
+                  className={errors.address ? "border-red-500" : ""}
                 />
                 {errors.address && (
-                  <p className="text-sm text-red-500 mt-1">{errors.address.message}</p>
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.address.message}
+                  </p>
                 )}
               </div>
-              
+
               <div>
-                <Label htmlFor="address2">Apartment, Suite, etc. (Optional)</Label>
+                <Label htmlFor="address2">
+                  Apartment, Suite, etc. (Optional)
+                </Label>
                 <Input
                   id="address2"
-                  {...register('address2')}
+                  {...register("address2")}
                   placeholder="Apt 4B"
                 />
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <Label htmlFor="city">City *</Label>
                   <Input
                     id="city"
-                    {...register('city')}
-                    className={errors.city ? 'border-red-500' : ''}
+                    {...register("city")}
+                    className={errors.city ? "border-red-500" : ""}
                   />
                   {errors.city && (
-                    <p className="text-sm text-red-500 mt-1">{errors.city.message}</p>
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.city.message}
+                    </p>
                   )}
                 </div>
-                
+
                 <div>
                   <Label htmlFor="state">State *</Label>
                   <Select
-                    value={watch('state')}
-                    onValueChange={(value) => setValue('state', value)}
+                    value={watch("state")}
+                    onValueChange={(value) => setValue("state", value)}
                   >
-                    <SelectTrigger className={errors.state ? 'border-red-500' : ''}>
+                    <SelectTrigger
+                      className={errors.state ? "border-red-500" : ""}
+                    >
                       <SelectValue placeholder="Select state" />
                     </SelectTrigger>
                     <SelectContent>
@@ -257,30 +285,36 @@ export default function BillingForm() {
                     </SelectContent>
                   </Select>
                   {errors.state && (
-                    <p className="text-sm text-red-500 mt-1">{errors.state.message}</p>
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.state.message}
+                    </p>
                   )}
                 </div>
-                
+
                 <div>
                   <Label htmlFor="postalCode">ZIP Code *</Label>
                   <Input
                     id="postalCode"
-                    {...register('postalCode')}
-                    className={errors.postalCode ? 'border-red-500' : ''}
+                    {...register("postalCode")}
+                    className={errors.postalCode ? "border-red-500" : ""}
                   />
                   {errors.postalCode && (
-                    <p className="text-sm text-red-500 mt-1">{errors.postalCode.message}</p>
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.postalCode.message}
+                    </p>
                   )}
                 </div>
               </div>
-              
+
               <div>
                 <Label htmlFor="country">Country *</Label>
                 <Select
-                  value={watch('country')}
-                  onValueChange={(value) => setValue('country', value)}
+                  value={watch("country")}
+                  onValueChange={(value) => setValue("country", value)}
                 >
-                  <SelectTrigger className={errors.country ? 'border-red-500' : ''}>
+                  <SelectTrigger
+                    className={errors.country ? "border-red-500" : ""}
+                  >
                     <SelectValue placeholder="Select country" />
                   </SelectTrigger>
                   <SelectContent>
@@ -292,7 +326,9 @@ export default function BillingForm() {
                   </SelectContent>
                 </Select>
                 {errors.country && (
-                  <p className="text-sm text-red-500 mt-1">{errors.country.message}</p>
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.country.message}
+                  </p>
                 )}
               </div>
             </div>

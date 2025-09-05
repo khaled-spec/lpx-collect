@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useMemo } from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import ProductCard from '@/components/ProductCard';
-import { productStyles } from '@/components/custom/product-styles';
-import { cn } from '@/lib/utils';
-import { 
-  Filter, 
-  X, 
+import { useState, useMemo } from "react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import ProductCard from "@/components/ProductCard";
+import { productStyles } from "@/components/custom/product-styles";
+import { cn } from "@/lib/utils";
+import {
+  Filter,
+  X,
   ChevronDown,
   ChevronUp,
   Grid3x3,
@@ -16,28 +16,28 @@ import {
   SlidersHorizontal,
   Package,
   Search,
-  ArrowUpDown
-} from 'lucide-react';
-import { products, categories } from '@/data/mockData';
-import type { Product } from '@/types';
+  ArrowUpDown,
+} from "lucide-react";
+import { products, categories } from "@/data/mockData";
+import type { Product } from "@/types";
 
-const conditions = ['new', 'mint', 'excellent', 'good', 'fair', 'poor'];
-const rarities = ['common', 'uncommon', 'rare', 'very-rare', 'legendary'];
+const conditions = ["new", "mint", "excellent", "good", "fair", "poor"];
+const rarities = ["common", "uncommon", "rare", "very-rare", "legendary"];
 const sortOptions = [
-  { value: 'newest', label: 'Newest First' },
-  { value: 'price-asc', label: 'Price: Low to High' },
-  { value: 'price-desc', label: 'Price: High to Low' },
-  { value: 'popular', label: 'Most Popular' },
+  { value: "newest", label: "Newest First" },
+  { value: "price-asc", label: "Price: Low to High" },
+  { value: "price-desc", label: "Price: High to Low" },
+  { value: "popular", label: "Most Popular" },
 ];
 
 export default function BrowsePage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
   const [selectedRarities, setSelectedRarities] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState({ min: '', max: '' });
-  const [sortBy, setSortBy] = useState('newest');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [priceRange, setPriceRange] = useState({ min: "", max: "" });
+  const [sortBy, setSortBy] = useState("newest");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
@@ -51,80 +51,94 @@ export default function BrowsePage() {
 
     // Search filter
     if (searchQuery) {
-      filtered = filtered.filter(p => 
-        p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+      filtered = filtered.filter(
+        (p) =>
+          p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.tags.some((tag) =>
+            tag.toLowerCase().includes(searchQuery.toLowerCase()),
+          ),
       );
     }
 
     // Category filter
     if (selectedCategory) {
-      filtered = filtered.filter(p => p.category.slug === selectedCategory);
+      filtered = filtered.filter((p) => p.category.slug === selectedCategory);
     }
 
     // Condition filter
     if (selectedConditions.length > 0) {
-      filtered = filtered.filter(p => selectedConditions.includes(p.condition));
+      filtered = filtered.filter((p) =>
+        selectedConditions.includes(p.condition),
+      );
     }
 
     // Rarity filter
-    if (selectedRarities.length > 0 && filtered.some(p => p.rarity)) {
-      filtered = filtered.filter(p => p.rarity && selectedRarities.includes(p.rarity));
+    if (selectedRarities.length > 0 && filtered.some((p) => p.rarity)) {
+      filtered = filtered.filter(
+        (p) => p.rarity && selectedRarities.includes(p.rarity),
+      );
     }
 
     // Price filter
     if (priceRange.min) {
-      filtered = filtered.filter(p => p.price >= Number(priceRange.min));
+      filtered = filtered.filter((p) => p.price >= Number(priceRange.min));
     }
     if (priceRange.max) {
-      filtered = filtered.filter(p => p.price <= Number(priceRange.max));
+      filtered = filtered.filter((p) => p.price <= Number(priceRange.max));
     }
 
     // Sort
     switch (sortBy) {
-      case 'price-asc':
+      case "price-asc":
         filtered.sort((a, b) => a.price - b.price);
         break;
-      case 'price-desc':
+      case "price-desc":
         filtered.sort((a, b) => b.price - a.price);
         break;
-      case 'popular':
+      case "popular":
         filtered.sort((a, b) => b.views - a.views);
         break;
-      case 'newest':
+      case "newest":
       default:
         filtered.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
     }
 
     return filtered;
-  }, [searchQuery, selectedCategory, selectedConditions, selectedRarities, priceRange, sortBy]);
+  }, [
+    searchQuery,
+    selectedCategory,
+    selectedConditions,
+    selectedRarities,
+    priceRange,
+    sortBy,
+  ]);
 
   const toggleCondition = (condition: string) => {
-    setSelectedConditions(prev =>
+    setSelectedConditions((prev) =>
       prev.includes(condition)
-        ? prev.filter(c => c !== condition)
-        : [...prev, condition]
+        ? prev.filter((c) => c !== condition)
+        : [...prev, condition],
     );
   };
 
   const toggleRarity = (rarity: string) => {
-    setSelectedRarities(prev =>
+    setSelectedRarities((prev) =>
       prev.includes(rarity)
-        ? prev.filter(r => r !== rarity)
-        : [...prev, rarity]
+        ? prev.filter((r) => r !== rarity)
+        : [...prev, rarity],
     );
   };
 
   const clearFilters = () => {
-    setSearchQuery('');
-    setSelectedCategory('');
+    setSearchQuery("");
+    setSelectedCategory("");
     setSelectedConditions([]);
     setSelectedRarities([]);
-    setPriceRange({ min: '', max: '' });
+    setPriceRange({ min: "", max: "" });
   };
 
-  const activeFilterCount = 
+  const activeFilterCount =
     (selectedCategory ? 1 : 0) +
     selectedConditions.length +
     selectedRarities.length +
@@ -133,34 +147,39 @@ export default function BrowsePage() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <Header />
-      
+
       <main className="flex-grow bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="bg-card rounded-xl border border-border shadow-lg p-8">
-          {/* Page Header */}
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold mb-2">Browse Collectibles</h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Discover {filteredProducts.length} unique items from our marketplace
-            </p>
-          </div>
+            {/* Page Header */}
+            <div className="mb-6">
+              <h1 className="text-3xl font-bold mb-2">Browse Collectibles</h1>
+              <p className="text-gray-600 dark:text-gray-400">
+                Discover {filteredProducts.length} unique items from our
+                marketplace
+              </p>
+            </div>
 
-          {/* Compact Filter Bar */}
-          <div className="mb-6">
-            {/* Filter Toggle & Quick Actions */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-4">
+            {/* Compact Filter Bar */}
+            <div className="mb-6">
+              {/* Filter Toggle & Quick Actions */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
                   <button
                     onClick={() => setIsFilterExpanded(!isFilterExpanded)}
                     className={cn(
                       productStyles.forms.button.md,
-                      "flex items-center gap-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+                      "flex items-center gap-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors",
                     )}
                   >
-                    <SlidersHorizontal className={productStyles.forms.icon.md} />
+                    <SlidersHorizontal
+                      className={productStyles.forms.icon.md}
+                    />
                     <span>Filters</span>
                     {activeFilterCount > 0 && (
-                      <span className="badge badge-primary">{activeFilterCount}</span>
+                      <span className="badge badge-primary">
+                        {activeFilterCount}
+                      </span>
                     )}
                     {isFilterExpanded ? (
                       <ChevronUp className={productStyles.forms.icon.md} />
@@ -171,10 +190,12 @@ export default function BrowsePage() {
 
                   {/* Quick Search */}
                   <div className="relative hidden sm:block">
-                    <Search className={cn(
-                      productStyles.forms.icon.md,
-                      "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                    )} />
+                    <Search
+                      className={cn(
+                        productStyles.forms.icon.md,
+                        "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground",
+                      )}
+                    />
                     <input
                       type="text"
                       value={searchQuery}
@@ -183,7 +204,7 @@ export default function BrowsePage() {
                       className={cn(
                         productStyles.forms.input.md,
                         "pl-10 w-64 border border-input bg-background",
-                        "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                        "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
                       )}
                     />
                   </div>
@@ -193,9 +214,12 @@ export default function BrowsePage() {
                     <div className="flex items-center gap-2">
                       {selectedCategory && (
                         <span className="badge badge-secondary">
-                          {categories.find(c => c.slug === selectedCategory)?.name}
+                          {
+                            categories.find((c) => c.slug === selectedCategory)
+                              ?.name
+                          }
                           <button
-                            onClick={() => setSelectedCategory('')}
+                            onClick={() => setSelectedCategory("")}
                             className="ml-1 hover:text-red-500"
                           >
                             <X className="h-3 w-3" />
@@ -219,22 +243,29 @@ export default function BrowsePage() {
                 <div className="flex items-center gap-4">
                   {/* Sort */}
                   <div className="relative">
-                    <button 
+                    <button
                       onClick={() => setIsSortOpen(!isSortOpen)}
                       onBlur={() => setTimeout(() => setIsSortOpen(false), 200)}
                       className={cn(
                         productStyles.forms.select.md,
-                        "flex items-center justify-between gap-2 w-48 border border-input bg-background hover:bg-accent transition-colors"
+                        "flex items-center justify-between gap-2 w-48 border border-input bg-background hover:bg-accent transition-colors",
                       )}
                     >
                       <span className="flex items-center gap-2 truncate">
-                        <ArrowUpDown className={cn(productStyles.forms.icon.md, "text-muted-foreground flex-shrink-0")} />
-                        <span className="truncate">{sortOptions.find(o => o.value === sortBy)?.label}</span>
+                        <ArrowUpDown
+                          className={cn(
+                            productStyles.forms.icon.md,
+                            "text-muted-foreground flex-shrink-0",
+                          )}
+                        />
+                        <span className="truncate">
+                          {sortOptions.find((o) => o.value === sortBy)?.label}
+                        </span>
                       </span>
                     </button>
                     {isSortOpen && (
                       <div className="dropdown-menu right-0">
-                        {sortOptions.map(option => (
+                        {sortOptions.map((option) => (
                           <button
                             key={option.value}
                             onClick={() => {
@@ -242,7 +273,9 @@ export default function BrowsePage() {
                               setIsSortOpen(false);
                             }}
                             className={`dropdown-item ${
-                              sortBy === option.value ? 'dropdown-item-active' : ''
+                              sortBy === option.value
+                                ? "dropdown-item-active"
+                                : ""
                             }`}
                           >
                             {option.label}
@@ -255,13 +288,13 @@ export default function BrowsePage() {
                   {/* View Mode */}
                   <div className="flex items-center border border-input rounded-md overflow-hidden">
                     <button
-                      onClick={() => setViewMode('grid')}
+                      onClick={() => setViewMode("grid")}
                       className={cn(
                         "h-9 px-3 flex items-center justify-center",
                         "rounded-none border-0 transition-colors",
-                        viewMode === 'grid'
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                        viewMode === "grid"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                       )}
                       aria-label="Grid view"
                     >
@@ -269,13 +302,13 @@ export default function BrowsePage() {
                     </button>
                     <div className="w-px h-6 bg-input" />
                     <button
-                      onClick={() => setViewMode('list')}
+                      onClick={() => setViewMode("list")}
                       className={cn(
                         "h-9 px-3 flex items-center justify-center",
                         "rounded-none border-0 transition-colors",
-                        viewMode === 'list'
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                        viewMode === "list"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                       )}
                       aria-label="List view"
                     >
@@ -285,271 +318,323 @@ export default function BrowsePage() {
                 </div>
               </div>
 
-            {/* Expandable Filter Content */}
-            {isFilterExpanded && (
-              <div className="border-t border-border animate-slide-up grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-4">
-                    {/* Search (Mobile) */}
-                    <div className="sm:hidden">
-                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Search</label>
-                      <div className="relative">
-                        <Search className={cn(
+              {/* Expandable Filter Content */}
+              {isFilterExpanded && (
+                <div className="border-t border-border animate-slide-up grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-4">
+                  {/* Search (Mobile) */}
+                  <div className="sm:hidden">
+                    <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                      Search
+                    </label>
+                    <div className="relative">
+                      <Search
+                        className={cn(
                           productStyles.forms.icon.md,
-                          "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                        )} />
-                        <input
-                          type="text"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          placeholder="Search items..."
-                          className={cn(
-                            productStyles.forms.input.md,
-                            "pl-10 w-full border border-input bg-background",
-                            "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                          )}
-                        />
-                      </div>
+                          "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground",
+                        )}
+                      />
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search items..."
+                        className={cn(
+                          productStyles.forms.input.md,
+                          "pl-10 w-full border border-input bg-background",
+                          "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                        )}
+                      />
                     </div>
+                  </div>
 
-                    {/* Category */}
-                    <div>
-                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Category</label>
-                      <div className="relative">
-                        <button 
-                          onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-                          onBlur={() => setTimeout(() => setIsCategoryOpen(false), 200)}
+                  {/* Category */}
+                  <div>
+                    <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                      Category
+                    </label>
+                    <div className="relative">
+                      <button
+                        onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+                        onBlur={() =>
+                          setTimeout(() => setIsCategoryOpen(false), 200)
+                        }
+                        className={cn(
+                          productStyles.forms.select.md,
+                          "w-full text-left flex items-center justify-between",
+                          "border border-input bg-background hover:bg-accent transition-colors",
+                        )}
+                      >
+                        <span>
+                          {selectedCategory
+                            ? categories.find(
+                                (c) => c.slug === selectedCategory,
+                              )?.name
+                            : "All Categories"}
+                        </span>
+                        <ChevronDown
                           className={cn(
-                            productStyles.forms.select.md,
-                            "w-full text-left flex items-center justify-between",
-                            "border border-input bg-background hover:bg-accent transition-colors"
-                          )}
-                        >
-                          <span>
-                            {selectedCategory 
-                              ? categories.find(c => c.slug === selectedCategory)?.name
-                              : 'All Categories'
-                            }
-                          </span>
-                          <ChevronDown className={cn(
                             productStyles.forms.icon.md,
                             "text-muted-foreground transition-transform",
-                            isCategoryOpen && "rotate-180"
-                          )} />
-                        </button>
-                        {isCategoryOpen && (
-                          <div className="dropdown-menu left-0 right-0">
+                            isCategoryOpen && "rotate-180",
+                          )}
+                        />
+                      </button>
+                      {isCategoryOpen && (
+                        <div className="dropdown-menu left-0 right-0">
+                          <button
+                            onClick={() => {
+                              setSelectedCategory("");
+                              setIsCategoryOpen(false);
+                            }}
+                            className={`dropdown-item ${
+                              selectedCategory === ""
+                                ? "dropdown-item-active"
+                                : ""
+                            }`}
+                          >
+                            All Categories
+                          </button>
+                          {categories.map((cat) => (
                             <button
+                              key={cat.id}
                               onClick={() => {
-                                setSelectedCategory('');
+                                setSelectedCategory(cat.slug);
                                 setIsCategoryOpen(false);
                               }}
                               className={`dropdown-item ${
-                                selectedCategory === '' ? 'dropdown-item-active' : ''
+                                selectedCategory === cat.slug
+                                  ? "dropdown-item-active"
+                                  : ""
                               }`}
                             >
-                              All Categories
+                              {cat.name} ({cat.productCount})
                             </button>
-                            {categories.map(cat => (
-                              <button
-                                key={cat.id}
-                                onClick={() => {
-                                  setSelectedCategory(cat.slug);
-                                  setIsCategoryOpen(false);
-                                }}
-                                className={`dropdown-item ${
-                                  selectedCategory === cat.slug ? 'dropdown-item-active' : ''
-                                }`}
-                              >
-                                {cat.name} ({cat.productCount})
-                              </button>
-                            ))}
-                          </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Price Range */}
+                  <div>
+                    <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                      Price Range
+                    </label>
+                    <div className="flex gap-2 items-center">
+                      <input
+                        type="number"
+                        placeholder="Min"
+                        value={priceRange.min}
+                        onChange={(e) =>
+                          setPriceRange((prev) => ({
+                            ...prev,
+                            min: e.target.value,
+                          }))
+                        }
+                        className={cn(
+                          productStyles.forms.input.md,
+                          "w-full border border-input bg-background",
+                          "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
                         )}
-                      </div>
+                      />
+                      <span className="text-muted-foreground text-xs">to</span>
+                      <input
+                        type="number"
+                        placeholder="Max"
+                        value={priceRange.max}
+                        onChange={(e) =>
+                          setPriceRange((prev) => ({
+                            ...prev,
+                            max: e.target.value,
+                          }))
+                        }
+                        className={cn(
+                          productStyles.forms.input.md,
+                          "w-full border border-input bg-background",
+                          "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                        )}
+                      />
                     </div>
+                  </div>
 
-                    {/* Price Range */}
-                    <div>
-                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Price Range</label>
-                      <div className="flex gap-2 items-center">
-                        <input
-                          type="number"
-                          placeholder="Min"
-                          value={priceRange.min}
-                          onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
+                  {/* Condition */}
+                  <div>
+                    <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                      Condition
+                    </label>
+                    <div className="relative">
+                      <button
+                        onClick={() => setIsConditionOpen(!isConditionOpen)}
+                        onBlur={() =>
+                          setTimeout(() => setIsConditionOpen(false), 200)
+                        }
+                        className={cn(
+                          productStyles.forms.select.md,
+                          "w-full text-left flex items-center justify-between",
+                          "border border-input bg-background hover:bg-accent transition-colors",
+                        )}
+                      >
+                        <span className="capitalize">
+                          {selectedConditions.length > 0
+                            ? selectedConditions[0]
+                            : "Select Condition"}
+                        </span>
+                        <ChevronDown
                           className={cn(
-                            productStyles.forms.input.md,
-                            "w-full border border-input bg-background",
-                            "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                          )}
-                        />
-                        <span className="text-muted-foreground text-xs">to</span>
-                        <input
-                          type="number"
-                          placeholder="Max"
-                          value={priceRange.max}
-                          onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
-                          className={cn(
-                            productStyles.forms.input.md,
-                            "w-full border border-input bg-background",
-                            "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                          )}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Condition */}
-                    <div>
-                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Condition</label>
-                      <div className="relative">
-                        <button 
-                          onClick={() => setIsConditionOpen(!isConditionOpen)}
-                          onBlur={() => setTimeout(() => setIsConditionOpen(false), 200)}
-                          className={cn(
-                            productStyles.forms.select.md,
-                            "w-full text-left flex items-center justify-between",
-                            "border border-input bg-background hover:bg-accent transition-colors"
-                          )}
-                        >
-                          <span className="capitalize">
-                            {selectedConditions.length > 0 
-                              ? selectedConditions[0]
-                              : 'Select Condition'
-                            }
-                          </span>
-                          <ChevronDown className={cn(
                             productStyles.forms.icon.md,
                             "text-muted-foreground transition-transform",
-                            isConditionOpen && "rotate-180"
-                          )} />
-                        </button>
-                        {isConditionOpen && (
-                          <div className="dropdown-menu left-0 right-0">
+                            isConditionOpen && "rotate-180",
+                          )}
+                        />
+                      </button>
+                      {isConditionOpen && (
+                        <div className="dropdown-menu left-0 right-0">
+                          <button
+                            onClick={() => {
+                              setSelectedConditions([]);
+                              setIsConditionOpen(false);
+                            }}
+                            className={`dropdown-item ${
+                              selectedConditions.length === 0
+                                ? "dropdown-item-active"
+                                : ""
+                            }`}
+                          >
+                            Select Condition
+                          </button>
+                          {conditions.map((condition) => (
                             <button
+                              key={condition}
                               onClick={() => {
-                                setSelectedConditions([]);
+                                setSelectedConditions([condition]);
                                 setIsConditionOpen(false);
                               }}
-                              className={`dropdown-item ${
-                                selectedConditions.length === 0 ? 'dropdown-item-active' : ''
+                              className={`dropdown-item capitalize ${
+                                selectedConditions.includes(condition)
+                                  ? "dropdown-item-active"
+                                  : ""
                               }`}
                             >
-                              Select Condition
+                              {condition}
                             </button>
-                            {conditions.map(condition => (
-                              <button
-                                key={condition}
-                                onClick={() => {
-                                  setSelectedConditions([condition]);
-                                  setIsConditionOpen(false);
-                                }}
-                                className={`dropdown-item capitalize ${
-                                  selectedConditions.includes(condition) ? 'dropdown-item-active' : ''
-                                }`}
-                              >
-                                {condition}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
+                  </div>
 
-                    {/* Rarity */}
-                    <div>
-                      <label className="block text-xs font-medium text-muted-foreground mb-1.5">Rarity</label>
-                      <div className="relative">
-                        <button 
-                          onClick={() => setIsRarityOpen(!isRarityOpen)}
-                          onBlur={() => setTimeout(() => setIsRarityOpen(false), 200)}
+                  {/* Rarity */}
+                  <div>
+                    <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                      Rarity
+                    </label>
+                    <div className="relative">
+                      <button
+                        onClick={() => setIsRarityOpen(!isRarityOpen)}
+                        onBlur={() =>
+                          setTimeout(() => setIsRarityOpen(false), 200)
+                        }
+                        className={cn(
+                          productStyles.forms.select.md,
+                          "w-full text-left flex items-center justify-between",
+                          "border border-input bg-background hover:bg-accent transition-colors",
+                        )}
+                      >
+                        <span className="capitalize">
+                          {selectedRarities.length > 0
+                            ? selectedRarities[0].replace("-", " ")
+                            : "Select Rarity"}
+                        </span>
+                        <ChevronDown
                           className={cn(
-                            productStyles.forms.select.md,
-                            "w-full text-left flex items-center justify-between",
-                            "border border-input bg-background hover:bg-accent transition-colors"
-                          )}
-                        >
-                          <span className="capitalize">
-                            {selectedRarities.length > 0 
-                              ? selectedRarities[0].replace('-', ' ')
-                              : 'Select Rarity'
-                            }
-                          </span>
-                          <ChevronDown className={cn(
                             productStyles.forms.icon.md,
                             "text-muted-foreground transition-transform",
-                            isRarityOpen && "rotate-180"
-                          )} />
-                        </button>
-                        {isRarityOpen && (
-                          <div className="dropdown-menu left-0 right-0">
+                            isRarityOpen && "rotate-180",
+                          )}
+                        />
+                      </button>
+                      {isRarityOpen && (
+                        <div className="dropdown-menu left-0 right-0">
+                          <button
+                            onClick={() => {
+                              setSelectedRarities([]);
+                              setIsRarityOpen(false);
+                            }}
+                            className={`dropdown-item ${
+                              selectedRarities.length === 0
+                                ? "dropdown-item-active"
+                                : ""
+                            }`}
+                          >
+                            Select Rarity
+                          </button>
+                          {rarities.map((rarity) => (
                             <button
+                              key={rarity}
                               onClick={() => {
-                                setSelectedRarities([]);
+                                setSelectedRarities([rarity]);
                                 setIsRarityOpen(false);
                               }}
-                              className={`dropdown-item ${
-                                selectedRarities.length === 0 ? 'dropdown-item-active' : ''
+                              className={`dropdown-item capitalize ${
+                                selectedRarities.includes(rarity)
+                                  ? "dropdown-item-active"
+                                  : ""
                               }`}
                             >
-                              Select Rarity
+                              {rarity.replace("-", " ")}
                             </button>
-                            {rarities.map(rarity => (
-                              <button
-                                key={rarity}
-                                onClick={() => {
-                                  setSelectedRarities([rarity]);
-                                  setIsRarityOpen(false);
-                                }}
-                                className={`dropdown-item capitalize ${
-                                  selectedRarities.includes(rarity) ? 'dropdown-item-active' : ''
-                                }`}
-                              >
-                                {rarity.replace('-', ' ')}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    
-                    {/* Clear Filters */}
-                    {activeFilterCount > 0 && (
-                      <div className="col-span-full mt-2 pt-4 border-t border-border flex justify-between items-center">
-                        <span className="text-xs text-muted-foreground font-medium">
-                          {activeFilterCount} {activeFilterCount === 1 ? 'filter' : 'filters'} active
-                        </span>
-                        <button
-                          onClick={clearFilters}
-                          className="btn btn-ghost btn-sm text-destructive hover:text-destructive"
-                        >
-                          <X className="h-3 w-3 mr-1" />
-                          Clear All
-                        </button>
-                      </div>
-                    )}
-              </div>
-            )}
-          </div>
+                  </div>
 
-          {/* Main Content */}
-          <div className="w-full">
+                  {/* Clear Filters */}
+                  {activeFilterCount > 0 && (
+                    <div className="col-span-full mt-2 pt-4 border-t border-border flex justify-between items-center">
+                      <span className="text-xs text-muted-foreground font-medium">
+                        {activeFilterCount}{" "}
+                        {activeFilterCount === 1 ? "filter" : "filters"} active
+                      </span>
+                      <button
+                        onClick={clearFilters}
+                        className="btn btn-ghost btn-sm text-destructive hover:text-destructive"
+                      >
+                        <X className="h-3 w-3 mr-1" />
+                        Clear All
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Main Content */}
+            <div className="w-full">
               {/* Results Count */}
               <div className="mb-4">
                 <p className="text-sm text-muted-foreground">
-                  Showing <span className="font-medium text-foreground">{filteredProducts.length}</span> results
+                  Showing{" "}
+                  <span className="font-medium text-foreground">
+                    {filteredProducts.length}
+                  </span>{" "}
+                  results
                 </p>
               </div>
 
               {/* Products Grid/List */}
               {filteredProducts.length > 0 ? (
-                <div className={
-                  viewMode === 'grid'
-                    ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
-                    : 'space-y-4'
-                }>
-                  {filteredProducts.map(product => (
-                    <ProductCard 
-                      key={product.id} 
-                      product={product} 
+                <div
+                  className={
+                    viewMode === "grid"
+                      ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                      : "space-y-4"
+                  }
+                >
+                  {filteredProducts.map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
                       viewMode={viewMode}
                       variant="default"
                     />
@@ -558,7 +643,9 @@ export default function BrowsePage() {
               ) : (
                 <div className="text-center py-12">
                   <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium mb-2">No products found</h3>
+                  <h3 className="text-lg font-medium mb-2">
+                    No products found
+                  </h3>
                   <p className="text-gray-500">
                     Try adjusting your filters or search query
                   </p>
@@ -591,7 +678,9 @@ export default function BrowsePage() {
                 {/* Mobile filters content (same as desktop) */}
                 {/* Search */}
                 <div className="mb-6">
-                  <label className="block text-sm font-medium mb-2">Search</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Search
+                  </label>
                   <input
                     type="text"
                     value={searchQuery}
@@ -603,14 +692,16 @@ export default function BrowsePage() {
 
                 {/* Categories */}
                 <div className="mb-6">
-                  <label className="block text-sm font-medium mb-2">Category</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Category
+                  </label>
                   <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
                     className="input w-full"
                   >
                     <option value="">All Categories</option>
-                    {categories.map(cat => (
+                    {categories.map((cat) => (
                       <option key={cat.id} value={cat.slug}>
                         {cat.name} ({cat.productCount})
                       </option>
@@ -620,13 +711,20 @@ export default function BrowsePage() {
 
                 {/* Price Range */}
                 <div className="mb-6">
-                  <label className="block text-sm font-medium mb-2">Price Range</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Price Range
+                  </label>
                   <div className="flex gap-2">
                     <input
                       type="number"
                       placeholder="Min"
                       value={priceRange.min}
-                      onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
+                      onChange={(e) =>
+                        setPriceRange((prev) => ({
+                          ...prev,
+                          min: e.target.value,
+                        }))
+                      }
                       className="input w-full"
                     />
                     <span className="self-center">-</span>
@@ -634,7 +732,12 @@ export default function BrowsePage() {
                       type="number"
                       placeholder="Max"
                       value={priceRange.max}
-                      onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
+                      onChange={(e) =>
+                        setPriceRange((prev) => ({
+                          ...prev,
+                          max: e.target.value,
+                        }))
+                      }
                       className="input w-full"
                     />
                   </div>
@@ -642,9 +745,11 @@ export default function BrowsePage() {
 
                 {/* Condition */}
                 <div className="mb-6">
-                  <label className="block text-sm font-medium mb-2">Condition</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Condition
+                  </label>
                   <div className="space-y-2">
-                    {conditions.map(condition => (
+                    {conditions.map((condition) => (
                       <label key={condition} className="flex items-center">
                         <input
                           type="checkbox"
@@ -660,9 +765,11 @@ export default function BrowsePage() {
 
                 {/* Rarity */}
                 <div className="mb-6">
-                  <label className="block text-sm font-medium mb-2">Rarity</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Rarity
+                  </label>
                   <div className="space-y-2">
-                    {rarities.map(rarity => (
+                    {rarities.map((rarity) => (
                       <label key={rarity} className="flex items-center">
                         <input
                           type="checkbox"
@@ -671,7 +778,7 @@ export default function BrowsePage() {
                           className="rounded border-gray-300 text-primary focus:ring-primary mr-2"
                         />
                         <span className="text-sm capitalize">
-                          {rarity.replace('-', ' ')}
+                          {rarity.replace("-", " ")}
                         </span>
                       </label>
                     ))}

@@ -1,16 +1,22 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useAuth } from '@/context/AuthContext';
-import { useCart } from '@/context/CartContext';
-import { Button } from '@/components/ui/button';
-import { IconButton } from '@/components/custom/button-variants';
-import { SearchInput } from '@/components/custom/input-variants';
-import { Badge } from '@/components/ui/badge';
-import { CategoryBadge } from '@/components/custom/badge-variants';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { useState } from "react";
+import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
+import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/custom/button-variants";
+import { SearchInput } from "@/components/custom/input-variants";
+import { Badge } from "@/components/ui/badge";
+import { CategoryBadge } from "@/components/custom/badge-variants";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -18,7 +24,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from '@/components/ui/navigation-menu';
+} from "@/components/ui/navigation-menu";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,31 +32,31 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Search, 
-  ShoppingCart, 
-  User, 
-  Menu, 
-  X, 
-  Package, 
+} from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
+import {
+  Search,
+  ShoppingCart,
+  User,
+  Menu,
+  X,
+  Package,
   Heart,
   Bell,
   LogIn,
   LogOut,
   Settings,
   Store,
-  ShoppingBag
-} from 'lucide-react';
+  ShoppingBag,
+} from "lucide-react";
 
 const categories = [
-  { name: 'Trading Cards', slug: 'trading-cards' },
-  { name: 'Comics', slug: 'comics' },
-  { name: 'Coins', slug: 'coins' },
-  { name: 'Stamps', slug: 'stamps' },
-  { name: 'Vintage Toys', slug: 'vintage-toys' },
-  { name: 'Sports Memorabilia', slug: 'sports-memorabilia' },
+  { name: "Trading Cards", slug: "trading-cards" },
+  { name: "Comics", slug: "comics" },
+  { name: "Coins", slug: "coins" },
+  { name: "Stamps", slug: "stamps" },
+  { name: "Vintage Toys", slug: "vintage-toys" },
+  { name: "Sports Memorabilia", slug: "sports-memorabilia" },
 ];
 
 export default function Header() {
@@ -66,8 +72,12 @@ export default function Header() {
         <div className="container flex justify-between items-center">
           <span>Free shipping on orders over $100</span>
           <div className="flex gap-4">
-            <Link href="/sell" className="hover:underline">Become a Vendor</Link>
-            <Link href="/help" className="hover:underline">Help Center</Link>
+            <Link href="/sell" className="hover:underline">
+              Become a Vendor
+            </Link>
+            <Link href="/help" className="hover:underline">
+              Help Center
+            </Link>
           </div>
         </div>
       </div>
@@ -94,11 +104,16 @@ export default function Header() {
                 <div className="absolute top-full mt-2 w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-border p-4">
                   <p className="text-sm text-gray-500">Popular searches:</p>
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {['Pokemon Cards', 'Marvel Comics', 'Vintage Coins'].map((term) => (
-                      <CategoryBadge key={term} className="cursor-pointer hover:bg-primary hover:text-white">
-                        {term}
-                      </CategoryBadge>
-                    ))}
+                    {["Pokemon Cards", "Marvel Comics", "Vintage Coins"].map(
+                      (term) => (
+                        <CategoryBadge
+                          key={term}
+                          className="cursor-pointer hover:bg-primary hover:text-white"
+                        >
+                          {term}
+                        </CategoryBadge>
+                      ),
+                    )}
                   </div>
                 </div>
               )}
@@ -125,9 +140,12 @@ export default function Header() {
                                 href={`/category/${category.slug}`}
                                 className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                               >
-                                <div className="text-sm font-medium leading-none">{category.name}</div>
+                                <div className="text-sm font-medium leading-none">
+                                  {category.name}
+                                </div>
                                 <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                  Browse our collection of {category.name.toLowerCase()}
+                                  Browse our collection of{" "}
+                                  {category.name.toLowerCase()}
                                 </p>
                               </Link>
                             </NavigationMenuLink>
@@ -138,10 +156,16 @@ export default function Header() {
                   </NavigationMenuItem>
                 </NavigationMenuList>
               </NavigationMenu>
-              <Link href="/browse" className="text-gray-700 dark:text-gray-300 hover:text-primary transition">
+              <Link
+                href="/browse"
+                className="text-gray-700 dark:text-gray-300 hover:text-primary transition"
+              >
                 Browse
               </Link>
-              <Link href="/vendors" className="text-gray-700 dark:text-gray-300 hover:text-primary transition">
+              <Link
+                href="/vendors"
+                className="text-gray-700 dark:text-gray-300 hover:text-primary transition"
+              >
                 Vendors
               </Link>
               {isAuthenticated ? (
@@ -158,11 +182,14 @@ export default function Header() {
                   </IconButton>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                      <Button
+                        variant="ghost"
+                        className="relative h-10 w-10 rounded-full"
+                      >
                         <Avatar className="h-10 w-10">
                           <AvatarImage src={user?.avatar} alt={user?.name} />
                           <AvatarFallback>
-                            {user?.name?.charAt(0).toUpperCase() || 'U'}
+                            {user?.name?.charAt(0).toUpperCase() || "U"}
                           </AvatarFallback>
                         </Avatar>
                       </Button>
@@ -170,7 +197,9 @@ export default function Header() {
                     <DropdownMenuContent align="end" className="w-56">
                       <DropdownMenuLabel className="font-normal">
                         <div className="flex flex-col space-y-1">
-                          <p className="text-sm font-medium leading-none">{user?.name}</p>
+                          <p className="text-sm font-medium leading-none">
+                            {user?.name}
+                          </p>
                           <p className="text-xs leading-none text-muted-foreground">
                             {user?.email}
                           </p>
@@ -183,9 +212,12 @@ export default function Header() {
                           Dashboard
                         </Link>
                       </DropdownMenuItem>
-                      {user?.role === 'vendor' && (
+                      {user?.role === "vendor" && (
                         <DropdownMenuItem asChild>
-                          <Link href="/vendor/dashboard" className="cursor-pointer">
+                          <Link
+                            href="/vendor/dashboard"
+                            className="cursor-pointer"
+                          >
                             <Store className="mr-2 h-4 w-4" />
                             Vendor Dashboard
                           </Link>
@@ -210,7 +242,10 @@ export default function Header() {
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={logout} className="cursor-pointer">
+                      <DropdownMenuItem
+                        onClick={logout}
+                        className="cursor-pointer"
+                      >
                         <LogOut className="mr-2 h-4 w-4" />
                         Logout
                       </DropdownMenuItem>
@@ -258,10 +293,7 @@ export default function Header() {
                 <div className="mt-6">
                   {/* Mobile Search */}
                   <div className="mb-4">
-                    <SearchInput
-                      placeholder="Search..."
-                      className="w-full"
-                    />
+                    <SearchInput placeholder="Search..." className="w-full" />
                   </div>
 
                   {/* Mobile Navigation */}
@@ -278,18 +310,34 @@ export default function Header() {
                       </Link>
                     ))}
                     <Separator className="my-2" />
-                    <Link href="/browse" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
+                    <Link
+                      href="/browse"
+                      className="py-2 hover:text-primary transition"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
                       Browse All
                     </Link>
-                    <Link href="/vendors" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
+                    <Link
+                      href="/vendors"
+                      className="py-2 hover:text-primary transition"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
                       Vendors
                     </Link>
                     {!isAuthenticated && (
                       <>
-                        <Link href="/login" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
+                        <Link
+                          href="/login"
+                          className="py-2 hover:text-primary transition"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
                           Login
                         </Link>
-                        <Link href="/register" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
+                        <Link
+                          href="/register"
+                          className="py-2 hover:text-primary transition"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
                           Sign Up
                         </Link>
                       </>
@@ -301,32 +349,54 @@ export default function Header() {
                           <Avatar className="h-8 w-8">
                             <AvatarImage src={user?.avatar} alt={user?.name} />
                             <AvatarFallback>
-                              {user?.name?.charAt(0).toUpperCase() || 'U'}
+                              {user?.name?.charAt(0).toUpperCase() || "U"}
                             </AvatarFallback>
                           </Avatar>
                           <div>
                             <p className="font-medium">{user?.name}</p>
-                            <p className="text-xs text-muted-foreground">{user?.email}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {user?.email}
+                            </p>
                           </div>
                         </div>
                         <Separator className="my-2" />
-                        <Link href="/dashboard" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
+                        <Link
+                          href="/dashboard"
+                          className="py-2 hover:text-primary transition"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
                           My Dashboard
                         </Link>
-                        <Link href="/orders" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
+                        <Link
+                          href="/orders"
+                          className="py-2 hover:text-primary transition"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
                           Orders
                         </Link>
-                        <Link href="/wishlist" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
+                        <Link
+                          href="/wishlist"
+                          className="py-2 hover:text-primary transition"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
                           Wishlist
                         </Link>
-                        <Link href="/notifications" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
+                        <Link
+                          href="/notifications"
+                          className="py-2 hover:text-primary transition"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
                           Notifications
                         </Link>
-                        <Link href="/settings" className="py-2 hover:text-primary transition" onClick={() => setIsMenuOpen(false)}>
+                        <Link
+                          href="/settings"
+                          className="py-2 hover:text-primary transition"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
                           Settings
                         </Link>
                         <Separator className="my-2" />
-                        <button 
+                        <button
                           onClick={() => {
                             logout();
                             setIsMenuOpen(false);
@@ -344,7 +414,6 @@ export default function Header() {
           </div>
         </div>
       </div>
-
     </header>
   );
 }

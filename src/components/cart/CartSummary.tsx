@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
-import { 
+import { useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import {
   ShoppingBag,
   Truck,
   Shield,
   ArrowRight,
   Info,
-  Lock
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useAuth } from '@/context/AuthContext';
+  Lock,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 
 interface CartSummaryProps {
   subtotal: number;
@@ -39,14 +39,17 @@ export default function CartSummary({
   const { isAuthenticated } = useAuth();
 
   const FREE_SHIPPING_THRESHOLD = 100;
-  const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  const remainingForFreeShipping = Math.max(
+    0,
+    FREE_SHIPPING_THRESHOLD - subtotal,
+  );
   const discountAmount = subtotal * discount;
 
   const handleCheckout = () => {
     if (isAuthenticated) {
-      router.push('/checkout');
+      router.push("/checkout");
     } else {
-      router.push('/login?redirect=/checkout');
+      router.push("/login?redirect=/checkout");
     }
   };
 
@@ -73,7 +76,9 @@ export default function CartSummary({
                 </Badge>
               )}
             </div>
-            <span className="text-green-600">-${discountAmount.toFixed(2)}</span>
+            <span className="text-green-600">
+              -${discountAmount.toFixed(2)}
+            </span>
           </div>
         )}
 
@@ -81,11 +86,13 @@ export default function CartSummary({
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Shipping</span>
-            <span className={shipping === 0 ? 'text-green-600 font-medium' : ''}>
-              {shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
+            <span
+              className={shipping === 0 ? "text-green-600 font-medium" : ""}
+            >
+              {shipping === 0 ? "FREE" : `$${shipping.toFixed(2)}`}
             </span>
           </div>
-          
+
           {/* Free Shipping Progress */}
           {remainingForFreeShipping > 0 && shipping > 0 && (
             <div className="bg-blue-50 dark:bg-blue-950/30 p-3 rounded-lg">
@@ -93,12 +100,15 @@ export default function CartSummary({
                 <Truck className="h-4 w-4 text-blue-600 mt-0.5" />
                 <div className="flex-1">
                   <p className="text-xs text-blue-900 dark:text-blue-100">
-                    Add ${remainingForFreeShipping.toFixed(2)} more for free shipping!
+                    Add ${remainingForFreeShipping.toFixed(2)} more for free
+                    shipping!
                   </p>
                   <div className="w-full bg-blue-200 dark:bg-blue-800 rounded-full h-1.5 mt-2">
-                    <div 
+                    <div
                       className="bg-blue-600 h-1.5 rounded-full transition-all"
-                      style={{ width: `${(subtotal / FREE_SHIPPING_THRESHOLD) * 100}%` }}
+                      style={{
+                        width: `${(subtotal / FREE_SHIPPING_THRESHOLD) * 100}%`,
+                      }}
                     />
                   </div>
                 </div>
@@ -136,7 +146,7 @@ export default function CartSummary({
         </div>
 
         {/* Checkout Button */}
-        <Button 
+        <Button
           onClick={handleCheckout}
           className="w-full"
           size="lg"
@@ -161,12 +171,22 @@ export default function CartSummary({
 
         {/* Payment Methods */}
         <div className="pt-4 border-t">
-          <p className="text-xs text-muted-foreground mb-2">Accepted payment methods</p>
+          <p className="text-xs text-muted-foreground mb-2">
+            Accepted payment methods
+          </p>
           <div className="flex gap-2">
-            <Badge variant="secondary" className="text-xs">Visa</Badge>
-            <Badge variant="secondary" className="text-xs">Mastercard</Badge>
-            <Badge variant="secondary" className="text-xs">PayPal</Badge>
-            <Badge variant="secondary" className="text-xs">Apple Pay</Badge>
+            <Badge variant="secondary" className="text-xs">
+              Visa
+            </Badge>
+            <Badge variant="secondary" className="text-xs">
+              Mastercard
+            </Badge>
+            <Badge variant="secondary" className="text-xs">
+              PayPal
+            </Badge>
+            <Badge variant="secondary" className="text-xs">
+              Apple Pay
+            </Badge>
           </div>
         </div>
       </CardContent>

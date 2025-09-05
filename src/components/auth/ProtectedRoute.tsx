@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
-import { Loader2 } from 'lucide-react';
+import { useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { Loader2 } from "lucide-react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: 'collector' | 'vendor' | 'admin';
+  requiredRole?: "collector" | "vendor" | "admin";
   redirectTo?: string;
 }
 
-export default function ProtectedRoute({ 
-  children, 
+export default function ProtectedRoute({
+  children,
   requiredRole,
-  redirectTo = '/login' 
+  redirectTo = "/login",
 }: ProtectedRouteProps) {
   const { isAuthenticated, isLoading, user } = useAuth();
   const router = useRouter();
@@ -27,9 +27,17 @@ export default function ProtectedRoute({
       router.push(`${redirectTo}?returnUrl=${returnUrl}`);
     } else if (!isLoading && requiredRole && user?.role !== requiredRole) {
       // User doesn't have the required role
-      router.push('/unauthorized');
+      router.push("/unauthorized");
     }
-  }, [isAuthenticated, isLoading, router, pathname, redirectTo, requiredRole, user]);
+  }, [
+    isAuthenticated,
+    isLoading,
+    router,
+    pathname,
+    redirectTo,
+    requiredRole,
+    user,
+  ]);
 
   if (isLoading) {
     return (

@@ -18,7 +18,7 @@ export interface BillingAddress extends ShippingAddress {
 }
 
 export interface PaymentMethod {
-  type: 'card' | 'paypal' | 'crypto';
+  type: "card" | "paypal" | "crypto";
   cardNumber?: string;
   cardHolder?: string;
   expiryDate?: string;
@@ -49,7 +49,7 @@ export interface Order {
   tax: number;
   discount: number;
   total: number;
-  status: 'pending' | 'processing' | 'completed' | 'cancelled';
+  status: "pending" | "processing" | "completed" | "cancelled";
   orderNotes?: string;
   createdAt: Date;
   estimatedDelivery: Date;
@@ -65,4 +65,4 @@ export interface OrderItem {
   vendor: string;
 }
 
-export type CheckoutStep = 'shipping' | 'billing' | 'payment' | 'review';
+export type CheckoutStep = "shipping" | "billing" | "payment" | "review";

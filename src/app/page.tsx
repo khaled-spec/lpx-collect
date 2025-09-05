@@ -1,32 +1,52 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import ProductCard from '@/components/ProductCard';
-import { Button } from '@/components/ui/button';
-import { PrimaryButton, SecondaryButton, OutlineButton } from '@/components/custom/button-variants';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FeatureCard, VendorCard, CategoryCard, StatsCard } from '@/components/custom/card-variants';
-import { Badge } from '@/components/ui/badge';
-import { VerifiedBadge } from '@/components/custom/badge-variants';
-import { Separator } from '@/components/ui/separator';
-import { 
-  ArrowRight, 
-  Shield, 
-  Truck, 
+import Link from "next/link";
+import Image from "next/image";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import ProductCard from "@/components/ProductCard";
+import { Button } from "@/components/ui/button";
+import {
+  PrimaryButton,
+  SecondaryButton,
+  OutlineButton,
+} from "@/components/custom/button-variants";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  FeatureCard,
+  VendorCard,
+  CategoryCard,
+  StatsCard,
+} from "@/components/custom/card-variants";
+import { Badge } from "@/components/ui/badge";
+import { VerifiedBadge } from "@/components/custom/badge-variants";
+import { Separator } from "@/components/ui/separator";
+import {
+  ArrowRight,
+  Shield,
+  Truck,
   Award,
   TrendingUp,
   Package,
   Users,
-  Star
-} from 'lucide-react';
-import { featuredProducts, categories, newArrivals, vendors } from '@/data/mockData';
+  Star,
+} from "lucide-react";
+import {
+  featuredProducts,
+  categories,
+  newArrivals,
+  vendors,
+} from "@/data/mockData";
 
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      
+
       <main className="flex-grow">
         {/* Hero Section */}
         <section className="relative bg-white text-black">
@@ -37,19 +57,26 @@ export default function Home() {
                   Discover Rare & Authentic Collectibles
                 </h1>
                 <p className="text-xl mb-8 text-gray-600">
-                  Join thousands of collectors in finding unique treasures from verified vendors worldwide.
+                  Join thousands of collectors in finding unique treasures from
+                  verified vendors worldwide.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <SecondaryButton asChild size="lg" className="bg-black text-white hover:bg-gray-800">
+                  <SecondaryButton
+                    asChild
+                    size="lg"
+                    className="bg-black text-white hover:bg-gray-800"
+                  >
                     <Link href="/browse">
                       Start Browsing
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Link>
                   </SecondaryButton>
-                  <OutlineButton asChild size="lg" className="border-black text-black hover:bg-black hover:text-white">
-                    <Link href="/sell">
-                      Become a Vendor
-                    </Link>
+                  <OutlineButton
+                    asChild
+                    size="lg"
+                    className="border-black text-black hover:bg-black hover:text-white"
+                  >
+                    <Link href="/sell">Become a Vendor</Link>
                   </OutlineButton>
                 </div>
                 <div className="mt-8 flex items-center gap-6">
@@ -68,7 +95,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="relative h-[400px] hidden md:block">
-                <Image 
+                <Image
                   src="/ChatGPT Image Sep 4, 2025, 11_51_28 AM.png"
                   alt="LPX Collect Package"
                   width={400}
@@ -126,7 +153,9 @@ export default function Home() {
           <div className="container">
             <div className="flex justify-between items-center mb-8">
               <div>
-                <h2 className="text-3xl font-bold mb-2">Featured Collectibles</h2>
+                <h2 className="text-3xl font-bold mb-2">
+                  Featured Collectibles
+                </h2>
                 <p className="text-gray-600 dark:text-gray-400">
                   Hand-picked rare items from our top vendors
                 </p>
@@ -140,7 +169,11 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {featuredProducts.slice(0, 4).map((product) => (
-                <ProductCard key={product.id} product={product} variant="default" />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  variant="default"
+                />
               ))}
             </div>
           </div>
@@ -198,7 +231,11 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {newArrivals.map((product) => (
-                <ProductCard key={product.id} product={product} variant="default" />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  variant="default"
+                />
               ))}
             </div>
           </div>
@@ -215,7 +252,11 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {vendors.map((vendor) => (
-                <Link key={vendor.id} href={`/vendor/${vendor.id}`} className="group">
+                <Link
+                  key={vendor.id}
+                  href={`/vendor/${vendor.id}`}
+                  className="group"
+                >
                   <VendorCard>
                     <CardContent className="p-6">
                       <div className="flex items-start gap-4">
@@ -234,7 +275,9 @@ export default function Home() {
                             </div>
                             <div className="flex items-center gap-1">
                               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                              <span className="text-sm font-medium">{vendor.rating}</span>
+                              <span className="text-sm font-medium">
+                                {vendor.rating}
+                              </span>
                             </div>
                           </div>
                           <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
@@ -269,19 +312,26 @@ export default function Home() {
               Start Your Collection Today
             </h2>
             <p className="text-xl mb-8 max-w-2xl mx-auto">
-              Join our community of passionate collectors and discover unique treasures from around the world.
+              Join our community of passionate collectors and discover unique
+              treasures from around the world.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <SecondaryButton asChild size="lg" className="bg-black text-white hover:bg-gray-800">
+              <SecondaryButton
+                asChild
+                size="lg"
+                className="bg-black text-white hover:bg-gray-800"
+              >
                 <Link href="/register">
                   Create Account
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </SecondaryButton>
-              <OutlineButton asChild size="lg" className="border-black text-black hover:bg-black hover:text-white">
-                <Link href="/how-it-works">
-                  Learn More
-                </Link>
+              <OutlineButton
+                asChild
+                size="lg"
+                className="border-black text-black hover:bg-black hover:text-white"
+              >
+                <Link href="/how-it-works">Learn More</Link>
               </OutlineButton>
             </div>
           </div>
@@ -294,7 +344,9 @@ export default function Home() {
               <div>
                 <TrendingUp className="h-8 w-8 text-primary mx-auto mb-3" />
                 <p className="text-3xl font-bold mb-1">$2M+</p>
-                <p className="text-gray-600 dark:text-gray-400">Monthly Sales</p>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Monthly Sales
+                </p>
               </div>
               <div>
                 <Package className="h-8 w-8 text-primary mx-auto mb-3" />
@@ -304,12 +356,16 @@ export default function Home() {
               <div>
                 <Users className="h-8 w-8 text-primary mx-auto mb-3" />
                 <p className="text-3xl font-bold mb-1">50K+</p>
-                <p className="text-gray-600 dark:text-gray-400">Happy Collectors</p>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Happy Collectors
+                </p>
               </div>
               <div>
                 <Award className="h-8 w-8 text-primary mx-auto mb-3" />
                 <p className="text-3xl font-bold mb-1">99%</p>
-                <p className="text-gray-600 dark:text-gray-400">Satisfaction Rate</p>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Satisfaction Rate
+                </p>
               </div>
             </div>
           </div>

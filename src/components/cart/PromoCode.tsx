@@ -1,15 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Tag,
-  X,
-  CheckCircle
-} from 'lucide-react';
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Tag, X, CheckCircle } from "lucide-react";
 
 interface PromoCodeProps {
   onApply: (code: string) => { valid: boolean; discount: number };
@@ -17,27 +13,31 @@ interface PromoCodeProps {
   onRemove?: () => void;
 }
 
-export default function PromoCode({ onApply, currentCode, onRemove }: PromoCodeProps) {
-  const [code, setCode] = useState('');
+export default function PromoCode({
+  onApply,
+  currentCode,
+  onRemove,
+}: PromoCodeProps) {
+  const [code, setCode] = useState("");
   const [isApplying, setIsApplying] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleApply = () => {
     if (!code.trim()) {
-      setError('Please enter a promo code');
+      setError("Please enter a promo code");
       return;
     }
 
     setIsApplying(true);
-    setError('');
+    setError("");
 
     // Simulate async validation
     setTimeout(() => {
       const result = onApply(code);
       if (!result.valid) {
-        setError('Invalid promo code');
+        setError("Invalid promo code");
       } else {
-        setCode('');
+        setCode("");
       }
       setIsApplying(false);
     }, 500);
@@ -46,13 +46,13 @@ export default function PromoCode({ onApply, currentCode, onRemove }: PromoCodeP
   const handleRemove = () => {
     if (onRemove) {
       onRemove();
-      setCode('');
-      setError('');
+      setCode("");
+      setError("");
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleApply();
     }
   };
@@ -67,11 +67,7 @@ export default function PromoCode({ onApply, currentCode, onRemove }: PromoCodeP
               <span className="text-sm font-medium">Promo code applied</span>
               <Badge variant="secondary">{currentCode}</Badge>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleRemove}
-            >
+            <Button variant="ghost" size="sm" onClick={handleRemove}>
               <X className="h-4 w-4" />
               Remove
             </Button>
@@ -89,17 +85,17 @@ export default function PromoCode({ onApply, currentCode, onRemove }: PromoCodeP
             <Tag className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm font-medium">Have a promo code?</span>
           </div>
-          
+
           <div className="flex gap-2">
             <Input
               placeholder="Enter promo code"
               value={code}
               onChange={(e) => {
                 setCode(e.target.value.toUpperCase());
-                setError('');
+                setError("");
               }}
               onKeyPress={handleKeyPress}
-              className={error ? 'border-red-500' : ''}
+              className={error ? "border-red-500" : ""}
               disabled={isApplying}
             />
             <Button
@@ -107,36 +103,36 @@ export default function PromoCode({ onApply, currentCode, onRemove }: PromoCodeP
               disabled={!code.trim() || isApplying}
               variant="outline"
             >
-              {isApplying ? 'Applying...' : 'Apply'}
+              {isApplying ? "Applying..." : "Apply"}
             </Button>
           </div>
 
-          {error && (
-            <p className="text-xs text-red-500">{error}</p>
-          )}
+          {error && <p className="text-xs text-red-500">{error}</p>}
 
           {/* Available Codes Hint (for demo) */}
           <div className="pt-2 border-t">
-            <p className="text-xs text-muted-foreground mb-2">Try these codes:</p>
+            <p className="text-xs text-muted-foreground mb-2">
+              Try these codes:
+            </p>
             <div className="flex flex-wrap gap-1">
-              <Badge 
-                variant="outline" 
+              <Badge
+                variant="outline"
                 className="text-xs cursor-pointer hover:bg-primary hover:text-white"
-                onClick={() => setCode('SAVE10')}
+                onClick={() => setCode("SAVE10")}
               >
                 SAVE10
               </Badge>
-              <Badge 
-                variant="outline" 
+              <Badge
+                variant="outline"
                 className="text-xs cursor-pointer hover:bg-primary hover:text-white"
-                onClick={() => setCode('WELCOME15')}
+                onClick={() => setCode("WELCOME15")}
               >
                 WELCOME15
               </Badge>
-              <Badge 
-                variant="outline" 
+              <Badge
+                variant="outline"
                 className="text-xs cursor-pointer hover:bg-primary hover:text-white"
-                onClick={() => setCode('FREESHIP')}
+                onClick={() => setCode("FREESHIP")}
               >
                 FREESHIP
               </Badge>

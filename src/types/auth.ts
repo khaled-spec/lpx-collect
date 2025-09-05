@@ -2,17 +2,17 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'collector' | 'vendor' | 'admin';
+  role: "collector" | "vendor" | "admin";
   avatar?: string;
   phoneNumber?: string;
   emailVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
-  
+
   // Collector specific fields
   wishlistCount?: number;
   orderCount?: number;
-  
+
   // Vendor specific fields
   storeName?: string;
   storeDescription?: string;
@@ -39,7 +39,7 @@ export interface RegisterData {
   email: string;
   password: string;
   confirmPassword: string;
-  accountType: 'collector' | 'vendor';
+  accountType: "collector" | "vendor";
   acceptTerms: boolean;
   newsletter?: boolean;
 }

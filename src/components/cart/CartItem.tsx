@@ -1,22 +1,16 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { CartItem as CartItemType } from '@/types';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Minus, 
-  Plus, 
-  X, 
-  Heart,
-  Package
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { VerifiedBadge } from '@/components/custom/badge-variants';
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { CartItem as CartItemType } from "@/types";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Minus, Plus, X, Heart, Package } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { VerifiedBadge } from "@/components/custom/badge-variants";
 
 interface CartItemProps {
   item: CartItemType;
@@ -24,7 +18,11 @@ interface CartItemProps {
   onRemove: (itemId: string) => void;
 }
 
-export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
+export default function CartItem({
+  item,
+  onUpdateQuantity,
+  onRemove,
+}: CartItemProps) {
   const [isUpdating, setIsUpdating] = useState(false);
   const { product, quantity } = item;
 
@@ -35,25 +33,25 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
   };
 
   const subtotal = product.price * quantity;
-  const savings = product.compareAtPrice 
-    ? (product.compareAtPrice - product.price) * quantity 
+  const savings = product.compareAtPrice
+    ? (product.compareAtPrice - product.price) * quantity
     : 0;
 
   const conditionColors = {
-    new: 'bg-green-100 text-green-800',
-    mint: 'bg-blue-100 text-blue-800',
-    excellent: 'bg-indigo-100 text-indigo-800',
-    good: 'bg-yellow-100 text-yellow-800',
-    fair: 'bg-orange-100 text-orange-800',
-    poor: 'bg-red-100 text-red-800',
+    new: "bg-green-100 text-green-800",
+    mint: "bg-blue-100 text-blue-800",
+    excellent: "bg-indigo-100 text-indigo-800",
+    good: "bg-yellow-100 text-yellow-800",
+    fair: "bg-orange-100 text-orange-800",
+    poor: "bg-red-100 text-red-800",
   };
 
   const rarityColors = {
-    common: 'bg-gray-100 text-gray-800',
-    uncommon: 'bg-green-100 text-green-800',
-    rare: 'bg-blue-100 text-blue-800',
-    'very-rare': 'bg-purple-100 text-purple-800',
-    legendary: 'bg-yellow-100 text-yellow-800',
+    common: "bg-gray-100 text-gray-800",
+    uncommon: "bg-green-100 text-green-800",
+    rare: "bg-blue-100 text-blue-800",
+    "very-rare": "bg-purple-100 text-purple-800",
+    legendary: "bg-yellow-100 text-yellow-800",
   };
 
   return (
@@ -64,7 +62,7 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
           <Link href={`/product/${product.id}`}>
             <div className="relative w-full h-full rounded-lg overflow-hidden bg-gray-100 cursor-pointer hover:opacity-90 transition">
               <Image
-                src={product.images[0] || '/placeholder.png'}
+                src={product.images[0] || "/placeholder.png"}
                 alt={product.title}
                 fill
                 className="object-cover"
@@ -85,7 +83,7 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
           {/* Title and Remove Button */}
           <div className="flex justify-between items-start gap-2">
             <div className="flex-1">
-              <Link 
+              <Link
                 href={`/product/${product.id}`}
                 className="font-medium text-base sm:text-lg hover:text-primary transition line-clamp-2"
               >
@@ -105,12 +103,18 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
           {/* Product Meta */}
           <div className="flex flex-wrap gap-2">
             {product.condition && (
-              <Badge variant="secondary" className={cn("text-xs", conditionColors[product.condition])}>
+              <Badge
+                variant="secondary"
+                className={cn("text-xs", conditionColors[product.condition])}
+              >
                 {product.condition}
               </Badge>
             )}
             {product.rarity && (
-              <Badge variant="secondary" className={cn("text-xs", rarityColors[product.rarity])}>
+              <Badge
+                variant="secondary"
+                className={cn("text-xs", rarityColors[product.rarity])}
+              >
                 {product.rarity}
               </Badge>
             )}
@@ -191,19 +195,11 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
 
           {/* Actions */}
           <div className="flex gap-2 pt-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-xs"
-            >
+            <Button variant="ghost" size="sm" className="text-xs">
               <Heart className="h-3 w-3 mr-1" />
               Save for later
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-xs"
-            >
+            <Button variant="ghost" size="sm" className="text-xs">
               <Package className="h-3 w-3 mr-1" />
               View similar
             </Button>

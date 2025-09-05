@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import * as React from "react";
 import { Button, ButtonProps } from "@/components/ui/button";
@@ -14,12 +14,12 @@ export const PrimaryButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
         variant="default"
         className={cn(
           "bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg hover:shadow-xl transition-all duration-200",
-          className
+          className,
         )}
         {...props}
       />
     );
-  }
+  },
 );
 PrimaryButton.displayName = "PrimaryButton";
 
@@ -32,12 +32,12 @@ export const SecondaryButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
         variant="secondary"
         className={cn(
           "bg-secondary hover:bg-secondary/80 text-secondary-foreground",
-          className
+          className,
         )}
         {...props}
       />
     );
-  }
+  },
 );
 SecondaryButton.displayName = "SecondaryButton";
 
@@ -51,12 +51,12 @@ export const IconButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
         size="icon"
         className={cn(
           "rounded-full hover:bg-accent hover:text-accent-foreground",
-          className
+          className,
         )}
         {...props}
       />
     );
-  }
+  },
 );
 IconButton.displayName = "IconButton";
 
@@ -70,12 +70,12 @@ export const CartButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
         size="icon"
         className={cn(
           "bg-primary hover:bg-primary/90 rounded-lg h-8 w-8",
-          className
+          className,
         )}
         {...props}
       />
     );
-  }
+  },
 );
 CartButton.displayName = "CartButton";
 
@@ -88,12 +88,12 @@ export const CTALinkButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
         variant="link"
         className={cn(
           "text-primary hover:text-primary/80 font-semibold p-0 h-auto",
-          className
+          className,
         )}
         {...props}
       />
     );
-  }
+  },
 );
 CTALinkButton.displayName = "CTALinkButton";
 
@@ -106,11 +106,11 @@ export const OutlineButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
         variant="outline"
         className={cn(
           "border-2 hover:bg-accent hover:text-accent-foreground",
-          className
+          className,
         )}
         {...props}
       />
     );
-  }
+  },
 );
 OutlineButton.displayName = "OutlineButton";

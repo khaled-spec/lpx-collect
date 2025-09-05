@@ -3,7 +3,7 @@ export interface User {
   name: string;
   email: string;
   avatar?: string;
-  role: 'buyer' | 'vendor' | 'admin';
+  role: "buyer" | "vendor" | "admin";
   createdAt: Date;
 }
 
@@ -44,8 +44,8 @@ export interface Product {
   images: string[];
   category: Category;
   vendor: Vendor;
-  condition: 'new' | 'mint' | 'excellent' | 'good' | 'fair' | 'poor';
-  rarity?: 'common' | 'uncommon' | 'rare' | 'very-rare' | 'legendary';
+  condition: "new" | "mint" | "excellent" | "good" | "fair" | "poor";
+  rarity?: "common" | "uncommon" | "rare" | "very-rare" | "legendary";
   stock: number;
   sold: number;
   views: number;
@@ -72,7 +72,7 @@ export interface Order {
   shipping: number;
   tax: number;
   total: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
   shippingAddress: Address;
   billingAddress: Address;
   paymentMethod: string;
@@ -123,5 +123,5 @@ export interface SearchFilters {
   condition?: string[];
   rarity?: string[];
   vendor?: string;
-  sortBy?: 'price-asc' | 'price-desc' | 'newest' | 'popular' | 'rating';
+  sortBy?: "price-asc" | "price-desc" | "newest" | "popular" | "rating";
 }

@@ -1,15 +1,15 @@
-import Link from 'next/link';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Package, 
-  Facebook, 
-  Twitter, 
-  Instagram, 
+import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
+import {
+  Package,
+  Facebook,
+  Twitter,
+  Instagram,
   Youtube,
   Mail,
   Phone,
-  MapPin
-} from 'lucide-react';
+  MapPin,
+} from "lucide-react";
 
 export default function Footer() {
   return (
@@ -23,7 +23,8 @@ export default function Footer() {
               <span className="text-xl font-bold">LPX Collect</span>
             </div>
             <p className="text-gray-400 mb-4">
-              Your trusted marketplace for authentic collectibles. Connect with verified vendors and discover rare treasures.
+              Your trusted marketplace for authentic collectibles. Connect with
+              verified vendors and discover rare treasures.
             </p>
             <div className="flex gap-4">
               <a href="#" className="text-gray-400 hover:text-white transition">
@@ -46,27 +47,42 @@ export default function Footer() {
             <h3 className="font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/browse" className="text-gray-400 hover:text-white transition">
+                <Link
+                  href="/browse"
+                  className="text-gray-400 hover:text-white transition"
+                >
                   Browse All
                 </Link>
               </li>
               <li>
-                <Link href="/new-arrivals" className="text-gray-400 hover:text-white transition">
+                <Link
+                  href="/new-arrivals"
+                  className="text-gray-400 hover:text-white transition"
+                >
                   New Arrivals
                 </Link>
               </li>
               <li>
-                <Link href="/featured" className="text-gray-400 hover:text-white transition">
+                <Link
+                  href="/featured"
+                  className="text-gray-400 hover:text-white transition"
+                >
                   Featured Items
                 </Link>
               </li>
               <li>
-                <Link href="/deals" className="text-gray-400 hover:text-white transition">
+                <Link
+                  href="/deals"
+                  className="text-gray-400 hover:text-white transition"
+                >
                   Deals & Offers
                 </Link>
               </li>
               <li>
-                <Link href="/vendors" className="text-gray-400 hover:text-white transition">
+                <Link
+                  href="/vendors"
+                  className="text-gray-400 hover:text-white transition"
+                >
                   Top Vendors
                 </Link>
               </li>
@@ -78,27 +94,42 @@ export default function Footer() {
             <h3 className="font-semibold mb-4">For Vendors</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/sell" className="text-gray-400 hover:text-white transition">
+                <Link
+                  href="/sell"
+                  className="text-gray-400 hover:text-white transition"
+                >
                   Start Selling
                 </Link>
               </li>
               <li>
-                <Link href="/vendor-guide" className="text-gray-400 hover:text-white transition">
+                <Link
+                  href="/vendor-guide"
+                  className="text-gray-400 hover:text-white transition"
+                >
                   Vendor Guide
                 </Link>
               </li>
               <li>
-                <Link href="/pricing" className="text-gray-400 hover:text-white transition">
+                <Link
+                  href="/pricing"
+                  className="text-gray-400 hover:text-white transition"
+                >
                   Pricing & Fees
                 </Link>
               </li>
               <li>
-                <Link href="/vendor-tools" className="text-gray-400 hover:text-white transition">
+                <Link
+                  href="/vendor-tools"
+                  className="text-gray-400 hover:text-white transition"
+                >
                   Vendor Tools
                 </Link>
               </li>
               <li>
-                <Link href="/success-stories" className="text-gray-400 hover:text-white transition">
+                <Link
+                  href="/success-stories"
+                  className="text-gray-400 hover:text-white transition"
+                >
                   Success Stories
                 </Link>
               </li>
@@ -110,27 +141,42 @@ export default function Footer() {
             <h3 className="font-semibold mb-4">Support</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/help" className="text-gray-400 hover:text-white transition">
+                <Link
+                  href="/help"
+                  className="text-gray-400 hover:text-white transition"
+                >
                   Help Center
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-400 hover:text-white transition">
+                <Link
+                  href="/contact"
+                  className="text-gray-400 hover:text-white transition"
+                >
                   Contact Us
                 </Link>
               </li>
               <li>
-                <Link href="/shipping" className="text-gray-400 hover:text-white transition">
+                <Link
+                  href="/shipping"
+                  className="text-gray-400 hover:text-white transition"
+                >
                   Shipping Info
                 </Link>
               </li>
               <li>
-                <Link href="/returns" className="text-gray-400 hover:text-white transition">
+                <Link
+                  href="/returns"
+                  className="text-gray-400 hover:text-white transition"
+                >
                   Returns & Refunds
                 </Link>
               </li>
               <li>
-                <Link href="/verification" className="text-gray-400 hover:text-white transition">
+                <Link
+                  href="/verification"
+                  className="text-gray-400 hover:text-white transition"
+                >
                   Verification Process
                 </Link>
               </li>
@@ -165,13 +211,22 @@ export default function Footer() {
               © 2024 LPX Collect. All rights reserved.
             </p>
             <div className="flex gap-6 text-sm">
-              <Link href="/privacy" className="text-gray-400 hover:text-white transition">
+              <Link
+                href="/privacy"
+                className="text-gray-400 hover:text-white transition"
+              >
                 Privacy Policy
               </Link>
-              <Link href="/terms" className="text-gray-400 hover:text-white transition">
+              <Link
+                href="/terms"
+                className="text-gray-400 hover:text-white transition"
+              >
                 Terms of Service
               </Link>
-              <Link href="/cookies" className="text-gray-400 hover:text-white transition">
+              <Link
+                href="/cookies"
+                className="text-gray-400 hover:text-white transition"
+              >
                 Cookie Policy
               </Link>
             </div>

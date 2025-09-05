@@ -1,14 +1,15 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { useCart } from '@/context/CartContext';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
-import { Shield, Truck, CreditCard } from 'lucide-react';
+import Image from "next/image";
+import { useCart } from "@/context/CartContext";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { Shield, Truck, CreditCard } from "lucide-react";
 
 export default function CheckoutSummary() {
-  const { items, subtotal, shipping, tax, discount, total, couponCode } = useCart();
+  const { items, subtotal, shipping, tax, discount, total, couponCode } =
+    useCart();
 
   return (
     <div className="space-y-4">
@@ -31,7 +32,9 @@ export default function CheckoutSummary() {
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{item.product.title}</p>
+                  <p className="text-sm font-medium truncate">
+                    {item.product.title}
+                  </p>
                   <p className="text-xs text-muted-foreground">
                     Qty: {item.quantity} × ${item.product.price.toFixed(2)}
                   </p>
@@ -51,27 +54,27 @@ export default function CheckoutSummary() {
               <span>Subtotal</span>
               <span>${subtotal.toFixed(2)}</span>
             </div>
-            
+
             {couponCode && discount > 0 && (
               <div className="flex justify-between text-sm">
-                <span className="text-green-600">
-                  Discount ({couponCode})
-                </span>
+                <span className="text-green-600">Discount ({couponCode})</span>
                 <span className="text-green-600">-${discount.toFixed(2)}</span>
               </div>
             )}
-            
+
             <div className="flex justify-between text-sm">
               <span>Shipping</span>
               <span>
                 {shipping === 0 ? (
-                  <Badge variant="secondary" className="text-xs">FREE</Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    FREE
+                  </Badge>
                 ) : (
                   `$${shipping.toFixed(2)}`
                 )}
               </span>
             </div>
-            
+
             <div className="flex justify-between text-sm">
               <span>Tax</span>
               <span>${tax.toFixed(2)}</span>
@@ -83,7 +86,9 @@ export default function CheckoutSummary() {
           {/* Total */}
           <div className="flex justify-between items-center">
             <span className="font-semibold text-lg">Total</span>
-            <span className="font-bold text-xl text-primary">${total.toFixed(2)}</span>
+            <span className="font-bold text-xl text-primary">
+              ${total.toFixed(2)}
+            </span>
           </div>
 
           {/* Free Shipping Notice */}
@@ -93,7 +98,7 @@ export default function CheckoutSummary() {
                 Add ${(100 - subtotal).toFixed(2)} more for free shipping!
               </p>
               <div className="mt-2 w-full bg-blue-100 dark:bg-blue-900 rounded-full h-2">
-                <div 
+                <div
                   className="bg-blue-500 h-2 rounded-full transition-all"
                   style={{ width: `${Math.min((subtotal / 100) * 100, 100)}%` }}
                 />
@@ -126,7 +131,7 @@ export default function CheckoutSummary() {
       {/* Help Text */}
       <div className="text-center">
         <p className="text-xs text-muted-foreground">
-          Need help? Contact our{' '}
+          Need help? Contact our{" "}
           <a href="/help" className="text-primary hover:underline">
             customer support
           </a>

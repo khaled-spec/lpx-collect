@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import Link from "next/link";
+import Image from "next/image";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@/components/ui/carousel';
-import { Star } from 'lucide-react';
+} from "@/components/ui/carousel";
+import { Star } from "lucide-react";
 
 interface RelatedProduct {
   id: string;
@@ -38,14 +38,17 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
 
       <Carousel
         opts={{
-          align: 'start',
+          align: "start",
           loop: true,
         }}
         className="w-full"
       >
         <CarouselContent className="-ml-4">
           {products.map((product) => (
-            <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+            <CarouselItem
+              key={product.id}
+              className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+            >
               <Link href={`/product/${product.id}`}>
                 <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
                   <div className="relative aspect-square overflow-hidden bg-gray-50">
@@ -55,7 +58,10 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
                       fill
                       className="object-cover hover:scale-105 transition-transform duration-300"
                     />
-                    <Badge className="absolute top-2 right-2" variant="secondary">
+                    <Badge
+                      className="absolute top-2 right-2"
+                      variant="secondary"
+                    >
                       {product.condition}
                     </Badge>
                   </div>
@@ -65,7 +71,10 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
                     </h3>
                     <div className="space-y-1">
                       <p className="text-xl font-bold">
-                        ${product.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        $
+                        {product.price.toLocaleString("en-US", {
+                          minimumFractionDigits: 2,
+                        })}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         by {product.vendor}

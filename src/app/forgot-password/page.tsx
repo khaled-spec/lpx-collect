@@ -1,27 +1,33 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { 
-  Mail, 
-  AlertCircle, 
+import { useState } from "react";
+import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  Mail,
+  AlertCircle,
   Package,
   Loader2,
   ArrowLeft,
-  CheckCircle
-} from 'lucide-react';
-import { mockResetPasswordRequest } from '@/lib/mock-auth';
+  CheckCircle,
+} from "lucide-react";
+import { mockResetPasswordRequest } from "@/lib/mock-auth";
 
 const resetSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
+  email: z.string().email("Please enter a valid email address"),
 });
 
 type ResetFormData = z.infer<typeof resetSchema>;
@@ -30,8 +36,8 @@ export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [submittedEmail, setSubmittedEmail] = useState('');
-  
+  const [submittedEmail, setSubmittedEmail] = useState("");
+
   const {
     register,
     handleSubmit,
@@ -39,20 +45,24 @@ export default function ForgotPasswordPage() {
   } = useForm<ResetFormData>({
     resolver: zodResolver(resetSchema),
     defaultValues: {
-      email: '',
+      email: "",
     },
   });
 
   const onSubmit = async (data: ResetFormData) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       await mockResetPasswordRequest(data.email);
       setSubmittedEmail(data.email);
       setIsSuccess(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send reset email. Please try again.');
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to send reset email. Please try again.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -78,24 +88,25 @@ export default function ForgotPasswordPage() {
             </CardDescription>
             <p className="font-medium text-foreground mt-1">{submittedEmail}</p>
           </CardHeader>
-          
+
           <CardContent className="space-y-4">
             <Alert className="border-blue-200 bg-blue-50 dark:bg-blue-950/50">
               <AlertCircle className="h-4 w-4 text-blue-600" />
               <AlertTitle className="text-sm font-medium">Demo Note</AlertTitle>
               <AlertDescription className="text-sm">
-                This is a demo. In production, you would receive an email with a link to reset your password.
+                This is a demo. In production, you would receive an email with a
+                link to reset your password.
               </AlertDescription>
             </Alert>
 
             <div className="space-y-2 text-center text-sm text-muted-foreground">
               <p>Didn't receive the email? Check your spam folder or</p>
-              <Button 
-                variant="link" 
+              <Button
+                variant="link"
                 className="p-0 h-auto font-normal text-primary"
                 onClick={() => {
                   setIsSuccess(false);
-                  setSubmittedEmail('');
+                  setSubmittedEmail("");
                 }}
               >
                 try with a different email address
@@ -103,11 +114,7 @@ export default function ForgotPasswordPage() {
             </div>
 
             <div className="space-y-3">
-              <Button 
-                asChild
-                variant="outline"
-                className="w-full"
-              >
+              <Button asChild variant="outline" className="w-full">
                 <Link href="/login">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to login
@@ -130,12 +137,15 @@ export default function ForgotPasswordPage() {
 
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">Forgot password?</CardTitle>
+          <CardTitle className="text-2xl text-center">
+            Forgot password?
+          </CardTitle>
           <CardDescription className="text-center">
-            Enter your email and we'll send you instructions to reset your password
+            Enter your email and we'll send you instructions to reset your
+            password
           </CardDescription>
         </CardHeader>
-        
+
         <CardContent className="space-y-4">
           {error && (
             <Alert variant="destructive">
@@ -155,20 +165,18 @@ export default function ForgotPasswordPage() {
                   type="email"
                   placeholder="Enter your email address"
                   className="pl-10"
-                  {...register('email')}
+                  {...register("email")}
                   disabled={isLoading}
                 />
               </div>
               {errors.email && (
-                <p className="text-sm text-destructive">{errors.email.message}</p>
+                <p className="text-sm text-destructive">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
-            <Button 
-              type="submit" 
-              className="w-full" 
-              disabled={isLoading}
-            >
+            <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -187,11 +195,7 @@ export default function ForgotPasswordPage() {
             <p className="text-sm text-muted-foreground">
               Remember your password?
             </p>
-            <Button 
-              asChild
-              variant="outline"
-              className="w-full"
-            >
+            <Button asChild variant="outline" className="w-full">
               <Link href="/login">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to login
@@ -203,11 +207,17 @@ export default function ForgotPasswordPage() {
 
       {/* Footer Links */}
       <div className="mt-8 flex gap-4 text-sm text-muted-foreground">
-        <Link href="/terms" className="hover:underline">Terms</Link>
+        <Link href="/terms" className="hover:underline">
+          Terms
+        </Link>
         <span>•</span>
-        <Link href="/privacy" className="hover:underline">Privacy</Link>
+        <Link href="/privacy" className="hover:underline">
+          Privacy
+        </Link>
         <span>•</span>
-        <Link href="/help" className="hover:underline">Help</Link>
+        <Link href="/help" className="hover:underline">
+          Help
+        </Link>
       </div>
     </div>
   );

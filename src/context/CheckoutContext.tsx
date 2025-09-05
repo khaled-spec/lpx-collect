@@ -1,11 +1,18 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { CheckoutData, CheckoutStep, ShippingAddress, BillingAddress, PaymentMethod, Order } from '@/types/checkout';
-import { useCart } from '@/context/CartContext';
-import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
+import React, { createContext, useContext, useState, useCallback } from "react";
+import {
+  CheckoutData,
+  CheckoutStep,
+  ShippingAddress,
+  BillingAddress,
+  PaymentMethod,
+  Order,
+} from "@/types/checkout";
+import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface CheckoutContextType {
   currentStep: CheckoutStep;
@@ -25,23 +32,26 @@ interface CheckoutContextType {
   canProceed: () => boolean;
 }
 
-const CheckoutContext = createContext<CheckoutContextType | undefined>(undefined);
+const CheckoutContext = createContext<CheckoutContextType | undefined>(
+  undefined,
+);
 
-const STEPS: CheckoutStep[] = ['shipping', 'billing', 'payment', 'review'];
+const STEPS: CheckoutStep[] = ["shipping", "billing", "payment", "review"];
 
 export function CheckoutProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { items, total, subtotal, shipping, tax, discount, clearCart } = useCart();
+  const { items, total, subtotal, shipping, tax, discount, clearCart } =
+    useCart();
   const { user } = useAuth();
-  
-  const [currentStep, setCurrentStep] = useState<CheckoutStep>('shipping');
+
+  const [currentStep, setCurrentStep] = useState<CheckoutStep>("shipping");
   const [isProcessing, setIsProcessing] = useState(false);
   const [checkoutData, setCheckoutData] = useState<CheckoutData>({
     shippingAddress: null,
     billingAddress: null,
     sameAsShipping: true,
     paymentMethod: null,
-    orderNotes: '',
+    orderNotes: "",
     acceptTerms: false,
     subscribeNewsletter: false,
   });
@@ -61,51 +71,56 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
   }, [currentStep]);
 
   const updateShippingAddress = useCallback((address: ShippingAddress) => {
-    setCheckoutData(prev => ({
+    setCheckoutData((prev) => ({
       ...prev,
       shippingAddress: address,
-      billingAddress: prev.sameAsShipping ? address as BillingAddress : prev.billingAddress,
+      billingAddress: prev.sameAsShipping
+        ? (address as BillingAddress)
+        : prev.billingAddress,
     }));
   }, []);
 
   const updateBillingAddress = useCallback((address: BillingAddress) => {
-    setCheckoutData(prev => ({
+    setCheckoutData((prev) => ({
       ...prev,
       billingAddress: address,
     }));
   }, []);
 
   const updatePaymentMethod = useCallback((method: PaymentMethod) => {
-    setCheckoutData(prev => ({
+    setCheckoutData((prev) => ({
       ...prev,
       paymentMethod: method,
     }));
   }, []);
 
   const setSameAsShipping = useCallback((same: boolean) => {
-    setCheckoutData(prev => ({
+    setCheckoutData((prev) => ({
       ...prev,
       sameAsShipping: same,
-      billingAddress: same && prev.shippingAddress ? prev.shippingAddress as BillingAddress : prev.billingAddress,
+      billingAddress:
+        same && prev.shippingAddress
+          ? (prev.shippingAddress as BillingAddress)
+          : prev.billingAddress,
     }));
   }, []);
 
   const setOrderNotes = useCallback((notes: string) => {
-    setCheckoutData(prev => ({
+    setCheckoutData((prev) => ({
       ...prev,
       orderNotes: notes,
     }));
   }, []);
 
   const setAcceptTerms = useCallback((accept: boolean) => {
-    setCheckoutData(prev => ({
+    setCheckoutData((prev) => ({
       ...prev,
       acceptTerms: accept,
     }));
   }, []);
 
   const setSubscribeNewsletter = useCallback((subscribe: boolean) => {
-    setCheckoutData(prev => ({
+    setCheckoutData((prev) => ({
       ...prev,
       subscribeNewsletter: subscribe,
     }));
@@ -113,13 +128,13 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
   const canProceed = useCallback(() => {
     switch (currentStep) {
-      case 'shipping':
+      case "shipping":
         return !!checkoutData.shippingAddress;
-      case 'billing':
+      case "billing":
         return checkoutData.sameAsShipping || !!checkoutData.billingAddress;
-      case 'payment':
+      case "payment":
         return !!checkoutData.paymentMethod;
-      case 'review':
+      case "review":
         return checkoutData.acceptTerms;
       default:
         return false;
@@ -128,25 +143,25 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
   const placeOrder = useCallback(async (): Promise<string> => {
     if (!canProceed() || items.length === 0) {
-      toast.error('Please complete all required fields');
-      return '';
+      toast.error("Please complete all required fields");
+      return "";
     }
 
     setIsProcessing(true);
 
     try {
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // Generate order data
       const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
       const orderNumber = `#${Math.floor(100000 + Math.random() * 900000)}`;
-      
+
       const order: Order = {
         id: orderId,
         orderNumber,
         userId: user?.id,
-        items: items.map(item => ({
+        items: items.map((item) => ({
           productId: item.product.id,
           title: item.product.title,
           price: item.product.price,
@@ -155,8 +170,8 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
           vendor: item.product.vendor.storeName,
         })),
         shippingAddress: checkoutData.shippingAddress!,
-        billingAddress: checkoutData.sameAsShipping 
-          ? checkoutData.shippingAddress as BillingAddress 
+        billingAddress: checkoutData.sameAsShipping
+          ? (checkoutData.shippingAddress as BillingAddress)
           : checkoutData.billingAddress!,
         paymentMethod: checkoutData.paymentMethod!,
         subtotal,
@@ -164,31 +179,33 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
         tax,
         discount,
         total,
-        status: 'processing',
+        status: "processing",
         orderNotes: checkoutData.orderNotes,
         createdAt: new Date(),
         estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
       };
 
       // Save order to localStorage
-      const existingOrders = JSON.parse(localStorage.getItem('lpx-orders') || '[]');
+      const existingOrders = JSON.parse(
+        localStorage.getItem("lpx-orders") || "[]",
+      );
       existingOrders.push(order);
-      localStorage.setItem('lpx-orders', JSON.stringify(existingOrders));
+      localStorage.setItem("lpx-orders", JSON.stringify(existingOrders));
 
       // Clear cart
       clearCart();
 
       // Show success message
-      toast.success('Order placed successfully!');
+      toast.success("Order placed successfully!");
 
       // Redirect to confirmation page
       router.push(`/order/${orderId}/confirmation`);
-      
+
       return orderId;
     } catch (error) {
-      console.error('Error placing order:', error);
-      toast.error('Failed to place order. Please try again.');
-      return '';
+      console.error("Error placing order:", error);
+      toast.error("Failed to place order. Please try again.");
+      return "";
     } finally {
       setIsProcessing(false);
     }
@@ -234,7 +251,7 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
 export function useCheckout() {
   const context = useContext(CheckoutContext);
   if (!context) {
-    throw new Error('useCheckout must be used within CheckoutProvider');
+    throw new Error("useCheckout must be used within CheckoutProvider");
   }
   return context;
 }

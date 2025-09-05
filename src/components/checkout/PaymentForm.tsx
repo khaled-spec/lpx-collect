@@ -1,48 +1,69 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { PaymentMethod } from '@/types/checkout';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { PrimaryButton, SecondaryButton } from '@/components/custom/button-variants';
-import { useCheckout } from '@/context/CheckoutContext';
-import { 
-  ArrowLeft, 
-  ArrowRight, 
-  CreditCard, 
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { PaymentMethod } from "@/types/checkout";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from "@/components/custom/button-variants";
+import { useCheckout } from "@/context/CheckoutContext";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CreditCard,
   Lock,
   Shield,
-  AlertCircle
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import Image from 'next/image';
+  AlertCircle,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
 
-const paymentSchema = z.object({
-  type: z.enum(['card', 'paypal', 'crypto']),
-  cardNumber: z.string().min(16, 'Card number must be 16 digits').max(16).optional(),
-  cardHolder: z.string().min(1, 'Cardholder name is required').optional(),
-  expiryDate: z.string().regex(/^(0[1-9]|1[0-2])\/\d{2}$/, 'Invalid expiry date (MM/YY)').optional(),
-  cvv: z.string().min(3, 'CVV must be at least 3 digits').max(4).optional(),
-  saveCard: z.boolean().optional(),
-}).refine((data) => {
-  if (data.type === 'card') {
-    return !!(data.cardNumber && data.cardHolder && data.expiryDate && data.cvv);
-  }
-  return true;
-}, {
-  message: "Card details are required for card payment",
-  path: ["cardNumber"],
-});
+const paymentSchema = z
+  .object({
+    type: z.enum(["card", "paypal", "crypto"]),
+    cardNumber: z
+      .string()
+      .min(16, "Card number must be 16 digits")
+      .max(16)
+      .optional(),
+    cardHolder: z.string().min(1, "Cardholder name is required").optional(),
+    expiryDate: z
+      .string()
+      .regex(/^(0[1-9]|1[0-2])\/\d{2}$/, "Invalid expiry date (MM/YY)")
+      .optional(),
+    cvv: z.string().min(3, "CVV must be at least 3 digits").max(4).optional(),
+    saveCard: z.boolean().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.type === "card") {
+        return !!(
+          data.cardNumber &&
+          data.cardHolder &&
+          data.expiryDate &&
+          data.cvv
+        );
+      }
+      return true;
+    },
+    {
+      message: "Card details are required for card payment",
+      path: ["cardNumber"],
+    },
+  );
 
 export default function PaymentForm() {
-  const { checkoutData, updatePaymentMethod, nextStep, prevStep } = useCheckout();
-  const [paymentType, setPaymentType] = useState<'card' | 'paypal' | 'crypto'>(
-    checkoutData.paymentMethod?.type || 'card'
+  const { checkoutData, updatePaymentMethod, nextStep, prevStep } =
+    useCheckout();
+  const [paymentType, setPaymentType] = useState<"card" | "paypal" | "crypto">(
+    checkoutData.paymentMethod?.type || "card",
   );
 
   const {
@@ -54,28 +75,28 @@ export default function PaymentForm() {
   } = useForm<PaymentMethod>({
     resolver: zodResolver(paymentSchema),
     defaultValues: checkoutData.paymentMethod || {
-      type: 'card',
-      cardNumber: '',
-      cardHolder: '',
-      expiryDate: '',
-      cvv: '',
+      type: "card",
+      cardNumber: "",
+      cardHolder: "",
+      expiryDate: "",
+      cvv: "",
       saveCard: false,
     },
   });
 
   const formatCardNumber = (value: string) => {
-    const cleaned = value.replace(/\D/g, '');
+    const cleaned = value.replace(/\D/g, "");
     const limited = cleaned.substring(0, 16);
-    setValue('cardNumber', limited);
+    setValue("cardNumber", limited);
   };
 
   const formatExpiryDate = (value: string) => {
-    const cleaned = value.replace(/\D/g, '');
+    const cleaned = value.replace(/\D/g, "");
     if (cleaned.length >= 3) {
       const formatted = `${cleaned.substring(0, 2)}/${cleaned.substring(2, 4)}`;
-      setValue('expiryDate', formatted);
+      setValue("expiryDate", formatted);
     } else {
-      setValue('expiryDate', cleaned);
+      setValue("expiryDate", cleaned);
     }
   };
 
@@ -84,9 +105,9 @@ export default function PaymentForm() {
     nextStep();
   };
 
-  const handlePaymentTypeChange = (type: 'card' | 'paypal' | 'crypto') => {
+  const handlePaymentTypeChange = (type: "card" | "paypal" | "crypto") => {
     setPaymentType(type);
-    if (type !== 'card') {
+    if (type !== "card") {
       // For non-card payments, just save the type
       updatePaymentMethod({ type });
       nextStep();
@@ -98,17 +119,27 @@ export default function PaymentForm() {
       {/* Payment Method Selection */}
       <div>
         <h3 className="text-lg font-semibold mb-4">Payment Method</h3>
-        <RadioGroup value={paymentType} onValueChange={(value) => handlePaymentTypeChange(value as any)}>
+        <RadioGroup
+          value={paymentType}
+          onValueChange={(value) => handlePaymentTypeChange(value as any)}
+        >
           <div className="space-y-3">
             {/* Credit/Debit Card */}
-            <div className={cn(
-              "border rounded-lg p-4 cursor-pointer transition-all",
-              paymentType === 'card' ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'
-            )}>
+            <div
+              className={cn(
+                "border rounded-lg p-4 cursor-pointer transition-all",
+                paymentType === "card"
+                  ? "border-primary bg-primary/5"
+                  : "border-gray-200 hover:border-gray-300",
+              )}
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <RadioGroupItem value="card" id="card" />
-                  <Label htmlFor="card" className="cursor-pointer flex items-center gap-2">
+                  <Label
+                    htmlFor="card"
+                    className="cursor-pointer flex items-center gap-2"
+                  >
                     <CreditCard className="h-5 w-5" />
                     Credit or Debit Card
                   </Label>
@@ -123,10 +154,14 @@ export default function PaymentForm() {
             </div>
 
             {/* PayPal */}
-            <div className={cn(
-              "border rounded-lg p-4 cursor-pointer transition-all",
-              paymentType === 'paypal' ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'
-            )}>
+            <div
+              className={cn(
+                "border rounded-lg p-4 cursor-pointer transition-all",
+                paymentType === "paypal"
+                  ? "border-primary bg-primary/5"
+                  : "border-gray-200 hover:border-gray-300",
+              )}
+            >
               <div className="flex items-center space-x-3">
                 <RadioGroupItem value="paypal" id="paypal" />
                 <Label htmlFor="paypal" className="cursor-pointer">
@@ -136,10 +171,14 @@ export default function PaymentForm() {
             </div>
 
             {/* Cryptocurrency */}
-            <div className={cn(
-              "border rounded-lg p-4 cursor-pointer transition-all opacity-50",
-              paymentType === 'crypto' ? 'border-primary bg-primary/5' : 'border-gray-200'
-            )}>
+            <div
+              className={cn(
+                "border rounded-lg p-4 cursor-pointer transition-all opacity-50",
+                paymentType === "crypto"
+                  ? "border-primary bg-primary/5"
+                  : "border-gray-200",
+              )}
+            >
               <div className="flex items-center space-x-3">
                 <RadioGroupItem value="crypto" id="crypto" disabled />
                 <Label htmlFor="crypto" className="cursor-pointer">
@@ -152,7 +191,7 @@ export default function PaymentForm() {
       </div>
 
       {/* Card Details Form */}
-      {paymentType === 'card' && (
+      {paymentType === "card" && (
         <>
           <div className="space-y-4">
             <div>
@@ -161,19 +200,21 @@ export default function PaymentForm() {
                 <Input
                   id="cardNumber"
                   type="text"
-                  {...register('cardNumber')}
+                  {...register("cardNumber")}
                   onChange={(e) => formatCardNumber(e.target.value)}
                   placeholder="1234 5678 9012 3456"
                   className={cn(
                     "pl-10",
-                    errors.cardNumber ? 'border-red-500' : ''
+                    errors.cardNumber ? "border-red-500" : "",
                   )}
                   maxLength={16}
                 />
                 <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               </div>
               {errors.cardNumber && (
-                <p className="text-sm text-red-500 mt-1">{errors.cardNumber.message}</p>
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.cardNumber.message}
+                </p>
               )}
             </div>
 
@@ -182,12 +223,14 @@ export default function PaymentForm() {
               <Input
                 id="cardHolder"
                 type="text"
-                {...register('cardHolder')}
+                {...register("cardHolder")}
                 placeholder="John Doe"
-                className={errors.cardHolder ? 'border-red-500' : ''}
+                className={errors.cardHolder ? "border-red-500" : ""}
               />
               {errors.cardHolder && (
-                <p className="text-sm text-red-500 mt-1">{errors.cardHolder.message}</p>
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.cardHolder.message}
+                </p>
               )}
             </div>
 
@@ -197,14 +240,16 @@ export default function PaymentForm() {
                 <Input
                   id="expiryDate"
                   type="text"
-                  {...register('expiryDate')}
+                  {...register("expiryDate")}
                   onChange={(e) => formatExpiryDate(e.target.value)}
                   placeholder="MM/YY"
-                  className={errors.expiryDate ? 'border-red-500' : ''}
+                  className={errors.expiryDate ? "border-red-500" : ""}
                   maxLength={5}
                 />
                 {errors.expiryDate && (
-                  <p className="text-sm text-red-500 mt-1">{errors.expiryDate.message}</p>
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.expiryDate.message}
+                  </p>
                 )}
               </div>
 
@@ -214,31 +259,32 @@ export default function PaymentForm() {
                   <Input
                     id="cvv"
                     type="text"
-                    {...register('cvv')}
+                    {...register("cvv")}
                     placeholder="123"
-                    className={cn(
-                      "pr-10",
-                      errors.cvv ? 'border-red-500' : ''
-                    )}
+                    className={cn("pr-10", errors.cvv ? "border-red-500" : "")}
                     maxLength={4}
                   />
                   <Shield className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
                 {errors.cvv && (
-                  <p className="text-sm text-red-500 mt-1">{errors.cvv.message}</p>
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.cvv.message}
+                  </p>
                 )}
               </div>
             </div>
 
             {/* Save Card Option */}
             <div className="flex items-center space-x-2">
-              <Checkbox 
+              <Checkbox
                 id="saveCard"
-                checked={watch('saveCard')}
-                onCheckedChange={(checked) => setValue('saveCard', checked as boolean)}
+                checked={watch("saveCard")}
+                onCheckedChange={(checked) =>
+                  setValue("saveCard", checked as boolean)
+                }
               />
-              <Label 
-                htmlFor="saveCard" 
+              <Label
+                htmlFor="saveCard"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 Save this card for future purchases
@@ -255,8 +301,8 @@ export default function PaymentForm() {
                   Your payment information is secure
                 </p>
                 <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                  We use industry-standard encryption to protect your payment details.
-                  Your information is never stored on our servers.
+                  We use industry-standard encryption to protect your payment
+                  details. Your information is never stored on our servers.
                 </p>
               </div>
             </div>
@@ -271,7 +317,8 @@ export default function PaymentForm() {
                   Test Mode
                 </p>
                 <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                  Use test card: 4242 4242 4242 4242, any future date, and any 3-digit CVV
+                  Use test card: 4242 4242 4242 4242, any future date, and any
+                  3-digit CVV
                 </p>
               </div>
             </div>
@@ -285,7 +332,7 @@ export default function PaymentForm() {
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Billing
         </SecondaryButton>
-        {paymentType === 'card' && (
+        {paymentType === "card" && (
           <PrimaryButton type="submit" size="lg">
             Review Order
             <ArrowRight className="ml-2 h-4 w-4" />
