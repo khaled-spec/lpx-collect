@@ -1,17 +1,17 @@
 # LPX Collect - Complete Feature & Page Specification
 
 ## 📊 Implementation Status Summary
-**Last Updated**: January 4, 2025
+**Last Updated**: January 5, 2025
 
 ### Completion Statistics
-- **Pages Implemented**: 17/30 (57%)
-- **Core Features**: Authentication ✅, Vendor System ✅, Design System ✅, Shopping Cart ✅, Checkout System ✅, Wishlist ✅
+- **Pages Implemented**: 19/30 (63%)
+- **Core Features**: Authentication ✅, Vendor System ✅, Design System ✅, Shopping Cart ✅, Checkout System ✅, Wishlist ✅, Order History ✅
 - **Additional Features Added**: Design Tokens, Mock Auth, UI Components, Pokemon TCG API, Cart System, Multi-step Checkout, Wishlist System
 
 ### Quick Status Overview
-- ✅ **Completed**: Homepage, Browse, Product Details, Shopping Cart, Checkout, Order Confirmation, Authentication (Login/Register/Dashboard), All Vendor Pages, Design System, Wishlist
+- ✅ **Completed**: Homepage, Browse, Product Details, Shopping Cart, Checkout, Order Confirmation, Authentication (Login/Register/Dashboard), All Vendor Pages, Design System, Wishlist, Order History
 - 🚧 **In Progress**: None
-- ❌ **Not Started**: Orders History, Admin Pages, Support Pages, Category Pages, Settings, Notifications
+- ❌ **Not Started**: Admin Pages, Support Pages, Category Pages, Settings, Notifications, Payment Methods
 
 ## Project Overview
 LPX Collect is a specialized marketplace platform for collectibles, connecting collectors with verified vendors for authentic rare items including trading cards, comics, coins, stamps, vintage toys, and sports memorabilia.
@@ -124,24 +124,34 @@ LPX Collect is a specialized marketplace platform for collectibles, connecting c
 - Account deletion
 
 ### 9. Order History (`/orders`)
-**Status**: ❌ Not Implemented
-**Required Features**:
-- Orders list with filters
-- Order status tracking
-- Order details view
-- Reorder functionality
-- Invoice download
-- Return/refund initiation
+**Status**: ✅ Implemented
+**Implemented Features**:
+- ✅ Orders list with status filters (all, pending, processing, shipped, delivered, cancelled)
+- ✅ Order status tracking with visual badges and icons
+- ✅ Expandable order details view showing items, addresses, payment info
+- ✅ Reorder functionality to add previous order items to cart
+- ✅ Sorting options (newest, oldest, highest value, lowest value)
+- ✅ User authentication check with login redirect
+- ✅ Empty state for users with no orders
+- ⚠️ Invoice download (UI ready, needs backend)
+- ❌ Return/refund initiation (not implemented)
 
 ### 10. Wishlist/Favorites (`/wishlist`)
-**Status**: ❌ Not Implemented
-**Required Features**:
-- Saved items grid
-- Price drop notifications
-- Stock alerts
-- Move to cart
-- Share wishlist
-- Create collections
+**Status**: ✅ Implemented
+**Implemented Features**:
+- ✅ Saved items grid with product cards
+- ✅ Add/remove items from wishlist
+- ✅ Wishlist toggle in product pages
+- ✅ Persistent storage (localStorage)
+- ✅ User-specific wishlists
+- ✅ Guest wishlist with merge on login
+- ✅ Clear all items functionality
+- ✅ Empty state with CTA
+- ❌ Price drop notifications (not implemented)
+- ❌ Stock alerts (not implemented)
+- ❌ Move to cart (not implemented)
+- ❌ Share wishlist (not implemented)
+- ❌ Create collections (not implemented)
 
 ### 11. Notifications (`/notifications`)
 **Status**: ❌ Not Implemented
