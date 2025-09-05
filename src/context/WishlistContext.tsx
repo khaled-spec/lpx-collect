@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { Product } from "@/types";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 interface WishlistContextType {
   items: Product[];
@@ -23,26 +24,85 @@ const WishlistContext = createContext<WishlistContextType | undefined>(
   undefined,
 );
 
-const WISHLIST_STORAGE_KEY = "lpx_wishlist";
+const GUEST_WISHLIST_KEY = "lpx_wishlist";
+const USER_WISHLIST_PREFIX = "lpx_wishlist_user_";
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<Product[]>([]);
+  const { user } = useAuth();
 
+  // Get the appropriate storage key based on auth status
+  const getStorageKey = useCallback(() => {
+    return user ? `${USER_WISHLIST_PREFIX}${user.id}` : GUEST_WISHLIST_KEY;
+  }, [user]);
+
+  // Load wishlist from localStorage when user changes and merge if logging in
   useEffect(() => {
-    const storedWishlist = localStorage.getItem(WISHLIST_STORAGE_KEY);
+    const storageKey = getStorageKey();
+    
+    // If user just logged in, merge guest wishlist first
+    if (user) {
+      const guestWishlist = localStorage.getItem(GUEST_WISHLIST_KEY);
+      const userWishlist = localStorage.getItem(storageKey);
+      
+      if (guestWishlist) {
+        try {
+          const guestItems: Product[] = JSON.parse(guestWishlist);
+          const userItems: Product[] = userWishlist ? JSON.parse(userWishlist) : [];
+          
+          // Merge unique items
+          const mergedItems = [...userItems];
+          let addedCount = 0;
+          
+          guestItems.forEach((guestItem) => {
+            if (!mergedItems.some((item) => item.id === guestItem.id)) {
+              mergedItems.push(guestItem);
+              addedCount++;
+            }
+          });
+          
+          if (addedCount > 0) {
+            setItems(mergedItems);
+            localStorage.setItem(storageKey, JSON.stringify(mergedItems));
+            toast.success(`${addedCount} item${addedCount > 1 ? 's' : ''} merged from your guest wishlist`);
+          } else {
+            setItems(userItems);
+          }
+          
+          // Clear guest wishlist after merge
+          localStorage.removeItem(GUEST_WISHLIST_KEY);
+          return;
+        } catch (error) {
+          console.error("Failed to merge guest wishlist:", error);
+        }
+      }
+    }
+    
+    // Normal loading of wishlist
+    const storedWishlist = localStorage.getItem(storageKey);
     if (storedWishlist) {
       try {
         const parsed = JSON.parse(storedWishlist);
         setItems(parsed);
       } catch (error) {
         console.error("Failed to parse wishlist from storage:", error);
+        setItems([]);
       }
+    } else {
+      setItems([]);
     }
-  }, []);
+  }, [user, getStorageKey]);
 
+  // Save wishlist to localStorage whenever items change
   useEffect(() => {
-    localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(items));
-  }, [items]);
+    const storageKey = getStorageKey();
+    if (items.length > 0) {
+      localStorage.setItem(storageKey, JSON.stringify(items));
+    } else {
+      // Don't remove the key, just set it to empty array
+      localStorage.setItem(storageKey, JSON.stringify([]));
+    }
+  }, [items, getStorageKey]);
 
   const addToWishlist = useCallback((product: Product) => {
     setItems((prevItems) => {
@@ -75,9 +135,10 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
 
   const clearWishlist = useCallback(() => {
     setItems([]);
-    localStorage.removeItem(WISHLIST_STORAGE_KEY);
+    const storageKey = getStorageKey();
+    localStorage.setItem(storageKey, JSON.stringify([]));
     toast.success("Wishlist cleared");
-  }, []);
+  }, [getStorageKey]);
 
   return (
     <WishlistContext.Provider

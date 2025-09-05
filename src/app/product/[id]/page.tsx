@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -9,6 +10,7 @@ import ProductInfo from "@/components/product/ProductInfo";
 import ProductPurchaseCard from "@/components/product/ProductPurchaseCardOptimized";
 import ProductDetailsTabbed from "@/components/product/ProductDetailsTabbed";
 import RelatedProducts from "@/components/product/RelatedProducts";
+import { useWishlist } from "@/context/WishlistContext";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -23,77 +25,9 @@ import { Shield, Award, TrendingUp, Star } from "lucide-react";
 import { productStyles } from "@/components/custom/product-styles";
 import { cn } from "@/lib/utils";
 import { Product } from "@/types";
-import { categories, vendors } from "@/data/mockData";
+import { categories, vendors, products } from "@/data/mockData";
 
-// Convert mock product to Product type
-const mockProduct: Product = {
-  id: "1",
-  title: "1999 Pokémon Base Set Charizard Holo #4/102 PSA 9 MINT",
-  slug: "pokemon-charizard-psa-9",
-  description:
-    "This is an authentic 1999 Pokémon Base Set Charizard holographic card, professionally graded PSA 9 MINT condition. This iconic card is one of the most sought-after cards in the entire Pokémon Trading Card Game.",
-  price: 4999.99,
-  compareAtPrice: 5999.99,
-  images: [
-    "https://images.unsplash.com/photo-1679678691006-0ad24fecb769?w=800&q=80",
-    "https://images.unsplash.com/photo-1679678691170-7781f11f9d86?w=800&q=80",
-    "https://images.unsplash.com/photo-1679678691250-a14e09c004c7?w=800&q=80",
-    "https://images.unsplash.com/photo-1679678691328-54929d271c3f?w=800&q=80",
-  ],
-  category: categories[0], // Trading Cards
-  vendor: vendors[0], // Premium Cards Co.
-  condition: "mint",
-  rarity: "legendary",
-  stock: 1,
-  sold: 0,
-  views: 1250,
-  likes: 89,
-  tags: ["pokemon", "charizard", "psa9", "vintage", "holographic"],
-  specifications: {
-    "Card Number": "4/102",
-    Set: "Base Set",
-    "Release Year": "1999",
-    Grade: "PSA 9",
-    "Grading Company": "PSA",
-    "Serial Number": "12345678",
-    Language: "English",
-    "Card Type": "Holographic",
-    Manufacturer: "Wizards of the Coast",
-  },
-  featured: true,
-  createdAt: new Date(),
-  updatedAt: new Date(),
-};
-
-// Additional mock data for compatibility with existing components
-const mockProductExtended = {
-  ...mockProduct,
-  originalPrice: mockProduct.compareAtPrice || mockProduct.price,
-  inStock: mockProduct.stock > 0,
-  stockQuantity: mockProduct.stock,
-  subcategory: "Pokémon",
-  shipping: {
-    price: 19.99,
-    expedited: 49.99,
-    estimatedDays: "3-5",
-    expeditedDays: "1-2",
-    freeShippingThreshold: 100,
-    locations: "Ships to United States",
-  },
-  returns: {
-    accepted: true,
-    period: "30 days",
-    condition: "Item must be in original sealed holder",
-    restockingFee: false,
-  },
-  authenticity: {
-    verified: true,
-    certificate: true,
-    verifiedBy: "PSA Authentication Services",
-    certificateNumber: "PSA-12345678",
-  },
-};
-
+// Mock data for reviews and questions
 const mockReviews = [
   {
     id: "1",
@@ -148,66 +82,135 @@ const mockQuestions = [
     question: "Do you accept offers on this item?",
     answer:
       'We occasionally consider reasonable offers. Please use the "Make an Offer" button to submit your best offer.',
-    askedBy: "Collector99",
+    askedBy: "CollectorMike",
     answeredBy: "Elite Collectibles Co.",
-    date: "2024-01-08",
-  },
-];
-
-const mockRelatedProducts = [
-  {
-    id: "2",
-    title: "1999 Pokémon Base Set Blastoise Holo #2/102",
-    price: 1999.99,
-    image:
-      "https://images.unsplash.com/photo-1679678690998-88c8711cbe5f?w=400&q=80",
-    condition: "Near Mint",
-    vendor: "Card Masters",
-  },
-  {
-    id: "3",
-    title: "1999 Pokémon Base Set Venusaur Holo #15/102",
-    price: 899.99,
-    image:
-      "https://images.unsplash.com/photo-1679678691010-894374986c72?w=400&q=80",
-    condition: "Excellent",
-    vendor: "Vintage Cards Plus",
-  },
-  {
-    id: "4",
-    title: "1999 Pokémon Jungle Set Flareon Holo",
-    price: 299.99,
-    image:
-      "https://images.unsplash.com/photo-1679678691006-0ad24fecb769?w=400&q=80",
-    condition: "Near Mint",
-    vendor: "Elite Collectibles Co.",
-  },
-  {
-    id: "5",
-    title: "1999 Pokémon Base Set Mewtwo Holo #10/102",
-    price: 599.99,
-    image:
-      "https://images.unsplash.com/photo-1679678691170-7781f11f9d86?w=400&q=80",
-    condition: "Mint",
-    vendor: "Card Kingdom",
+    date: "2024-01-10",
   },
 ];
 
 export default function ProductDetailsPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+
+  // Find product by slug
+  useEffect(() => {
+    async function loadProduct() {
+      const resolvedParams = await params;
+      const foundProduct = products.find((p) => p.slug === resolvedParams.id);
+      if (foundProduct) {
+        setProduct(foundProduct);
+      }
+      setLoading(false);
+    }
+    loadProduct();
+  }, [params]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Product Not Found</h1>
+            <Link href="/browse" className="text-primary hover:underline">
+              Back to Browse
+            </Link>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Create extended product data for compatibility
+  const productExtended = {
+    ...product,
+    originalPrice: product.compareAtPrice || product.price,
+    inStock: product.stock > 0,
+    stockQuantity: product.stock,
+    subcategory: "Pokémon",
+    shipping: {
+      price: 19.99,
+      expedited: 49.99,
+      estimatedDays: "3-5",
+      expeditedDays: "1-2",
+      freeShippingThreshold: 100,
+      locations: "Ships to United States",
+    },
+    returns: {
+      accepted: true,
+      period: "30 days",
+      condition: "Item must be in original sealed holder",
+      restockingFee: false,
+    },
+    authenticity: {
+      verified: true,
+      certificate: true,
+      verifiedBy: "PSA Authentication Services",
+      certificateNumber: "PSA-12345678",
+    },
+  };
+
+  const mockRelatedProducts = [
+    {
+      id: "2",
+      title: "1999 Pokémon Base Set Blastoise Holo #2/102",
+      price: 1999.99,
+      image:
+        "https://images.unsplash.com/photo-1679678690998-88c8711cbe5f?w=400&q=80",
+      condition: "Near Mint",
+      vendor: "Card Masters",
+    },
+    {
+      id: "3",
+      title: "1999 Pokémon Base Set Venusaur Holo #15/102",
+      price: 899.99,
+      image:
+        "https://images.unsplash.com/photo-1679678691010-894374986c72?w=400&q=80",
+      condition: "Excellent",
+      vendor: "Vintage Cards Plus",
+    },
+    {
+      id: "4",
+      title: "1999 Pokémon Jungle Set Flareon Holo",
+      price: 299.99,
+      image:
+        "https://images.unsplash.com/photo-1679678691006-0ad24fecb769?w=400&q=80",
+      condition: "Near Mint",
+      vendor: "Elite Collectibles Co.",
+    },
+    {
+      id: "5",
+      title: "1999 Pokémon Base Set Mewtwo Holo #10/102",
+      price: 599.99,
+      image:
+        "https://images.unsplash.com/photo-1679678691170-7781f11f9d86?w=400&q=80",
+      condition: "Mint",
+      vendor: "Card Kingdom",
+    },
+  ];
 
   const handleShare = () => {
     // Share functionality
     if (navigator.share) {
       navigator.share({
-        title: mockProduct.title,
-        text: `Check out this ${mockProduct.title}`,
+        title: product.title,
+        text: `Check out this ${product.title}`,
         url: window.location.href,
       });
     } else {
@@ -216,10 +219,10 @@ export default function ProductDetailsPage({
     }
   };
 
-  const discountPercentage = mockProduct.compareAtPrice
+  const discountPercentage = product.compareAtPrice
     ? Math.round(
-        ((mockProduct.compareAtPrice - mockProduct.price) /
-          mockProduct.compareAtPrice) *
+        ((product.compareAtPrice - product.price) /
+          product.compareAtPrice) *
           100,
       )
     : 0;
@@ -254,16 +257,16 @@ export default function ProductDetailsPage({
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                   <BreadcrumbLink
-                    href={`/category/${mockProduct.category.slug}`}
+                    href={`/category/${product.category.slug}`}
                     className="hover:text-primary transition-colors"
                   >
-                    {mockProduct.category.name}
+                    {product.category.name}
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                   <BreadcrumbPage className="text-foreground font-medium">
-                    {mockProductExtended.subcategory}
+                    {productExtended.subcategory}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
@@ -272,7 +275,7 @@ export default function ProductDetailsPage({
             {/* Page Title */}
             <div className="mb-8">
               <h1 className="text-3xl font-bold tracking-tight mb-3">
-                {mockProduct.title}
+                {product.title}
               </h1>
               <div className="flex items-center gap-2 flex-wrap">
                 <span
@@ -286,7 +289,7 @@ export default function ProductDetailsPage({
                     "text-base font-medium hover:text-primary transition-colors cursor-pointer",
                   )}
                 >
-                  {mockProduct.vendor.storeName}
+                  {product.vendor.storeName}
                 </span>
                 <div className="flex items-center gap-1">
                   <div className={productStyles.rating.container}>
@@ -297,11 +300,11 @@ export default function ProductDetailsPage({
                         "text-sm font-medium",
                       )}
                     >
-                      {mockProduct.vendor.rating}
+                      {product.vendor.rating}
                     </span>
                   </div>
                   <span className={cn(productStyles.typography.meta, "ml-1")}>
-                    ({mockProduct.vendor.totalSales} sales)
+                    ({product.vendor.totalSales} sales)
                   </span>
                 </div>
               </div>
@@ -313,12 +316,16 @@ export default function ProductDetailsPage({
               <div className="lg:col-span-1">
                 <div className="sticky top-20">
                   <ProductImageGallery
-                    images={mockProduct.images}
-                    title={mockProduct.title}
+                    images={product.images}
+                    title={product.title}
                     selectedImage={selectedImage}
                     onImageSelect={setSelectedImage}
-                    isWishlisted={isWishlisted}
-                    onWishlistToggle={() => setIsWishlisted(!isWishlisted)}
+                    isWishlisted={isInWishlist(product.id)}
+                    onWishlistToggle={() =>
+                      isInWishlist(product.id)
+                        ? removeFromWishlist(product.id)
+                        : addToWishlist(product)
+                    }
                     onShare={handleShare}
                   />
                 </div>
@@ -328,8 +335,8 @@ export default function ProductDetailsPage({
               <div className="lg:col-span-1">
                 <div className="sticky top-20">
                   <ProductPurchaseCard
-                    product={mockProduct}
-                    productExtended={mockProductExtended}
+                    product={product}
+                    productExtended={productExtended}
                     quantity={quantity}
                     setQuantity={setQuantity}
                     discountPercentage={discountPercentage}
@@ -352,7 +359,7 @@ export default function ProductDetailsPage({
                             productStyles.badges.base,
                           )}
                         >
-                          {mockProduct.condition}
+                          {product.condition}
                         </Badge>
                         <Badge
                           variant="secondary"
@@ -361,7 +368,7 @@ export default function ProductDetailsPage({
                             productStyles.badges.base,
                           )}
                         >
-                          {mockProduct.rarity}
+                          {product.rarity}
                         </Badge>
                         <Badge
                           variant="secondary"
@@ -370,7 +377,7 @@ export default function ProductDetailsPage({
                             productStyles.badges.base,
                           )}
                         >
-                          {mockProduct.category.name}
+                          {product.category.name}
                         </Badge>
                       </div>
 
@@ -385,7 +392,7 @@ export default function ProductDetailsPage({
                             "text-sm leading-relaxed text-foreground",
                           )}
                         >
-                          {mockProduct.description}
+                          {product.description}
                         </p>
                       </div>
                     </div>
@@ -393,20 +400,20 @@ export default function ProductDetailsPage({
                     {/* Details Tabs */}
                     <ProductDetailsTabbed
                       vendor={{
-                        id: mockProduct.vendor.id,
-                        name: mockProduct.vendor.storeName,
-                        rating: mockProduct.vendor.rating,
-                        totalSales: mockProduct.vendor.totalSales,
-                        verified: mockProduct.vendor.verified,
-                        responseTime: mockProduct.vendor.responseTime,
-                        joinedDate: mockProduct.vendor.createdAt.toISOString(),
+                        id: product.vendor.id,
+                        name: product.vendor.storeName,
+                        rating: product.vendor.rating,
+                        totalSales: product.vendor.totalSales,
+                        verified: product.vendor.verified,
+                        responseTime: product.vendor.responseTime,
+                        joinedDate: product.vendor.createdAt.toISOString(),
                         avatar:
-                          mockProduct.vendor.logo ||
+                          product.vendor.logo ||
                           "/images/vendors/default.jpg",
                       }}
-                      details={mockProduct.specifications || {}}
-                      returns={mockProductExtended.returns}
-                      authenticity={mockProductExtended.authenticity}
+                      details={product.specifications || {}}
+                      returns={productExtended.returns}
+                      authenticity={productExtended.authenticity}
                     />
                   </CardContent>
                 </Card>

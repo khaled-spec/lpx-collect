@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/custom/button-variants";
 import { SearchInput } from "@/components/custom/input-variants";
@@ -64,6 +65,7 @@ export default function Header() {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const { itemCount } = useCart();
+  const { wishlistCount } = useWishlist();
 
   return (
     <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-border">
@@ -168,13 +170,19 @@ export default function Header() {
               >
                 Vendors
               </Link>
+              {/* Wishlist - Available for all users */}
+              <IconButton asChild className="relative">
+                <Link href="/wishlist">
+                  <Heart className="h-5 w-5" />
+                  {wishlistCount > 0 && (
+                    <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center">
+                      {wishlistCount}
+                    </Badge>
+                  )}
+                </Link>
+              </IconButton>
               {isAuthenticated ? (
                 <>
-                  <IconButton asChild>
-                    <Link href="/wishlist">
-                      <Heart className="h-5 w-5" />
-                    </Link>
-                  </IconButton>
                   <IconButton asChild>
                     <Link href="/notifications">
                       <Bell className="h-5 w-5" />

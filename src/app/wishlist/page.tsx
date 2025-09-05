@@ -2,7 +2,6 @@
 
 import { useWishlist } from "@/context/WishlistContext";
 import { useAuth } from "@/context/AuthContext";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
@@ -183,9 +182,5 @@ function WishlistContent() {
 }
 
 export default function WishlistPage() {
-  return (
-    <ProtectedRoute>
-      <WishlistContent />
-    </ProtectedRoute>
-  );
+  return <WishlistContent />;
 }
