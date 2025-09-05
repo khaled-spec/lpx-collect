@@ -162,18 +162,35 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
         orderNumber,
         userId: user?.id,
         items: items.map((item) => ({
+          id: item.product.id,
           productId: item.product.id,
+          name: item.product.title,
           title: item.product.title,
           price: item.product.price,
           quantity: item.quantity,
           image: item.product.images[0],
           vendor: item.product.vendor.storeName,
         })),
-        shippingAddress: checkoutData.shippingAddress!,
+        shippingAddress: {
+          ...checkoutData.shippingAddress!,
+          fullName: `${checkoutData.shippingAddress!.firstName} ${checkoutData.shippingAddress!.lastName}`,
+          apartment: checkoutData.shippingAddress!.address2,
+          zipCode: checkoutData.shippingAddress!.postalCode,
+        } as any,
         billingAddress: checkoutData.sameAsShipping
-          ? (checkoutData.shippingAddress as BillingAddress)
-          : checkoutData.billingAddress!,
-        paymentMethod: checkoutData.paymentMethod!,
+          ? ({
+              ...checkoutData.shippingAddress!,
+              fullName: `${checkoutData.shippingAddress!.firstName} ${checkoutData.shippingAddress!.lastName}`,
+              apartment: checkoutData.shippingAddress!.address2,
+              zipCode: checkoutData.shippingAddress!.postalCode,
+            } as any)
+          : ({
+              ...checkoutData.billingAddress!,
+              fullName: `${checkoutData.billingAddress!.firstName} ${checkoutData.billingAddress!.lastName}`,
+              apartment: checkoutData.billingAddress!.address2,
+              zipCode: checkoutData.billingAddress!.postalCode,
+            } as any),
+        paymentMethod: checkoutData.paymentMethod?.type || "card",
         subtotal,
         shipping,
         tax,
@@ -181,16 +198,27 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
         total,
         status: "processing",
         orderNotes: checkoutData.orderNotes,
-        createdAt: new Date(),
-        estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+        createdAt: new Date().toISOString(),
+        estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        }),
       };
 
-      // Save order to localStorage
+      // Save order to localStorage with user-specific key
+      const orderKey = user?.id ? `lpx_orders_${user.id}` : "lpx_orders_guest";
       const existingOrders = JSON.parse(
-        localStorage.getItem("lpx-orders") || "[]",
+        localStorage.getItem(orderKey) || "[]",
       );
       existingOrders.push(order);
-      localStorage.setItem("lpx-orders", JSON.stringify(existingOrders));
+      localStorage.setItem(orderKey, JSON.stringify(existingOrders));
+      
+      // Also save as last order for backwards compatibility
+      if (user?.id) {
+        localStorage.setItem(`lpx_order_${user.id}_last`, JSON.stringify(order));
+      }
 
       // Clear cart
       clearCart();
