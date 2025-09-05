@@ -4,7 +4,8 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { extendedVendors } from "@/data/vendorData";
+// TODO: Replace with actual data from API or database
+const extendedVendors: any[] = [];
 import { productStyles } from "@/components/custom/product-styles";
 import { cn } from "@/lib/utils";
 import {
@@ -67,7 +68,7 @@ export default function VendorsPage() {
         (v) =>
           v.storeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
           v.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          v.specialties.some((s) =>
+          v.specialties?.some((s: string) =>
             s.toLowerCase().includes(searchQuery.toLowerCase()),
           ),
       );
@@ -76,7 +77,7 @@ export default function VendorsPage() {
     // Specialty filter
     if (selectedSpecialties.length > 0) {
       filtered = filtered.filter((v) =>
-        v.specialties.some((s) => selectedSpecialties.includes(s)),
+        v.specialties?.some((s: string) => selectedSpecialties.includes(s)),
       );
     }
 
@@ -619,7 +620,7 @@ export default function VendorsPage() {
                           {/* Badges */}
                           {vendor.badges && vendor.badges.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-3">
-                              {vendor.badges.slice(0, 3).map((badge, index) => (
+                              {vendor.badges.slice(0, 3).map((badge: string, index: number) => (
                                 <span
                                   key={index}
                                   className="px-2 py-1 text-xs rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"

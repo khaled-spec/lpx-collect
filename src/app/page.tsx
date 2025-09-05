@@ -35,12 +35,11 @@ import {
   Users,
   Star,
 } from "lucide-react";
-import {
-  featuredProducts,
-  categories,
-  newArrivals,
-  vendors,
-} from "@/data/mockData";
+// TODO: Replace with actual data from API or database
+const featuredProducts: any[] = [];
+const categories: any[] = [];
+const newArrivals: any[] = [];
+const vendors: any[] = [];
 
 export default function Home() {
   return (

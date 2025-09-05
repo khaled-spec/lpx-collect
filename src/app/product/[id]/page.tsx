@@ -25,68 +25,14 @@ import { Shield, Award, TrendingUp, Star } from "lucide-react";
 import { productStyles } from "@/components/custom/product-styles";
 import { cn } from "@/lib/utils";
 import { Product } from "@/types";
-import { categories, vendors, products } from "@/data/mockData";
+// TODO: Replace with actual data from API or database
+const categories: any[] = [];
+const vendors: any[] = [];
+const products: Product[] = [];
 
-// Mock data for reviews and questions
-const mockReviews = [
-  {
-    id: "1",
-    author: "John D.",
-    rating: 5,
-    date: "2024-01-15",
-    verified: true,
-    title: "Amazing condition!",
-    content:
-      "The card arrived exactly as described. Perfect PSA 9 condition, fast shipping, and excellent packaging. Highly recommend this seller!",
-    helpful: 45,
-    images: [],
-  },
-  {
-    id: "2",
-    author: "Sarah M.",
-    rating: 5,
-    date: "2024-01-10",
-    verified: true,
-    title: "Dream card acquired!",
-    content:
-      "Finally got my hands on this grail card. The seller was responsive and the authenticity is guaranteed. Could not be happier!",
-    helpful: 32,
-    images: [],
-  },
-  {
-    id: "3",
-    author: "Mike R.",
-    rating: 4,
-    date: "2023-12-28",
-    verified: true,
-    title: "Great card, minor shipping delay",
-    content:
-      "The card is absolutely beautiful and exactly as pictured. Only minor issue was a 2-day shipping delay due to weather, but seller kept me updated.",
-    helpful: 18,
-    images: [],
-  },
-];
-
-const mockQuestions = [
-  {
-    id: "1",
-    question: "Is this card guaranteed authentic?",
-    answer:
-      "Yes, this card has been professionally authenticated and graded by PSA. It comes with a certificate of authenticity.",
-    askedBy: "User123",
-    answeredBy: "Elite Collectibles Co.",
-    date: "2024-01-12",
-  },
-  {
-    id: "2",
-    question: "Do you accept offers on this item?",
-    answer:
-      'We occasionally consider reasonable offers. Please use the "Make an Offer" button to submit your best offer.',
-    askedBy: "CollectorMike",
-    answeredBy: "Elite Collectibles Co.",
-    date: "2024-01-10",
-  },
-];
+// TODO: Replace with actual data from API or database
+const mockReviews: any[] = [];
+const mockQuestions: any[] = [];
 
 export default function ProductDetailsPage({
   params,

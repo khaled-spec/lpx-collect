@@ -2,7 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { mockVendorDashboard } from "@/data/vendorData";
+// TODO: Replace with actual data from API or database
+const mockVendorDashboard = {
+  analytics: {
+    revenue: { total: 0, thisMonth: 0, lastMonth: 0, growth: 0 },
+    orders: { total: 0, pending: 0, processing: 0, completed: 0 },
+    products: { total: 0, active: 0, outOfStock: 0, draft: 0 },
+    customers: { total: 0, returning: 0, new: 0, satisfactionRate: 0 },
+  },
+  recentOrders: [] as any[],
+  topProducts: [] as any[],
+  messages: [] as any[],
+};
 import { Container } from "@/components/layout/Container";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import {

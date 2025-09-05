@@ -4,8 +4,9 @@ import { useState, useMemo } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { extendedVendors } from "@/data/vendorData";
-import { products } from "@/data/mockData";
+// TODO: Replace with actual data from API or database
+const extendedVendors: any[] = [];
+const products: any[] = [];
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
@@ -649,7 +650,7 @@ export default function VendorStorefrontPage() {
                           Specialties
                         </h3>
                         <div className="flex flex-wrap gap-1">
-                          {vendor.specialties.map((specialty) => (
+                          {vendor.specialties?.map((specialty: string) => (
                             <span
                               key={specialty}
                               className="text-xs bg-muted px-2 py-1 rounded-md"
@@ -665,7 +666,7 @@ export default function VendorStorefrontPage() {
                           Achievements
                         </h3>
                         <div className="space-y-1">
-                          {vendor.badges.slice(0, 3).map((badge) => (
+                          {vendor.badges?.slice(0, 3).map((badge: string) => (
                             <div
                               key={badge}
                               className="flex items-center gap-2 text-xs"

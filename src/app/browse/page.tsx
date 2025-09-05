@@ -18,8 +18,11 @@ import {
   Search,
   ArrowUpDown,
 } from "lucide-react";
-import { products, categories } from "@/data/mockData";
 import type { Product } from "@/types";
+
+// TODO: Replace with actual data from API or database
+const products: Product[] = [];
+const categories: any[] = [];
 
 const conditions = ["new", "mint", "excellent", "good", "fair", "poor"];
 const rarities = ["common", "uncommon", "rare", "very-rare", "legendary"];

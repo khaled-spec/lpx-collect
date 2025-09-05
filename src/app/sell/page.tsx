@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import {
-  vendorPricingPlans,
-  vendorSuccessStories,
-  vendorFAQ,
-} from "@/data/vendorData";
+// TODO: Replace with actual data from API or database
+const vendorPricingPlans: any[] = [];
+const vendorSuccessStories: any[] = [];
+const vendorFAQ: any[] = [];
 import { Container } from "@/components/layout/Container";
 import {
   PrimaryButton,
@@ -276,7 +275,7 @@ export default function BecomeVendorPage() {
 
                 <CardContent>
                   <ul className="space-y-3 mb-6">
-                    {plan.features.map((feature, index) => (
+                    {plan.features?.map((feature: string, index: number) => (
                       <li key={index} className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-sm">{feature}</span>
