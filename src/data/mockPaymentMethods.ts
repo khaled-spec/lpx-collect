@@ -224,7 +224,7 @@ export async function updatePaymentMethod(
     ...methods[index],
     ...updates,
     updatedAt: new Date().toISOString()
-  };
+  } as PaymentMethodUnion;
   
   localStorage.setItem(`payment_methods_${userId}`, JSON.stringify(methods));
   
