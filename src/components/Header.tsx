@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { useNotifications } from "@/context/NotificationContext";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/custom/button-variants";
 import { SearchInput } from "@/components/custom/input-variants";
@@ -66,6 +67,7 @@ export default function Header() {
   const { isAuthenticated, user, logout } = useAuth();
   const { itemCount } = useCart();
   const { wishlistCount } = useWishlist();
+  const { unreadCount } = useNotifications();
 
   return (
     <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-border">
@@ -183,9 +185,14 @@ export default function Header() {
               </IconButton>
               {isAuthenticated ? (
                 <>
-                  <IconButton asChild>
+                  <IconButton asChild className="relative">
                     <Link href="/notifications">
                       <Bell className="h-5 w-5" />
+                      {unreadCount > 0 && (
+                        <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center" variant="destructive">
+                          {unreadCount > 9 ? "9+" : unreadCount}
+                        </Badge>
+                      )}
                     </Link>
                   </IconButton>
                   <DropdownMenu>
