@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ProductCard from "@/components/ProductCard";
+import LegacyProductCard from "@/components/LegacyProductCard";
 import { productStyles } from "@/components/custom/product-styles";
 import { cn } from "@/lib/utils";
 import {
@@ -635,7 +635,7 @@ export default function BrowsePage() {
                   }
                 >
                   {filteredProducts.map((product) => (
-                    <ProductCard
+                    <LegacyProductCard
                       key={product.id}
                       product={product}
                       viewMode={viewMode}

@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ProductCard from "@/components/ProductCard";
+import LegacyProductCard from "@/components/LegacyProductCard";
 import { Button } from "@/components/ui/button";
 import {
   PrimaryButton,
@@ -168,7 +168,7 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {featuredProducts.slice(0, 4).map((product) => (
-                <ProductCard
+                <LegacyProductCard
                   key={product.id}
                   product={product}
                   variant="default"
@@ -230,7 +230,7 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {newArrivals.map((product) => (
-                <ProductCard
+                <LegacyProductCard
                   key={product.id}
                   product={product}
                   variant="default"

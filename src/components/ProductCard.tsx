@@ -6,346 +6,288 @@ import Link from "next/link";
 import { Heart, ShoppingCart, Package, Star } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  DiscountBadge,
-  StockBadge,
-  VerifiedBadge,
-} from "@/components/custom/badge-variants";
-import { IconButton, CartButton } from "@/components/custom/button-variants";
+import { IconButton } from "@/components/custom/button-variants";
+import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  productStyles,
-  getProductClasses,
-  getContentClasses,
-  getImageContainerClasses,
-  getImageClasses,
-} from "@/components/custom/product-styles";
 import { cn } from "@/lib/utils";
-import { useWishlist } from "@/context/WishlistContext";
-import { useCart } from "@/context/CartContext";
-import type { Product } from "@/types";
+import type { Product } from "@/lib/api/types";
 
 interface ProductCardProps {
   product: Product;
-  variant?: "default" | "compact" | "large";
-  viewMode?: "grid" | "list";
-  imageMode?: "contain" | "cover" | "fill" | "scale";
+  onAddToCart?: () => void;
+  onToggleWishlist?: () => void;
+  isWishlisted?: boolean;
+  viewMode?: "vertical" | "horizontal";
+  compact?: boolean;
   className?: string;
 }
 
-// Format number with thousand separators
-const formatPrice = (num: number) => {
-  return num.toLocaleString("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-};
-
-export default function ProductCard({
+export function ProductCard({
   product,
-  variant = "default",
-  viewMode = "grid",
-  imageMode = "contain",
+  onAddToCart,
+  onToggleWishlist,
+  isWishlisted = false,
+  viewMode = "vertical",
+  compact = false,
   className,
 }: ProductCardProps) {
   const [imageError, setImageError] = useState(false);
-  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
-  const { addToCart } = useCart();
 
-  const isLiked = isInWishlist(product.id);
-
-  const discountPercentage = product.compareAtPrice
-    ? Math.round(
-        ((product.compareAtPrice - product.price) / product.compareAtPrice) *
-          100,
-      )
-    : 0;
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(price);
+  };
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
-    addToCart(product);
+    e.stopPropagation();
+    onAddToCart?.();
   };
 
-  const handleToggleLike = (e: React.MouseEvent) => {
+  const handleToggleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (isLiked) {
-      removeFromWishlist(product.id);
-    } else {
-      addToWishlist(product);
-    }
+    e.stopPropagation();
+    onToggleWishlist?.();
   };
 
-  if (viewMode === "list") {
+  // Horizontal/List view
+  if (viewMode === "horizontal") {
     return (
-      <Link href={`/product/${product.slug}`} className="group block">
-        <div className={cn(productStyles.list.container, className)}>
+      <Card className={cn("overflow-hidden hover:shadow-lg transition-shadow", className)}>
+        <Link href={`/product/${product.id}`} className="flex gap-4 p-4">
           {/* Image */}
-          <div
-            className={cn(
-              productStyles.list.imageContainer,
-              "flex items-center justify-center",
-            )}
-          >
-            {!imageError && product.images[0] ? (
+          <div className="relative w-32 h-32 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
+            {!imageError && product.image ? (
               <Image
-                src={product.images[0]}
-                alt={product.title}
-                width={128}
-                height={128}
-                className="w-full h-full object-contain"
+                src={product.image}
+                alt={product.name}
+                fill
+                className="object-cover"
                 onError={() => setImageError(true)}
               />
             ) : (
-              <Package className="h-12 w-12 text-muted-foreground/30" />
+              <div className="w-full h-full flex items-center justify-center">
+                <Package className="h-12 w-12 text-muted-foreground/30" />
+              </div>
             )}
           </div>
 
           {/* Content */}
-          <div className={productStyles.list.content}>
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <p className={productStyles.typography.category}>
-                  {product.category.name}
+          <div className="flex-1 min-w-0">
+            <div className="flex justify-between items-start gap-4">
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-muted-foreground mb-1">
+                  {product.category}
                 </p>
-                <h3 className={cn(productStyles.typography.title, "text-base")}>
-                  {product.title}
+                <h3 className="font-semibold text-sm truncate mb-1">
+                  {product.name}
                 </h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <Badge
-                    variant="outline"
-                    className={cn(
-                      productStyles.badges.size.md,
-                      productStyles.badges.base,
-                    )}
-                  >
-                    {product.condition}
-                  </Badge>
+                
+                {/* Badges */}
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {product.condition && (
+                    <Badge variant="outline" className="text-xs">
+                      {product.condition}
+                    </Badge>
+                  )}
                   {product.rarity && (
-                    <Badge
-                      variant="secondary"
-                      className={cn(
-                        productStyles.badges.size.md,
-                        productStyles.badges.base,
-                      )}
-                    >
+                    <Badge variant="secondary" className="text-xs">
                       {product.rarity}
                     </Badge>
                   )}
+                  {product.authenticity?.verified && (
+                    <Badge variant="default" className="text-xs">
+                      Verified
+                    </Badge>
+                  )}
                 </div>
-                <div className="flex items-center gap-2 mt-1">
-                  <p className={productStyles.typography.vendor}>
-                    {product.vendor.storeName}
-                  </p>
-                  {product.vendor.rating > 0 && (
-                    <div className={productStyles.rating.container}>
-                      <Star className={productStyles.rating.star} />
-                      <span className={productStyles.rating.text}>
-                        {product.vendor.rating.toFixed(1)}
-                      </span>
+
+                {/* Vendor and Rating */}
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <span>{product.vendor}</span>
+                  {product.rating > 0 && (
+                    <div className="flex items-center gap-1">
+                      <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                      <span className="text-xs">{product.rating.toFixed(1)}</span>
                     </div>
                   )}
-                  {product.vendor.verified && (
-                    <VerifiedBadge
-                      className={cn(
-                        productStyles.badges.size.md,
-                        productStyles.badges.base,
-                      )}
-                    />
-                  )}
                 </div>
               </div>
-              <div className="text-right">
-                <span className={productStyles.typography.price.current}>
-                  ${formatPrice(product.price)}
-                </span>
-                {product.compareAtPrice && (
-                  <span
-                    className={cn(
-                      productStyles.typography.price.original,
-                      "block",
-                    )}
-                  >
-                    ${formatPrice(product.compareAtPrice)}
-                  </span>
-                )}
-              </div>
-            </div>
 
-            <div className="flex items-center justify-between mt-2">
-              <div className="flex items-center gap-4">
-                {product.stock <= 5 && product.stock > 0 && (
-                  <StockBadge stock={product.stock} />
-                )}
-              </div>
-              <div className={productStyles.list.actions}>
-                <IconButton
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleToggleLike}
-                >
-                  <Heart
-                    className={cn(
-                      "h-4 w-4",
-                      isLiked && "fill-red-500 text-red-500",
-                    )}
-                  />
-                </IconButton>
-                <CartButton
-                  className={productStyles.actions.cartButton.sm}
-                  onClick={handleAddToCart}
-                >
-                  <ShoppingCart className={productStyles.actions.icon.sm} />
-                </CartButton>
+              {/* Price and Actions */}
+              <div className="flex flex-col items-end gap-2">
+                <div className="text-right">
+                  <p className="text-lg font-bold">{formatPrice(product.price)}</p>
+                  {product.stock <= 5 && product.stock > 0 && (
+                    <p className="text-xs text-orange-500">Only {product.stock} left</p>
+                  )}
+                  {product.stock === 0 && (
+                    <p className="text-xs text-red-500">Out of stock</p>
+                  )}
+                </div>
+                
+                <div className="flex gap-1">
+                  <IconButton
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleToggleWishlist}
+                  >
+                    <Heart
+                      className={cn(
+                        "h-4 w-4",
+                        isWishlisted && "fill-red-500 text-red-500"
+                      )}
+                    />
+                  </IconButton>
+                  <Button
+                    size="sm"
+                    onClick={handleAddToCart}
+                    disabled={product.stock === 0}
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </Link>
+        </Link>
+      </Card>
     );
   }
 
+  // Vertical/Grid view
   return (
-    <Link href={`/product/${product.slug}`} className="group block">
-      <Card className={getProductClasses(variant, className)}>
-        {/* Image Container with fixed dimensions */}
-        <div className={getImageContainerClasses(variant)}>
-          {discountPercentage > 0 && (
-            <DiscountBadge className={productStyles.badges.position.topRight}>
-              -{discountPercentage}%
-            </DiscountBadge>
+    <Card className={cn(
+      "overflow-hidden hover:shadow-lg transition-shadow",
+      compact && "scale-95",
+      className
+    )}>
+      <Link href={`/product/${product.id}`} className="block">
+        {/* Image */}
+        <div className={cn(
+          "relative bg-gray-100 overflow-hidden",
+          compact ? "h-32" : "h-48"
+        )}>
+          {product.featured && (
+            <Badge className="absolute top-2 left-2 z-10" variant="destructive">
+              Featured
+            </Badge>
           )}
-
-          {!imageError && product.images[0] ? (
+          {!imageError && product.image ? (
             <Image
-              src={product.images[0]}
-              alt={product.title}
+              src={product.image}
+              alt={product.name}
               fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className={getImageClasses(imageMode)}
+              className="object-cover"
               onError={() => setImageError(true)}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <Package className="h-20 w-20 text-muted-foreground/30" />
+              <Package className="h-16 w-16 text-muted-foreground/30" />
             </div>
           )}
-
+          
           {/* Hover Actions */}
-          <div className={productStyles.actions.container}>
-            <div className={productStyles.actions.buttonGroup}>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <IconButton
-                      variant="secondary"
-                      className={productStyles.actions.button}
-                      onClick={handleToggleLike}
-                    >
-                      <Heart
-                        className={`h-4 w-4 ${
-                          isLiked ? "fill-red-500 text-red-500" : ""
-                        }`}
-                      />
-                    </IconButton>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>
-                      {isLiked ? "Remove from favorites" : "Add to favorites"}
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
+          <div className="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+            <IconButton
+              variant="secondary"
+              size="sm"
+              onClick={handleToggleWishlist}
+            >
+              <Heart
+                className={cn(
+                  "h-4 w-4",
+                  isWishlisted && "fill-red-500 text-red-500"
+                )}
+              />
+            </IconButton>
+            <Button
+              size="sm"
+              onClick={handleAddToCart}
+              disabled={product.stock === 0}
+            >
+              <ShoppingCart className="h-4 w-4 mr-1" />
+              Add to Cart
+            </Button>
           </div>
         </div>
 
-        {/* Content with flex-grow to push elements to consistent positions */}
-        <div className={getContentClasses(variant)}>
-          {/* Category */}
-          <div className="flex items-center gap-2 h-4">
-            <span className={productStyles.typography.category}>
-              {product.category.name}
-            </span>
-          </div>
-
-          {/* Title - Fixed height with line clamp */}
-          <h3 className={productStyles.typography.title}>{product.title}</h3>
-
-          {/* Badges - Fixed height */}
-          <div className="flex items-center gap-1.5 h-5">
-            <Badge
-              variant="outline"
-              className={cn(
-                productStyles.badges.size.md,
-                productStyles.badges.base,
+        {/* Content */}
+        <div className={cn("p-4", compact && "p-3")}>
+          <p className="text-xs text-muted-foreground mb-1">
+            {product.category}
+          </p>
+          <h3 className={cn(
+            "font-semibold mb-2 line-clamp-2",
+            compact ? "text-sm" : "text-base"
+          )}>
+            {product.name}
+          </h3>
+          
+          {/* Badges */}
+          {!compact && (
+            <div className="flex flex-wrap gap-1 mb-2">
+              {product.condition && (
+                <Badge variant="outline" className="text-xs">
+                  {product.condition}
+                </Badge>
               )}
-            >
-              {product.condition}
-            </Badge>
-            {product.rarity && (
-              <Badge
-                variant="secondary"
-                className={cn(
-                  productStyles.badges.size.md,
-                  productStyles.badges.base,
-                )}
-              >
-                {product.rarity}
-              </Badge>
-            )}
-          </div>
-
-          {/* Vendor with Rating - Fixed height */}
-          <div className="flex items-center gap-1.5 h-5">
-            <p className={productStyles.typography.vendor}>
-              by {product.vendor.storeName}
-            </p>
-            {product.vendor.rating > 0 && (
-              <div className={productStyles.rating.container}>
-                <Star className={productStyles.rating.star} />
-                <span className={productStyles.rating.text}>
-                  {product.vendor.rating.toFixed(1)}
-                </span>
-              </div>
-            )}
-            {product.vendor.verified && (
-              <VerifiedBadge
-                className={cn(
-                  productStyles.badges.size.md,
-                  productStyles.badges.base,
-                )}
-              />
-            )}
-          </div>
-
-          {/* Price - Fixed height */}
-          <div className="flex items-center justify-between h-8">
-            <div className="flex items-center gap-2">
-              <span className={productStyles.typography.price.current}>
-                ${formatPrice(product.price)}
-              </span>
-              {product.compareAtPrice && (
-                <span className={productStyles.typography.price.original}>
-                  ${formatPrice(product.compareAtPrice)}
-                </span>
+              {product.rarity && (
+                <Badge variant="secondary" className="text-xs">
+                  {product.rarity}
+                </Badge>
               )}
             </div>
+          )}
 
-            {/* Add to Cart Button */}
+          {/* Vendor and Rating */}
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xs text-muted-foreground truncate">
+              {product.vendor}
+            </span>
+            {product.rating > 0 && (
+              <div className="flex items-center gap-1">
+                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                <span className="text-xs">{product.rating.toFixed(1)}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Price and Stock */}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className={cn(
+                "font-bold",
+                compact ? "text-sm" : "text-lg"
+              )}>
+                {formatPrice(product.price)}
+              </p>
+              {product.stock <= 5 && product.stock > 0 && (
+                <p className="text-xs text-orange-500">Only {product.stock} left</p>
+              )}
+              {product.stock === 0 && (
+                <p className="text-xs text-red-500">Out of stock</p>
+              )}
+            </div>
+            
+            {/* Quick Add to Cart */}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <CartButton
+                  <IconButton
+                    size="sm"
                     onClick={handleAddToCart}
-                    className={productStyles.actions.cartButton.md}
+                    disabled={product.stock === 0}
                   >
-                    <ShoppingCart className={productStyles.actions.icon.md} />
-                  </CartButton>
+                    <ShoppingCart className="h-4 w-4" />
+                  </IconButton>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Add to cart</p>
@@ -353,16 +295,8 @@ export default function ProductCard({
               </Tooltip>
             </TooltipProvider>
           </div>
-
-          {/* Spacer to push stock badge to bottom */}
-          <div className="flex-grow" />
-
-          {/* Stock Status */}
-          {(product.stock <= 5 || product.stock === 0) && (
-            <StockBadge stock={product.stock} className="mt-auto" />
-          )}
         </div>
-      </Card>
-    </Link>
+      </Link>
+    </Card>
   );
 }
