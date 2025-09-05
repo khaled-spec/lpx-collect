@@ -4,7 +4,7 @@ import { useWishlist } from "@/context/WishlistContext";
 import { useAuth } from "@/context/AuthContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ProductCard from "@/components/ProductCard";
+import LegacyProductCard from "@/components/LegacyProductCard";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -136,7 +136,7 @@ function WishlistContent() {
               "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
             )}>
               {items.map((product) => (
-                <ProductCard
+                <LegacyProductCard
                   key={product.id}
                   product={product}
                   variant="default"

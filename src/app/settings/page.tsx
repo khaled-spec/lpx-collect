@@ -92,7 +92,7 @@ const addressSchema = z.object({
   zipCode: z.string().min(1, "ZIP code is required"),
   country: z.string().min(1, "Country is required"),
   phone: z.string().optional(),
-  isDefault: z.boolean().default(false),
+  isDefault: z.boolean(),
 });
 
 type PersonalInfoFormData = z.infer<typeof personalInfoSchema>;
@@ -338,6 +338,9 @@ function AddressManager({ settings, onUpdate }: { settings: UserSettings; onUpda
     formState: { errors, isSubmitting },
   } = useForm<AddressFormData>({
     resolver: zodResolver(addressSchema),
+    defaultValues: {
+      isDefault: false,
+    },
   });
 
   const onSubmit = async (data: AddressFormData) => {

@@ -96,8 +96,8 @@ type ViewMode = "grid" | "grid-compact" | "list";
 export default function CategoryPage() {
   const params = useParams();
   const router = useRouter();
-  const { addItem } = useCart();
-  const { toggleWishlist, isInWishlist } = useWishlist();
+  const { addToCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   
   const categorySlug = params.slug as string;
   
@@ -179,23 +179,68 @@ export default function CategoryPage() {
   }, [categorySlug, currentPage, sortBy, priceRange, selectedConditions, selectedRarities, selectedVendors, inStockOnly]);
 
   const handleAddToCart = (product: Product) => {
-    addItem({
+    // Convert new Product type to old format for CartContext
+    const cartProduct: any = {
       id: product.id,
-      name: product.name,
+      title: product.name,
+      slug: product.id,
+      description: product.description,
       price: product.price,
-      image: product.image,
-      quantity: 1,
-      vendor: product.vendor,
+      images: product.images || [product.image],
+      category: {
+        id: categorySlug,
+        name: product.category,
+        slug: product.categorySlug,
+      },
+      vendor: {
+        id: product.vendorId,
+        storeName: product.vendor,
+        rating: product.rating,
+      },
       condition: product.condition,
       rarity: product.rarity,
-    });
+      stock: product.stock,
+      tags: product.tags || [],
+    };
+    
+    addToCart(cartProduct, 1);
     toast.success("Added to cart");
   };
 
   const handleToggleWishlist = (product: Product) => {
-    toggleWishlist(product);
     const isWishlisted = isInWishlist(product.id);
-    toast.success(isWishlisted ? "Removed from wishlist" : "Added to wishlist");
+    
+    // Convert to old Product type for wishlist
+    const wishlistProduct: any = {
+      id: product.id,
+      title: product.name,
+      slug: product.id,
+      description: product.description,
+      price: product.price,
+      images: product.images || [product.image],
+      category: {
+        id: categorySlug,
+        name: product.category,
+        slug: product.categorySlug,
+      },
+      vendor: {
+        id: product.vendorId,
+        storeName: product.vendor,
+        rating: product.rating,
+      },
+      condition: product.condition,
+      rarity: product.rarity,
+      stock: product.stock,
+      tags: product.tags || [],
+    };
+    
+    if (isWishlisted) {
+      removeFromWishlist(product.id);
+      toast.success("Removed from wishlist");
+    } else {
+      addToWishlist(wishlistProduct);
+      toast.success("Added to wishlist");
+    }
   };
 
   const clearFilters = () => {
@@ -240,7 +285,7 @@ export default function CategoryPage() {
         <Label className="text-sm font-medium mb-3 block">Price Range</Label>
         <Slider
           value={priceRange}
-          onValueChange={setPriceRange}
+          onValueChange={(value) => setPriceRange(value as [number, number])}
           max={10000}
           step={10}
           className="mb-2"
@@ -476,7 +521,7 @@ export default function CategoryPage() {
 
                 <div className="flex items-center gap-4">
                   {/* Sort */}
-                  <Select value={sortBy} onValueChange={setSortBy}>
+                  <Select value={sortBy} onValueChange={(value) => setSortBy(value as ProductFilter["sortBy"])}>
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Sort by" />
                     </SelectTrigger>

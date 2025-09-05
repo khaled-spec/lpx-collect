@@ -242,12 +242,14 @@ export default function OrderConfirmationPage() {
                     Payment Method
                   </p>
                   <p className="font-medium">
-                    {order.paymentMethod.type === "card" &&
-                    order.paymentMethod.cardNumber
-                      ? `Card ending in ${order.paymentMethod.cardNumber.slice(-4)}`
-                      : order.paymentMethod.type === "paypal"
-                        ? "PayPal"
-                        : "Unknown"}
+                    {typeof order.paymentMethod === 'string' 
+                      ? order.paymentMethod
+                      : order.paymentMethod.type === "card" &&
+                        order.paymentMethod.cardNumber
+                        ? `Card ending in ${order.paymentMethod.cardNumber.slice(-4)}`
+                        : order.paymentMethod.type === "paypal"
+                          ? "PayPal"
+                          : "Unknown"}
                   </p>
                 </div>
 
@@ -291,8 +293,8 @@ export default function OrderConfirmationPage() {
                   <div key={index} className="flex items-center gap-4">
                     <div className="relative w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
                       <Image
-                        src={item.image}
-                        alt={item.title}
+                        src={item.image || "/placeholder.jpg"}
+                        alt={item.title || "Product"}
                         fill
                         className="object-cover"
                       />

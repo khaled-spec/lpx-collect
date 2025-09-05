@@ -9,7 +9,7 @@ const extendedVendors: any[] = [];
 const products: any[] = [];
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ProductCard from "@/components/ProductCard";
+import LegacyProductCard from "@/components/LegacyProductCard";
 import {
   PrimaryButton,
   SecondaryButton,
@@ -612,7 +612,7 @@ export default function VendorStorefrontPage() {
                           }
                         >
                           {vendorProducts.map((product) => (
-                            <ProductCard
+                            <LegacyProductCard
                               key={product.id}
                               product={product}
                               viewMode={viewMode}

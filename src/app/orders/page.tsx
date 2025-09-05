@@ -71,7 +71,7 @@ function OrderCard({ order, onReorder }: { order: Order; onReorder: (order: Orde
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <h3 className="font-semibold">Order #{order.orderNumber}</h3>
-                <Badge variant={order.status === "delivered" ? "success" : "secondary"}>
+                <Badge variant={order.status === "delivered" ? "default" : "secondary"}>
                   {status.label}
                 </Badge>
               </div>
@@ -146,11 +146,11 @@ function OrderCard({ order, onReorder }: { order: Order; onReorder: (order: Orde
               <div className="space-y-3">
                 <h4 className="font-medium">Delivery Address</h4>
                 <div className="text-sm text-muted-foreground">
-                  <p>{order.shippingAddress.fullName}</p>
+                  <p>{order.shippingAddress.firstName} {order.shippingAddress.lastName}</p>
                   <p>{order.shippingAddress.address}</p>
-                  {order.shippingAddress.apartment && <p>{order.shippingAddress.apartment}</p>}
+                  {order.shippingAddress.address2 && <p>{order.shippingAddress.address2}</p>}
                   <p>
-                    {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}
+                    {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.postalCode}
                   </p>
                   <p>{order.shippingAddress.country}</p>
                 </div>
@@ -161,7 +161,9 @@ function OrderCard({ order, onReorder }: { order: Order; onReorder: (order: Orde
                 <div className="flex items-center gap-2 text-sm">
                   <CreditCard className="h-4 w-4 text-muted-foreground" />
                   <span className="text-muted-foreground">
-                    {order.paymentMethod === "card" ? "Credit Card" : order.paymentMethod}
+                    {typeof order.paymentMethod === "string" 
+                      ? (order.paymentMethod === "card" ? "Credit Card" : order.paymentMethod)
+                      : order.paymentMethod.type === "card" ? "Credit Card" : order.paymentMethod.type}
                   </span>
                 </div>
               </div>
@@ -193,7 +195,11 @@ function OrderCard({ order, onReorder }: { order: Order; onReorder: (order: Orde
               <div className="flex items-center gap-2 p-3 bg-primary/5 rounded-lg">
                 <Truck className="h-4 w-4 text-primary" />
                 <p className="text-sm">
-                  Estimated delivery: <span className="font-medium">{order.estimatedDelivery}</span>
+                  Estimated delivery: <span className="font-medium">
+                    {typeof order.estimatedDelivery === 'string' 
+                      ? order.estimatedDelivery 
+                      : order.estimatedDelivery?.toLocaleDateString()}
+                  </span>
                 </p>
               </div>
             )}
@@ -207,7 +213,7 @@ function OrderCard({ order, onReorder }: { order: Order; onReorder: (order: Orde
 export default function OrdersPage() {
   const { user } = useAuth();
   const router = useRouter();
-  const { addItem } = useCart();
+  const { addToCart } = useCart();
   const [orders, setOrders] = useState<Order[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [filterStatus, setFilterStatus] = useState<string>("all");
@@ -285,31 +291,18 @@ export default function OrdersPage() {
   }, [orders, filterStatus, sortBy]);
 
   const handleReorder = (order: Order) => {
-    order.items.forEach(item => {
-      // Create a simplified product object for the cart
-      const product = {
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        category: "collectibles",
-        condition: "mint",
-        stock: 10,
-        images: ["/placeholder.jpg"],
-        vendor: {
-          id: "vendor-1",
-          name: "LPX Vendor",
-          rating: 5,
-          isVerified: true,
-        }
-      };
-      
-      for (let i = 0; i < item.quantity; i++) {
-        addItem(product);
-      }
-    });
+    // For now, we'll just show a message since we don't have the full product data
+    // In a real app, you'd fetch the product details from the API
+    toast.info("Reorder functionality is not yet implemented");
     
-    toast.success(`${order.items.length} items added to cart`);
-    router.push("/cart");
+    // Alternatively, if we had access to the products:
+    // order.items.forEach(item => {
+    //   for (let i = 0; i < item.quantity; i++) {
+    //     addToCart(item.product, 1);
+    //   }
+    // });
+    // toast.success(`${order.items.length} items added to cart`);
+    // router.push("/cart");
   };
 
   if (!user) {
