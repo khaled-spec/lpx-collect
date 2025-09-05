@@ -50,6 +50,7 @@ import {
   Settings,
   Store,
   ShoppingBag,
+  CreditCard,
 } from "lucide-react";
 
 const categories = [
@@ -256,6 +257,12 @@ export default function Header() {
                           Settings
                         </Link>
                       </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/payment-methods" className="cursor-pointer">
+                          <CreditCard className="mr-2 h-4 w-4" />
+                          Payment Methods
+                        </Link>
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={logout}
@@ -409,6 +416,13 @@ export default function Header() {
                           onClick={() => setIsMenuOpen(false)}
                         >
                           Settings
+                        </Link>
+                        <Link
+                          href="/payment-methods"
+                          className="py-2 hover:text-primary transition"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          Payment Methods
                         </Link>
                         <Separator className="my-2" />
                         <button

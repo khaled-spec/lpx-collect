@@ -4,6 +4,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import { NotificationProvider } from "@/context/NotificationContext";
+import { PaymentMethodsProvider } from "@/context/PaymentMethodsContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -25,7 +26,9 @@ export default function RootLayout({
         <AuthProvider>
           <NotificationProvider>
             <WishlistProvider>
-              <CartProvider>{children}</CartProvider>
+              <PaymentMethodsProvider>
+                <CartProvider>{children}</CartProvider>
+              </PaymentMethodsProvider>
             </WishlistProvider>
           </NotificationProvider>
         </AuthProvider>
