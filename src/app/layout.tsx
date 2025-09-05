@@ -2,12 +2,15 @@ import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
+import { WishlistProvider } from "@/context/WishlistContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "LPX Collect - Premium Collectibles Marketplace",
-  description: "Discover, buy, and sell rare collectibles from verified vendors. Your trusted marketplace for trading cards, comics, vintage items, and more.",
-  keywords: "collectibles, marketplace, trading cards, comics, vintage, rare items, buy, sell",
+  description:
+    "Discover, buy, and sell rare collectibles from verified vendors. Your trusted marketplace for trading cards, comics, vintage items, and more.",
+  keywords:
+    "collectibles, marketplace, trading cards, comics, vintage, rare items, buy, sell",
 };
 
 export default function RootLayout({
@@ -20,7 +23,7 @@ export default function RootLayout({
       <body className="antialiased">
         <AuthProvider>
           <CartProvider>
-            {children}
+            <WishlistProvider>{children}</WishlistProvider>
           </CartProvider>
         </AuthProvider>
         <Toaster />

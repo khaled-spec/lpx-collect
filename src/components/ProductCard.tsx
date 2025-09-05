@@ -1,73 +1,96 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Heart, ShoppingCart, Package, Star } from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { DiscountBadge, StockBadge, VerifiedBadge } from '@/components/custom/badge-variants';
-import { IconButton, CartButton } from '@/components/custom/button-variants';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { 
-  productStyles, 
-  getProductClasses, 
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Heart, ShoppingCart, Package, Star } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  DiscountBadge,
+  StockBadge,
+  VerifiedBadge,
+} from "@/components/custom/badge-variants";
+import { IconButton, CartButton } from "@/components/custom/button-variants";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  productStyles,
+  getProductClasses,
   getContentClasses,
   getImageContainerClasses,
-  getImageClasses 
-} from '@/components/custom/product-styles';
-import { cn } from '@/lib/utils';
-import type { Product } from '@/types';
+  getImageClasses,
+} from "@/components/custom/product-styles";
+import { cn } from "@/lib/utils";
+import { useWishlist } from "@/context/WishlistContext";
+import { useCart } from "@/context/CartContext";
+import type { Product } from "@/types";
 
 interface ProductCardProps {
   product: Product;
-  variant?: 'default' | 'compact' | 'large';
-  viewMode?: 'grid' | 'list';
-  imageMode?: 'contain' | 'cover' | 'fill' | 'scale';
+  variant?: "default" | "compact" | "large";
+  viewMode?: "grid" | "list";
+  imageMode?: "contain" | "cover" | "fill" | "scale";
   className?: string;
 }
 
 // Format number with thousand separators
 const formatPrice = (num: number) => {
-  return num.toLocaleString('en-US', {
+  return num.toLocaleString("en-US", {
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   });
 };
 
-export default function ProductCard({ 
-  product, 
-  variant = 'default',
-  viewMode = 'grid',
-  imageMode = 'contain',
-  className 
+export default function ProductCard({
+  product,
+  variant = "default",
+  viewMode = "grid",
+  imageMode = "contain",
+  className,
 }: ProductCardProps) {
-  const [isLiked, setIsLiked] = useState(false);
   const [imageError, setImageError] = useState(false);
-  
-  // Debug: Log the product title to console
-  console.log('Product title:', product.title, 'Typography classes:', productStyles.typography.title);
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const { addToCart } = useCart();
+
+  const isLiked = isInWishlist(product.id);
 
   const discountPercentage = product.compareAtPrice
-    ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
+    ? Math.round(
+        ((product.compareAtPrice - product.price) / product.compareAtPrice) *
+          100,
+      )
     : 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
-    console.log('Add to cart:', product.id);
+    addToCart(product);
   };
 
   const handleToggleLike = (e: React.MouseEvent) => {
     e.preventDefault();
-    setIsLiked(!isLiked);
+    if (isLiked) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product);
+    }
   };
 
-  if (viewMode === 'list') {
+  if (viewMode === "list") {
     return (
       <Link href={`/product/${product.slug}`} className="group block">
         <div className={cn(productStyles.list.container, className)}>
           {/* Image */}
-          <div className={cn(productStyles.list.imageContainer, "flex items-center justify-center")}>
+          <div
+            className={cn(
+              productStyles.list.imageContainer,
+              "flex items-center justify-center",
+            )}
+          >
             {!imageError && product.images[0] ? (
               <Image
                 src={product.images[0]}
@@ -81,7 +104,7 @@ export default function ProductCard({
               <Package className="h-12 w-12 text-muted-foreground/30" />
             )}
           </div>
-          
+
           {/* Content */}
           <div className={productStyles.list.content}>
             <div className="flex items-start justify-between">
@@ -93,11 +116,23 @@ export default function ProductCard({
                   {product.title}
                 </h3>
                 <div className="flex items-center gap-2 mt-1">
-                  <Badge variant="outline" className={cn(productStyles.badges.size.md, productStyles.badges.base)}>
+                  <Badge
+                    variant="outline"
+                    className={cn(
+                      productStyles.badges.size.md,
+                      productStyles.badges.base,
+                    )}
+                  >
                     {product.condition}
                   </Badge>
                   {product.rarity && (
-                    <Badge variant="secondary" className={cn(productStyles.badges.size.md, productStyles.badges.base)}>
+                    <Badge
+                      variant="secondary"
+                      className={cn(
+                        productStyles.badges.size.md,
+                        productStyles.badges.base,
+                      )}
+                    >
                       {product.rarity}
                     </Badge>
                   )}
@@ -114,7 +149,14 @@ export default function ProductCard({
                       </span>
                     </div>
                   )}
-                  {product.vendor.verified && <VerifiedBadge className={cn(productStyles.badges.size.md, productStyles.badges.base)} />}
+                  {product.vendor.verified && (
+                    <VerifiedBadge
+                      className={cn(
+                        productStyles.badges.size.md,
+                        productStyles.badges.base,
+                      )}
+                    />
+                  )}
                 </div>
               </div>
               <div className="text-right">
@@ -122,13 +164,18 @@ export default function ProductCard({
                   ${formatPrice(product.price)}
                 </span>
                 {product.compareAtPrice && (
-                  <span className={cn(productStyles.typography.price.original, "block")}>
+                  <span
+                    className={cn(
+                      productStyles.typography.price.original,
+                      "block",
+                    )}
+                  >
                     ${formatPrice(product.compareAtPrice)}
                   </span>
                 )}
               </div>
             </div>
-            
+
             <div className="flex items-center justify-between mt-2">
               <div className="flex items-center gap-4">
                 {product.stock <= 5 && product.stock > 0 && (
@@ -141,12 +188,17 @@ export default function ProductCard({
                   size="sm"
                   onClick={handleToggleLike}
                 >
-                  <Heart className={cn(
-                    "h-4 w-4",
-                    isLiked && "fill-red-500 text-red-500"
-                  )} />
+                  <Heart
+                    className={cn(
+                      "h-4 w-4",
+                      isLiked && "fill-red-500 text-red-500",
+                    )}
+                  />
                 </IconButton>
-                <CartButton className={productStyles.actions.cartButton.sm} onClick={handleAddToCart}>
+                <CartButton
+                  className={productStyles.actions.cartButton.sm}
+                  onClick={handleAddToCart}
+                >
                   <ShoppingCart className={productStyles.actions.icon.sm} />
                 </CartButton>
               </div>
@@ -167,7 +219,7 @@ export default function ProductCard({
               -{discountPercentage}%
             </DiscountBadge>
           )}
-          
+
           {!imageError && product.images[0] ? (
             <Image
               src={product.images[0]}
@@ -196,13 +248,15 @@ export default function ProductCard({
                     >
                       <Heart
                         className={`h-4 w-4 ${
-                          isLiked ? 'fill-red-500 text-red-500' : ''
+                          isLiked ? "fill-red-500 text-red-500" : ""
                         }`}
                       />
                     </IconButton>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>{isLiked ? 'Remove from favorites' : 'Add to favorites'}</p>
+                    <p>
+                      {isLiked ? "Remove from favorites" : "Add to favorites"}
+                    </p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -220,17 +274,27 @@ export default function ProductCard({
           </div>
 
           {/* Title - Fixed height with line clamp */}
-          <h3 className={productStyles.typography.title}>
-            {product.title}
-          </h3>
+          <h3 className={productStyles.typography.title}>{product.title}</h3>
 
           {/* Badges - Fixed height */}
           <div className="flex items-center gap-1.5 h-5">
-            <Badge variant="outline" className={cn(productStyles.badges.size.md, productStyles.badges.base)}>
+            <Badge
+              variant="outline"
+              className={cn(
+                productStyles.badges.size.md,
+                productStyles.badges.base,
+              )}
+            >
               {product.condition}
             </Badge>
             {product.rarity && (
-              <Badge variant="secondary" className={cn(productStyles.badges.size.md, productStyles.badges.base)}>
+              <Badge
+                variant="secondary"
+                className={cn(
+                  productStyles.badges.size.md,
+                  productStyles.badges.base,
+                )}
+              >
                 {product.rarity}
               </Badge>
             )}
@@ -250,7 +314,12 @@ export default function ProductCard({
               </div>
             )}
             {product.vendor.verified && (
-              <VerifiedBadge className={cn(productStyles.badges.size.md, productStyles.badges.base)} />
+              <VerifiedBadge
+                className={cn(
+                  productStyles.badges.size.md,
+                  productStyles.badges.base,
+                )}
+              />
             )}
           </div>
 
@@ -266,7 +335,7 @@ export default function ProductCard({
                 </span>
               )}
             </div>
-            
+
             {/* Add to Cart Button */}
             <TooltipProvider>
               <Tooltip>

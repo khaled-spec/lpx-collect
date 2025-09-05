@@ -1,26 +1,27 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { 
-  ShoppingCart, 
-  Heart, 
-  Share2, 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import {
+  ShoppingCart,
+  Heart,
+  Share2,
   Truck,
   Minus,
   Plus,
   CheckCircle,
-  Check
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { productStyles } from '@/components/custom/product-styles';
-import { useCart } from '@/context/CartContext';
-import { useAuth } from '@/context/AuthContext';
-import { Product } from '@/types';
+  Check,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { productStyles } from "@/components/custom/product-styles";
+import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
+import { useWishlist } from "@/context/WishlistContext";
+import { Product } from "@/types";
 
 interface ProductPurchaseCardProps {
   product: Product;
@@ -50,24 +51,27 @@ export default function ProductPurchaseCardOptimized({
   setQuantity,
   discountPercentage,
 }: ProductPurchaseCardProps) {
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const { addToCart, isInCart } = useCart();
   const { isAuthenticated } = useAuth();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const router = useRouter();
+
+  const isWishlisted = isInWishlist(product.id);
 
   // Use extended props if available, otherwise use Product props
   const inStock = productExtended?.inStock ?? product.stock > 0;
   const stockQuantity = productExtended?.stockQuantity ?? product.stock;
-  const originalPrice = productExtended?.originalPrice ?? product.compareAtPrice ?? product.price;
+  const originalPrice =
+    productExtended?.originalPrice ?? product.compareAtPrice ?? product.price;
   const shipping = productExtended?.shipping ?? {
     price: 19.99,
     freeShippingThreshold: 100,
-    estimatedDays: '3-5',
+    estimatedDays: "3-5",
   };
   const returns = productExtended?.returns ?? {
     accepted: true,
-    period: '30 days',
+    period: "30 days",
   };
 
   const handleQuantityChange = (change: number) => {
@@ -86,9 +90,9 @@ export default function ProductPurchaseCardOptimized({
   const handleBuyNow = () => {
     addToCart(product, quantity);
     if (isAuthenticated) {
-      router.push('/checkout');
+      router.push("/checkout");
     } else {
-      router.push('/login?redirect=/checkout');
+      router.push("/login?redirect=/checkout");
     }
   };
 
@@ -106,9 +110,7 @@ export default function ProductPurchaseCardOptimized({
                 <span className="text-lg text-muted-foreground line-through">
                   ${originalPrice.toLocaleString()}
                 </span>
-                <Badge variant="destructive">
-                  Save {discountPercentage}%
-                </Badge>
+                <Badge variant="destructive">Save {discountPercentage}%</Badge>
               </>
             )}
           </div>
@@ -117,32 +119,64 @@ export default function ProductPurchaseCardOptimized({
           {inStock ? (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <CheckCircle className={cn(productStyles.forms.icon.md, "text-success")} />
-                <span className={cn(productStyles.typography.meta, "font-medium text-success")}>
+                <CheckCircle
+                  className={cn(productStyles.forms.icon.md, "text-success")}
+                />
+                <span
+                  className={cn(
+                    productStyles.typography.meta,
+                    "font-medium text-success",
+                  )}
+                >
                   In Stock
                 </span>
                 {stockQuantity <= 5 && (
-                  <Badge variant="outline" className="border-warning text-warning">
+                  <Badge
+                    variant="outline"
+                    className="border-warning text-warning"
+                  >
                     Only {stockQuantity} left
                   </Badge>
                 )}
               </div>
-              
+
               {/* Delivery info - inline without container */}
-              <div className={cn("flex items-center gap-2", productStyles.typography.meta)}>
-                <Truck className={cn(productStyles.forms.icon.md, "text-muted-foreground")} />
+              <div
+                className={cn(
+                  "flex items-center gap-2",
+                  productStyles.typography.meta,
+                )}
+              >
+                <Truck
+                  className={cn(
+                    productStyles.forms.icon.md,
+                    "text-muted-foreground",
+                  )}
+                />
                 <span className="text-muted-foreground">Delivery:</span>
-                <span className="font-medium">{shipping.estimatedDays} days</span>
+                <span className="font-medium">
+                  {shipping.estimatedDays} days
+                </span>
               </div>
               {shipping.freeShippingThreshold && (
-                <p className={cn(productStyles.typography.meta, "text-success ml-6")}>
+                <p
+                  className={cn(
+                    productStyles.typography.meta,
+                    "text-success ml-6",
+                  )}
+                >
                   FREE shipping on orders over ${shipping.freeShippingThreshold}
                 </p>
               )}
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <span className={cn(productStyles.typography.meta, "font-medium text-destructive")}>
+              <span
+                className={cn(
+                  productStyles.typography.meta,
+                  "font-medium text-destructive",
+                )}
+              >
                 Out of Stock
               </span>
             </div>
@@ -154,7 +188,9 @@ export default function ProductPurchaseCardOptimized({
         {/* Quantity Selector - Clean design */}
         {inStock && (
           <div className="space-y-2">
-            <label className={cn(productStyles.typography.meta, "font-medium")}>Quantity:</label>
+            <label className={cn(productStyles.typography.meta, "font-medium")}>
+              Quantity:
+            </label>
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
@@ -184,17 +220,16 @@ export default function ProductPurchaseCardOptimized({
         {/* Primary Actions - Clear hierarchy */}
         {inStock && (
           <div className="space-y-2">
-            <Button 
-              className="w-full" 
-              size="lg"
-              onClick={handleBuyNow}
-            >
+            <Button className="w-full" size="lg" onClick={handleBuyNow}>
               Buy Now
             </Button>
-            
-            <Button 
-              variant={isInCart(product.id) ? "outline" : "secondary"} 
-              className={cn("w-full", justAdded && "bg-green-50 border-green-500")} 
+
+            <Button
+              variant={isInCart(product.id) ? "outline" : "secondary"}
+              className={cn(
+                "w-full",
+                justAdded && "bg-green-50 border-green-500",
+              )}
               size="lg"
               onClick={handleAddToCart}
               disabled={isInCart(product.id) && !justAdded}
@@ -206,14 +241,52 @@ export default function ProductPurchaseCardOptimized({
                 </>
               ) : (
                 <>
-                  <ShoppingCart className={cn(productStyles.forms.icon.md, "mr-2")} />
-                  {justAdded ? 'Adding...' : 'Add to Cart'}
+                  <ShoppingCart
+                    className={cn(productStyles.forms.icon.md, "mr-2")}
+                  />
+                  {justAdded ? "Adding..." : "Add to Cart"}
                 </>
               )}
             </Button>
+
+            {/* Secondary Actions - Social buttons */}
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                className="flex-1"
+                size="lg"
+                onClick={() =>
+                  isWishlisted
+                    ? removeFromWishlist(product.id)
+                    : addToWishlist(product)
+                }
+              >
+                <Heart
+                  className={cn(
+                    productStyles.forms.icon.md,
+                    "mr-2",
+                    isWishlisted && "fill-current text-red-500",
+                  )}
+                />
+                {isWishlisted ? "Saved" : "Save"}
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() =>
+                  navigator.share?.({
+                    title: product.title,
+                    url: window.location.href,
+                  })
+                }
+                className="flex-1"
+              >
+                <Share2 className={cn(productStyles.forms.icon.md, "mr-2")} />
+                Share
+              </Button>
+            </div>
           </div>
         )}
-
       </CardContent>
     </Card>
   );

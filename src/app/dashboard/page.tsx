@@ -1,84 +1,120 @@
-'use client';
+"use client";
 
-import { useAuth } from '@/context/AuthContext';
-import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  Package, 
-  Heart, 
-  ShoppingBag, 
-  Settings, 
+import { useAuth } from "@/context/AuthContext";
+import { useWishlist } from "@/context/WishlistContext";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Package,
+  Heart,
+  ShoppingBag,
+  Settings,
   CreditCard,
   Truck,
   Star,
   TrendingUp,
   Clock,
-  ArrowRight
-} from 'lucide-react';
-import Link from 'next/link';
+  ArrowRight,
+} from "lucide-react";
+import Link from "next/link";
 
 function DashboardContent() {
   const { user } = useAuth();
+  const { wishlistCount } = useWishlist();
 
   const stats = [
-    { label: 'Total Orders', value: user?.orderCount || 0, icon: ShoppingBag, color: 'text-blue-600' },
-    { label: 'Wishlist Items', value: user?.wishlistCount || 0, icon: Heart, color: 'text-red-600' },
-    { label: 'Reviews Written', value: 5, icon: Star, color: 'text-yellow-600' },
-    { label: 'Member Since', value: 'Jan 2024', icon: Clock, color: 'text-green-600' },
+    {
+      label: "Total Orders",
+      value: user?.orderCount || 0,
+      icon: ShoppingBag,
+      color: "text-blue-600",
+    },
+    {
+      label: "Wishlist Items",
+      value: wishlistCount,
+      icon: Heart,
+      color: "text-red-600",
+    },
+    {
+      label: "Reviews Written",
+      value: 5,
+      icon: Star,
+      color: "text-yellow-600",
+    },
+    {
+      label: "Member Since",
+      value: "Jan 2024",
+      icon: Clock,
+      color: "text-green-600",
+    },
   ];
 
   const recentOrders = [
     {
-      id: '1',
-      date: '2024-01-15',
+      id: "1",
+      date: "2024-01-15",
       total: 299.99,
-      status: 'delivered',
+      status: "delivered",
       items: 2,
     },
     {
-      id: '2',
-      date: '2024-01-10',
+      id: "2",
+      date: "2024-01-10",
       total: 599.99,
-      status: 'shipped',
+      status: "shipped",
       items: 1,
     },
     {
-      id: '3',
-      date: '2024-01-05',
+      id: "3",
+      date: "2024-01-05",
       total: 149.99,
-      status: 'processing',
+      status: "processing",
       items: 3,
     },
   ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'delivered': return 'bg-green-100 text-green-800';
-      case 'shipped': return 'bg-blue-100 text-blue-800';
-      case 'processing': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "delivered":
+        return "bg-green-100 text-green-800";
+      case "shipped":
+        return "bg-blue-100 text-blue-800";
+      case "processing":
+        return "bg-yellow-100 text-yellow-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <main className="container py-8">
         {/* Welcome Section */}
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-6">
             <Avatar className="h-16 w-16">
               <AvatarImage src={user?.avatar} alt={user?.name} />
-              <AvatarFallback>{user?.name?.charAt(0).toUpperCase()}</AvatarFallback>
+              <AvatarFallback>
+                {user?.name?.charAt(0).toUpperCase()}
+              </AvatarFallback>
             </Avatar>
             <div>
-              <h1 className="text-3xl font-bold">Welcome back, {user?.name}!</h1>
+              <h1 className="text-3xl font-bold">
+                Welcome back, {user?.name}!
+              </h1>
               <p className="text-muted-foreground">
                 Manage your orders, wishlist, and account settings
               </p>
@@ -93,7 +129,9 @@ function DashboardContent() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">{stat.label}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {stat.label}
+                    </p>
                     <p className="text-2xl font-bold">{stat.value}</p>
                   </div>
                   <stat.icon className={`h-8 w-8 ${stat.color}`} />
@@ -110,21 +148,30 @@ function DashboardContent() {
             <Card>
               <CardHeader>
                 <CardTitle>Recent Orders</CardTitle>
-                <CardDescription>Track and manage your recent purchases</CardDescription>
+                <CardDescription>
+                  Track and manage your recent purchases
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {recentOrders.map((order) => (
-                    <div key={order.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div
+                      key={order.id}
+                      className="flex items-center justify-between p-4 border rounded-lg"
+                    >
                       <div>
                         <p className="font-medium">Order #{order.id}</p>
                         <p className="text-sm text-muted-foreground">
-                          {new Date(order.date).toLocaleDateString()} • {order.items} items
+                          {new Date(order.date).toLocaleDateString()} •{" "}
+                          {order.items} items
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="font-bold">${order.total}</p>
-                        <Badge className={getStatusColor(order.status)} variant="secondary">
+                        <Badge
+                          className={getStatusColor(order.status)}
+                          variant="secondary"
+                        >
                           {order.status}
                         </Badge>
                       </div>
@@ -149,25 +196,41 @@ function DashboardContent() {
                 <CardDescription>Manage your account</CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Button asChild variant="outline" className="w-full justify-start">
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full justify-start"
+                >
                   <Link href="/settings">
                     <Settings className="mr-2 h-4 w-4" />
                     Account Settings
                   </Link>
                 </Button>
-                <Button asChild variant="outline" className="w-full justify-start">
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full justify-start"
+                >
                   <Link href="/wishlist">
                     <Heart className="mr-2 h-4 w-4" />
                     My Wishlist
                   </Link>
                 </Button>
-                <Button asChild variant="outline" className="w-full justify-start">
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full justify-start"
+                >
                   <Link href="/payment-methods">
                     <CreditCard className="mr-2 h-4 w-4" />
                     Payment Methods
                   </Link>
                 </Button>
-                <Button asChild variant="outline" className="w-full justify-start">
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full justify-start"
+                >
                   <Link href="/addresses">
                     <Truck className="mr-2 h-4 w-4" />
                     Shipping Addresses
@@ -190,14 +253,18 @@ function DashboardContent() {
                   <div className="flex items-center gap-3">
                     <div className="h-12 w-12 rounded bg-muted"></div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium line-clamp-1">Vintage Pokemon Card</p>
+                      <p className="text-sm font-medium line-clamp-1">
+                        Vintage Pokemon Card
+                      </p>
                       <p className="text-sm text-muted-foreground">$299.99</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="h-12 w-12 rounded bg-muted"></div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium line-clamp-1">Rare Comic Book</p>
+                      <p className="text-sm font-medium line-clamp-1">
+                        Rare Comic Book
+                      </p>
                       <p className="text-sm text-muted-foreground">$149.99</p>
                     </div>
                   </div>
