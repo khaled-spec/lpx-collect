@@ -36,6 +36,8 @@ export interface CheckoutData {
   subscribeNewsletter: boolean;
 }
 
+export type OrderStatus = "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+
 export interface Order {
   id: string;
   orderNumber: string;
@@ -43,26 +45,28 @@ export interface Order {
   items: OrderItem[];
   shippingAddress: ShippingAddress;
   billingAddress: BillingAddress;
-  paymentMethod: PaymentMethod;
+  paymentMethod: PaymentMethod | string;
   subtotal: number;
   shipping: number;
   tax: number;
   discount: number;
   total: number;
-  status: "pending" | "processing" | "completed" | "cancelled";
+  status: OrderStatus;
   orderNotes?: string;
-  createdAt: Date;
-  estimatedDelivery: Date;
+  createdAt: Date | string;
+  estimatedDelivery: Date | string;
   trackingNumber?: string;
 }
 
 export interface OrderItem {
-  productId: string;
-  title: string;
+  id: string;
+  productId?: string;
+  name: string;
+  title?: string;
   price: number;
   quantity: number;
-  image: string;
-  vendor: string;
+  image?: string;
+  vendor?: string;
 }
 
 export type CheckoutStep = "shipping" | "billing" | "payment" | "review";
