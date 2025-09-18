@@ -9,8 +9,9 @@ import { Product } from "@/lib/api/types";
 import PageLayout from "@/components/layout/PageLayout";
 import {
   ConditionBadge,
-  RarityBadge,
-  VerifiedBadge,
+  SealedBadge,
+  GradingBadge,
+  StockBadge,
 } from "@/components/custom/badge-variants";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -92,29 +93,43 @@ export default function ProductDetailsPage({
     );
   }
 
+  const getCategorySlug = () => {
+    if (product.categorySlug) {
+      return product.categorySlug;
+    }
+
+    if (typeof product.category === 'string') {
+      return product.category.toLowerCase().replace(/\s+/g, '-');
+    }
+
+    return 'unknown';
+  };
+
   const breadcrumbs = [
     { label: "Browse", href: "/browse" },
-    { label: product.category, href: `/category/${product.categorySlug}` },
+    {
+      label: product.category,
+      href: `/category/${getCategorySlug()}`
+    },
     { label: product.name },
   ];
 
   return (
     <PageLayout
-      title={product.name}
       breadcrumbs={breadcrumbs}
       showHeader={true}
       showFooter={true}
-      withCard={false}
+      withCard={true}
     >
-      <div className="flex min-h-[600px] lg:h-[calc(100vh-300px)] overflow-hidden bg-card rounded-xl border">
+      <div className="flex min-h-[600px] overflow-hidden rounded-lg border">
         {/* Left Half - Product Images */}
-        <div className="flex-1 flex flex-col bg-background border-r">
+        <div className="flex-1 flex flex-col bg-muted/30 border-r">
           {/* Main Image */}
           <div className="flex-1 flex items-center justify-center p-8">
             <div className="w-full max-w-lg aspect-square relative">
               <Image
                 src={
-                  product.images ? product.images[selectedImage] : product.image
+                  (product.images ? product.images[selectedImage] : product.image) || '/placeholder-card.jpg'
                 }
                 alt={product.name}
                 fill
@@ -126,8 +141,8 @@ export default function ProductDetailsPage({
           {/* Thumbnail Images */}
           <div className="p-6 border-t">
             <div className="flex space-x-3 justify-center">
-              {(product.images || [product.image]).map(
-                (image: string, index: number) => (
+              {(product.images || [product.image]).filter(Boolean).map(
+                (image, index: number) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
@@ -139,7 +154,7 @@ export default function ProductDetailsPage({
                     )}
                   >
                     <Image
-                      src={image}
+                      src={image || '/placeholder-card.jpg'}
                       alt={`${product.name} view ${index + 1}`}
                       fill
                       className="object-cover"
@@ -165,9 +180,18 @@ export default function ProductDetailsPage({
                 <div className="mb-4">
                   <p className="text-sm text-muted-foreground">
                     Sold by{" "}
-                    <span className="font-medium text-foreground">
-                      {product.vendor}
-                    </span>
+                    {product.vendorId ? (
+                      <Link
+                        href={`/vendor/${product.vendorId}`}
+                        className="font-medium text-foreground hover:text-primary transition-colors underline decoration-dotted hover:decoration-solid"
+                      >
+                        {product.vendor}
+                      </Link>
+                    ) : (
+                      <span className="font-medium text-foreground">
+                        {product.vendor}
+                      </span>
+                    )}
                   </p>
                   <div className="flex items-center space-x-2 text-xs text-muted-foreground mt-1">
                     <div className="flex">
@@ -210,17 +234,20 @@ export default function ProductDetailsPage({
                 </p>
               </div>
 
-              {/* Condition and Rarity */}
+              {/* Product Badges */}
               <div className="flex flex-wrap gap-2">
-                {product.condition && (
-                  <ConditionBadge condition={product.condition} />
+                {product.stock <= 5 && product.stock > 0 && (
+                  <StockBadge stock={product.stock} />
                 )}
-                {product.rarity && <RarityBadge rarity={product.rarity} />}
-                {product.authenticity?.verified && (
-                  <VerifiedBadge>
-                    <Shield className="h-3 w-3 mr-1" />
-                    Authenticated
-                  </VerifiedBadge>
+                {product.state === "sealed" && <SealedBadge />}
+                {product.state === "open" && product.grading && (
+                  <GradingBadge
+                    company={product.grading.company}
+                    grade={product.grading.grade}
+                  />
+                )}
+                {product.state === "open" && !product.grading && product.condition && (
+                  <ConditionBadge condition={product.condition} />
                 )}
               </div>
 

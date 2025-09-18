@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
-import { useUser } from "@clerk/nextjs";
 import { CheckoutProvider, useCheckout } from "@/context/CheckoutContext";
 import PageLayout from "@/components/layout/PageLayout";
 import CheckoutSteps from "@/components/checkout/CheckoutSteps";
@@ -23,8 +22,7 @@ import { cn } from "@/lib/utils";
 function CheckoutContent() {
   const router = useRouter();
   const { items } = useCart();
-  const { user, isLoaded } = useUser();
-  const authLoading = !isLoaded;
+  const authLoading = false; // No auth loading in frontend-only app
   const { currentStep, setCurrentStep } = useCheckout();
 
   // Redirect if cart is empty
@@ -101,18 +99,16 @@ function CheckoutContent() {
     >
       <div className="max-w-7xl mx-auto">
         {/* Guest Checkout Notice */}
-        {!user && (
-          <Alert className="mb-6">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              You're checking out as a guest.
-              <Link href="/sign-in" className="ml-1 text-primary hover:underline">
-                Sign in
-              </Link>{" "}
-              to save your information for next time.
-            </AlertDescription>
-          </Alert>
-        )}
+        <Alert className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            You're checking out as a guest.
+            <Link href="/sign-in" className="ml-1 text-primary hover:underline">
+              Sign in
+            </Link>{" "}
+            to save your information for next time.
+          </AlertDescription>
+        </Alert>
 
         {/* Checkout Progress */}
         <CheckoutSteps currentStep={currentStep} onStepClick={setCurrentStep} />

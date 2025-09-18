@@ -3,7 +3,6 @@
 import { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { cn } from "@/lib/utils";
 import {
@@ -70,7 +69,6 @@ const adminNavItems = [
 
 function AdminLayoutContent({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { user } = useUser();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
@@ -100,7 +98,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
                 <span className="text-muted-foreground">Admin Mode</span>
               </div>
               <span className="font-medium">
-                {user?.firstName || user?.emailAddresses[0]?.emailAddress}
+                Admin User
               </span>
             </div>
             <Button variant="outline" size="sm" asChild>

@@ -1,11 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-const extendedVendors: any[] = [];
-const products: any[] = [];
 import PageLayout from "@/components/layout/PageLayout";
 import { ProductCard } from "@/components/shared/ProductCard";
 import { EmptyStates } from "@/components/shared/EmptyState";
@@ -18,8 +16,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
-  VerifiedBadge,
   CategoryBadge,
 } from "@/components/custom/badge-variants";
 import { Separator } from "@/components/ui/separator";
@@ -44,14 +42,43 @@ import {
   ArrowUpDown,
   LayoutList,
   X,
+  MapPin,
+  Clock,
+  Users,
+  Shield,
+  Globe,
+  Facebook,
+  Twitter,
+  Instagram,
+  ExternalLink,
 } from "lucide-react";
+import { MockVendorAPI, MockProductAPI } from "@/lib/api/mock";
+import { Vendor, Product, Category } from "@/lib/api/types";
+import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
+import { QuickView } from "@/components/browse/QuickView";
+import { toast } from "sonner";
 
 type ViewMode = "grid" | "list";
+
+// Initialize API instances
+const vendorAPI = new MockVendorAPI();
+const productAPI = new MockProductAPI();
 
 export default function VendorStorefrontPage() {
   const params = useParams();
   const vendorId = params.id as string;
+  const { addToCart } = useCart();
+  const { addToWishlist } = useWishlist();
 
+  // State for data
+  const [vendor, setVendor] = useState<Vendor | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [productsLoading, setProductsLoading] = useState(false);
+
+  // UI state
   const [isFollowing, setIsFollowing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -59,6 +86,7 @@ export default function VendorStorefrontPage() {
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [sortBy, setSortBy] = useState("newest");
   const [isSortOpen, setIsSortOpen] = useState(false);
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
   // Sort options
   const sortOptions = [
@@ -68,57 +96,209 @@ export default function VendorStorefrontPage() {
     { value: "popular", label: "Most Popular" },
   ];
 
-  // Find vendor
-  const vendor = extendedVendors.find((v) => v.id === vendorId);
+  // Fetch vendor data
+  useEffect(() => {
+    async function fetchVendor() {
+      try {
+        setLoading(true);
+        setError(null);
 
-  // Get vendor products
+        const response = await vendorAPI.getVendorById(vendorId);
+
+        if (response.success) {
+          setVendor(response.data);
+        } else {
+          setError(response.error.message);
+        }
+      } catch (err) {
+        setError("Failed to load vendor information");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (vendorId) {
+      fetchVendor();
+    }
+  }, [vendorId]);
+
+  // Fetch vendor products
+  useEffect(() => {
+    async function fetchProducts() {
+      if (!vendor) return;
+
+      try {
+        setProductsLoading(true);
+
+        const response = await vendorAPI.getVendorProducts(vendor.id, {
+          search: searchQuery || undefined,
+          sortBy: sortBy as any,
+        });
+
+        if (response.success) {
+          setProducts(response.data.data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+      } finally {
+        setProductsLoading(false);
+      }
+    }
+
+    fetchProducts();
+  }, [vendor, searchQuery, sortBy]);
+
+  // Filter and sort products
   const vendorProducts = useMemo(() => {
-    let filtered = products.filter((p) => p.vendor.id === vendorId);
+    let filtered = [...products];
 
-    if (searchQuery) {
-      filtered = filtered.filter(
-        (p) =>
-          p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.description.toLowerCase().includes(searchQuery.toLowerCase()),
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter((p) =>
+        p.categorySlug === selectedCategory
       );
     }
 
-    if (selectedCategory !== "all") {
-      filtered = filtered.filter((p) => p.category.slug === selectedCategory);
-    }
-
-    // Sort
-    switch (sortBy) {
-      case "price-asc":
-        filtered.sort((a, b) => a.price - b.price);
-        break;
-      case "price-desc":
-        filtered.sort((a, b) => b.price - a.price);
-        break;
-      case "popular":
-        filtered.sort((a, b) => b.views - a.views);
-        break;
-      case "newest":
-      default:
-        filtered.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-    }
-
     return filtered;
-  }, [vendorId, searchQuery, selectedCategory, sortBy]);
+  }, [products, selectedCategory]);
 
   // Get unique categories from vendor products
   const vendorCategories = useMemo(() => {
-    const categories = new Set(
-      products.filter((p) => p.vendor.id === vendorId).map((p) => p.category),
-    );
-    return Array.from(categories);
-  }, [vendorId]);
+    const categoryMap = new Map();
+
+    products.forEach((p) => {
+      const category = typeof p.category === 'string'
+        ? { id: p.categorySlug || p.category, name: p.category, slug: p.categorySlug || p.category }
+        : p.category;
+
+      if (category && !categoryMap.has(category.slug)) {
+        categoryMap.set(category.slug, category);
+      }
+    });
+
+    return Array.from(categoryMap.values()) as Category[];
+  }, [products]);
 
   // Calculate active filter count
   const activeFilterCount =
     (selectedCategory !== "all" ? 1 : 0) + (searchQuery ? 1 : 0);
 
-  if (!vendor) {
+  // Handle product actions
+  const handleAddToCart = (product: Product) => {
+    // Convert API Product to Cart Product format
+    const cartProduct = {
+      id: product.id,
+      title: product.name,
+      slug: product.id,
+      description: product.description,
+      price: product.price,
+      images: product.images || [product.image],
+      category: {
+        id: product.categorySlug,
+        name: product.category,
+        slug: product.categorySlug,
+        productCount: 0,
+      },
+      vendor: {
+        id: product.vendorId,
+        userId: product.vendorId,
+        storeName: product.vendor,
+        description: "",
+        rating: 0,
+        totalSales: 0,
+        totalProducts: 0,
+        responseTime: "",
+        shippingInfo: "",
+        returnPolicy: "",
+        verified: false,
+        createdAt: new Date(),
+      },
+      condition: product.condition || ("good" as any),
+      stock: product.stock,
+      sold: 0,
+      views: 0,
+      likes: 0,
+      tags: product.tags || [],
+      createdAt: new Date(product.createdAt || Date.now()),
+      updatedAt: new Date(product.updatedAt || Date.now()),
+    };
+
+    addToCart(cartProduct as any, 1);
+    toast.success(`${product.name} added to cart`);
+  };
+
+  const handleAddToWishlist = (product: Product) => {
+    // Convert Product to old format expected by wishlist
+    const wishlistProduct = {
+      id: product.id,
+      title: product.name,
+      slug: product.id,
+      description: product.description,
+      price: product.price,
+      images: product.images || [product.image],
+      category: {
+        id: "cat-1",
+        name: product.category,
+        slug: product.categorySlug,
+      },
+      vendor: {
+        id: product.vendorId,
+        storeName: product.vendor,
+        rating: 0,
+      },
+      condition: product.condition as any,
+      stock: product.stock,
+      sold: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      views: 0,
+      likes: 0,
+      tags: product.tags || [],
+    };
+    addToWishlist(wishlistProduct as any);
+    toast.success(`${product.name} added to wishlist`);
+  };
+
+  const handleBuyNow = (product: Product) => {
+    // TODO: Implement buy now functionality
+    console.log("Buy now clicked for:", product.id);
+    toast.info("Buy now functionality coming soon!");
+  };
+
+  const handleShare = (product: Product) => {
+    // TODO: Implement share functionality
+    if (navigator.share) {
+      navigator
+        .share({
+          title: product.name,
+          text: `Check out ${product.name} on LPX Collect`,
+          url: window.location.origin + `/product/${product.id}`,
+        })
+        .catch(() => {});
+    } else {
+      navigator.clipboard.writeText(
+        window.location.origin + `/product/${product.id}`,
+      );
+      toast.success("Product link copied to clipboard!");
+    }
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <PageLayout
+        title="Loading..."
+        breadcrumbs={[
+          { label: "Vendors", href: "/vendors" },
+          { label: "Loading..." },
+        ]}
+      >
+        <VendorPageSkeleton />
+      </PageLayout>
+    );
+  }
+
+  // Error state
+  if (error || !vendor) {
     return (
       <PageLayout
         title="Vendor Not Found"
@@ -134,29 +314,39 @@ export default function VendorStorefrontPage() {
 
   const breadcrumbs = [
     { label: "Vendors", href: "/vendors" },
-    { label: vendor.storeName },
+    { label: vendor.name },
   ];
 
   return (
     <PageLayout
-      title={vendor.storeName}
+      title={vendor.name}
       description={vendor.description}
       breadcrumbs={breadcrumbs}
     >
-      {/* Vendor Header Card - Improved Layout */}
+      {/* Vendor Header Card - Enhanced with Real Data */}
       <Card className="mb-8 border-0 shadow-none">
         <CardContent className="p-0 space-y-6">
           {/* Sidebar-Style Layout */}
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Left Sidebar Info */}
-            <div className="lg:w-64 w-full space-y-4 lg:sticky lg:top-4 lg:self-start">
+            <div className="lg:w-80 w-full space-y-4 lg:sticky lg:top-4 lg:self-start">
               {/* Vendor Card */}
-              <div className="text-center">
+              <div className="text-center bg-card rounded-lg p-6 border">
                 <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Store className="h-10 w-10 text-muted-foreground" />
+                  {vendor.logo ? (
+                    <Image
+                      src={vendor.logo}
+                      alt={vendor.name}
+                      width={80}
+                      height={80}
+                      className="w-20 h-20 rounded-full object-cover"
+                    />
+                  ) : (
+                    <Store className="h-10 w-10 text-muted-foreground" />
+                  )}
                 </div>
                 <h1 className={cn(designTokens.typography.h4)}>
-                  {vendor.storeName}
+                  {vendor.name}
                 </h1>
                 {vendor.verified && (
                   <div className="inline-flex items-center gap-1 text-xs text-green-600 mt-1">
@@ -168,15 +358,30 @@ export default function VendorStorefrontPage() {
                   <div className="flex items-center justify-center gap-1 text-sm">
                     <Star className="h-4 w-4 text-yellow-500 fill-current" />
                     <span className="font-semibold">{vendor.rating}</span>
-                    <span className="text-muted-foreground">rating</span>
+                    <span className="text-muted-foreground">
+                      ({vendor.reviewCount || 0} reviews)
+                    </span>
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {vendor.totalSales.toLocaleString()} sales •{" "}
-                    {vendor.totalProducts} items
+                    {vendor.totalSales?.toLocaleString() || 0} sales •{" "}
+                    {vendor.totalProducts || vendor.productCount || 0} items
                   </div>
+                  <div className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    Responds {vendor.responseTime || "quickly"}
+                  </div>
+                  {vendor.location && (
+                    <div className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      {typeof vendor.location === 'string'
+                        ? vendor.location
+                        : `${vendor.location.city}, ${vendor.location.country}`
+                      }
+                    </div>
+                  )}
                   <div className="text-xs text-muted-foreground">
                     Member since{" "}
-                    {vendor.createdAt.toLocaleDateString("en-US", {
+                    {new Date(vendor.joinedDate).toLocaleDateString("en-US", {
                       month: "short",
                       year: "numeric",
                     })}
@@ -184,33 +389,78 @@ export default function VendorStorefrontPage() {
                 </div>
               </div>
 
-              {/* Quick Stats */}
-              <div className="border rounded-lg p-3 space-y-2">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">Response Rate</span>
-                  <span className="font-semibold">
-                    {vendor.stats.responseRate}%
-                  </span>
+              {/* Quick Stats - Enhanced */}
+              {vendor.specialties && vendor.specialties.length > 0 && (
+                <div className="border rounded-lg p-4">
+                  <h3 className="font-medium text-sm mb-2 flex items-center gap-2">
+                    <Package className="h-4 w-4" />
+                    Specializes in
+                  </h3>
+                  <div className="flex flex-wrap gap-1">
+                    {vendor.specialties.map((specialty, index) => (
+                      <Badge key={index} variant="secondary" className="text-xs">
+                        {specialty}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">Ships On Time</span>
-                  <span className="font-semibold text-green-600">
-                    {vendor.stats.shipOnTime}%
-                  </span>
+              )}
+
+              {/* Contact & Social */}
+              {(vendor.contact || vendor.socialMedia) && (
+                <div className="border rounded-lg p-4 space-y-3">
+                  <h3 className="font-medium text-sm flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    Connect
+                  </h3>
+
+                  {vendor.contact?.website && (
+                    <a
+                      href={vendor.contact.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700"
+                    >
+                      <Globe className="h-4 w-4" />
+                      Visit Website
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
+
+                  <div className="flex gap-2">
+                    {vendor.socialMedia?.facebook && (
+                      <a
+                        href={vendor.socialMedia.facebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 border rounded-md hover:bg-accent"
+                      >
+                        <Facebook className="h-4 w-4" />
+                      </a>
+                    )}
+                    {vendor.socialMedia?.instagram && (
+                      <a
+                        href={vendor.socialMedia.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 border rounded-md hover:bg-accent"
+                      >
+                        <Instagram className="h-4 w-4" />
+                      </a>
+                    )}
+                    {vendor.socialMedia?.twitter && (
+                      <a
+                        href={vendor.socialMedia.twitter}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 border rounded-md hover:bg-accent"
+                      >
+                        <Twitter className="h-4 w-4" />
+                      </a>
+                    )}
+                  </div>
                 </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">
-                    Positive Reviews
-                  </span>
-                  <span className="font-semibold text-blue-600">
-                    {vendor.stats.positiveReviews}%
-                  </span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">Avg Response</span>
-                  <span className="font-semibold">{vendor.responseTime}</span>
-                </div>
-              </div>
+              )}
 
               {/* Actions */}
               <div className="space-y-2">
@@ -433,8 +683,8 @@ export default function VendorStorefrontPage() {
                                 {
                                   products.filter(
                                     (p) =>
-                                      p.vendor.id === vendorId &&
-                                      p.category.id === cat.id,
+                                      p.vendorId === vendorId &&
+                                      p.categorySlug === cat.slug,
                                   ).length
                                 }
                                 )
@@ -489,7 +739,30 @@ export default function VendorStorefrontPage() {
                 </div>
 
                 {/* Products Grid/List */}
-                {vendorProducts.length === 0 ? (
+                {productsLoading ? (
+                  <div
+                    className={
+                      viewMode === "grid"
+                        ? `grid grid-cols-2 lg:grid-cols-3 gap-4`
+                        : "space-y-4"
+                    }
+                  >
+                    {Array.from({ length: 6 }).map((_, index) => (
+                      <div
+                        key={index}
+                        className={viewMode === "grid" ? "" : "h-48"}
+                      >
+                        <Skeleton
+                          className={
+                            viewMode === "grid"
+                              ? "h-64 rounded-lg"
+                              : "h-48 rounded-lg"
+                          }
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : vendorProducts.length === 0 ? (
                   <EmptyStates.NoProducts />
                 ) : (
                   <div
@@ -504,22 +777,21 @@ export default function VendorStorefrontPage() {
                         key={product.id}
                         product={{
                           ...product,
-                          name: product.title,
-                          image: product.images?.[0] || "",
-                          category: product.category?.name || "Uncategorized",
-                          categorySlug:
-                            product.category?.slug || "uncategorized",
-                          vendor: vendor.storeName,
-                          stock: product.stock || 10,
-                          condition: product.condition || "New",
-                          rarity: product.rarity || "Common",
+                          name: product.name,
+                          image: product.image || product.images?.[0] || "",
+                          category: product.category,
+                          categorySlug: product.categorySlug || product.category.toLowerCase().replace(/\s+/g, '-'),
+                          vendor: vendor.name,
+                          stock: product.stock || 0,
+                          condition: product.condition || "new",
                         }}
                         viewMode={viewMode}
-                        onAddToCart={(p) => console.log("Add to cart:", p)}
-                        onAddToWishlist={(p) =>
-                          console.log("Add to wishlist:", p)
-                        }
-                        onBuyNow={(p) => console.log("Buy now:", p)}
+                        showQuickView={true}
+                        onQuickView={(p) => setQuickViewProduct(p)}
+                        onAddToCart={handleAddToCart}
+                        onAddToWishlist={handleAddToWishlist}
+                        onBuyNow={handleBuyNow}
+                        onShare={handleShare}
                       />
                     ))}
                   </div>
@@ -530,23 +802,138 @@ export default function VendorStorefrontPage() {
         </CardContent>
       </Card>
 
-      {/* Simple About Section */}
+      {/* Enhanced About Section */}
       <div className="flex flex-col lg:flex-row gap-6 mt-8">
         {/* Keep sidebar space */}
-        <div className="lg:w-64 w-full" />
+        <div className="lg:w-80 w-full" />
 
         {/* Main content area */}
-        <div className="flex-1">
+        <div className="flex-1 space-y-6">
+          {/* About Section */}
           <div className="bg-card rounded-lg border p-6">
             <h2 className={cn(designTokens.typography.h4, "mb-4")}>
-              About {vendor.storeName}
+              About {vendor.name}
             </h2>
             <p className="text-muted-foreground leading-relaxed">
               {vendor.description}
             </p>
           </div>
+
+          {/* Policies Section */}
+          {vendor.policies && (
+            <div className="bg-card rounded-lg border p-6">
+              <h2 className={cn(designTokens.typography.h4, "mb-4")}>
+                Policies
+              </h2>
+              <div className="space-y-4">
+                {vendor.policies.shipping && (
+                  <div>
+                    <h3 className="font-medium text-sm mb-2 flex items-center gap-2">
+                      <Package className="h-4 w-4" />
+                      Shipping Policy
+                    </h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      {vendor.policies.shipping}
+                    </p>
+                  </div>
+                )}
+                {vendor.policies.returns && (
+                  <div>
+                    <h3 className="font-medium text-sm mb-2 flex items-center gap-2">
+                      <Shield className="h-4 w-4" />
+                      Return Policy
+                    </h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      {vendor.policies.returns}
+                    </p>
+                  </div>
+                )}
+                {vendor.policies.authenticity && (
+                  <div>
+                    <h3 className="font-medium text-sm mb-2 flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4" />
+                      Authenticity Guarantee
+                    </h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      {vendor.policies.authenticity}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Quick View Modal */}
+      <QuickView
+        product={quickViewProduct}
+        isOpen={quickViewProduct !== null}
+        onClose={() => setQuickViewProduct(null)}
+        onAddToCart={handleAddToCart}
+        onAddToWishlist={handleAddToWishlist}
+      />
     </PageLayout>
+  );
+}
+
+// Loading skeleton component
+function VendorPageSkeleton() {
+  return (
+    <Card className="mb-8 border-0 shadow-none">
+      <CardContent className="p-0 space-y-6">
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Sidebar Skeleton */}
+          <div className="lg:w-80 w-full space-y-4">
+            <div className="text-center bg-card rounded-lg p-6 border">
+              <Skeleton className="w-20 h-20 rounded-full mx-auto mb-3" />
+              <Skeleton className="h-6 w-32 mx-auto mb-2" />
+              <Skeleton className="h-4 w-24 mx-auto mb-3" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-28 mx-auto" />
+                <Skeleton className="h-4 w-36 mx-auto" />
+                <Skeleton className="h-4 w-32 mx-auto" />
+                <Skeleton className="h-4 w-40 mx-auto" />
+              </div>
+            </div>
+            <div className="border rounded-lg p-4 space-y-3">
+              <Skeleton className="h-5 w-24" />
+              <div className="flex flex-wrap gap-1">
+                <Skeleton className="h-6 w-16" />
+                <Skeleton className="h-6 w-20" />
+                <Skeleton className="h-6 w-14" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Skeleton className="h-9 w-full" />
+              <Skeleton className="h-9 w-full" />
+            </div>
+          </div>
+
+          {/* Main Content Skeleton */}
+          <div className="flex-1">
+            <div className="space-y-6">
+              <Skeleton className="h-8 w-32" />
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-10 w-32" />
+                  <div className="flex gap-2">
+                    <Skeleton className="h-10 w-40" />
+                    <Skeleton className="h-10 w-20" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Array.from({ length: 6 }).map((_, index) => (
+                    <Skeleton key={index} className="h-64 rounded-lg" />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useUser, useClerk, SignInButton } from "@clerk/nextjs";
+import { useUser, useClerk } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useNotifications } from "@/context/NotificationContext";
@@ -206,7 +206,7 @@ export default function Header() {
                         <Avatar className="h-10 w-10">
                           <AvatarImage src={user?.imageUrl} alt={user?.firstName || "User"} />
                           <AvatarFallback>
-                            {user?.firstName?.charAt(0).toUpperCase() || user?.emailAddresses[0]?.emailAddress?.charAt(0).toUpperCase() || "U"}
+                            {user?.firstName?.charAt(0).toUpperCase() || user?.emailAddresses?.[0]?.emailAddress?.charAt(0).toUpperCase() || "U"}
                           </AvatarFallback>
                         </Avatar>
                       </Button>
@@ -229,7 +229,7 @@ export default function Header() {
                           Dashboard
                         </Link>
                       </DropdownMenuItem>
-                      {user?.publicMetadata?.role === "vendor" && (
+                      {user?.role === "vendor" && (
                         <DropdownMenuItem asChild>
                           <Link
                             href="/vendor/dashboard"
@@ -240,7 +240,7 @@ export default function Header() {
                           </Link>
                         </DropdownMenuItem>
                       )}
-                      {user?.publicMetadata?.role === "admin" && (
+                      {user?.role === "admin" && (
                         <DropdownMenuItem asChild>
                           <Link
                             href="/admin"
@@ -297,15 +297,15 @@ export default function Header() {
                   </DropdownMenu>
                 ) : (
                   <div className="flex items-center gap-2">
-                    <SignInButton mode="modal">
-                      <Button variant="ghost" className="flex items-center gap-2">
+                    <Button asChild variant="ghost" className="flex items-center gap-2">
+                      <Link href="/sign-in">
                         <LogIn className="h-4 w-4" />
                         <span>Sign In</span>
-                      </Button>
-                    </SignInButton>
-                    <SignInButton mode="modal">
-                      <Button>Sign Up</Button>
-                    </SignInButton>
+                      </Link>
+                    </Button>
+                    <Button asChild>
+                      <Link href="/sign-up">Sign Up</Link>
+                    </Button>
                   </div>
                 )}
               </div>
@@ -429,7 +429,7 @@ export default function Header() {
                         >
                           Payment Methods
                         </Link>
-                        {user?.publicMetadata?.role !== "vendor" && (
+                        {user?.role !== "vendor" && (
                           <Link
                             href="/sell"
                             className="py-2 hover:text-primary transition"

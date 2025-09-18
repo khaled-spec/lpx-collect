@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
@@ -11,6 +10,7 @@ import { ProductCard } from "@/components/shared/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { VendorStyleFilterBar } from "@/components/browse/VendorStyleFilterBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -36,6 +36,9 @@ import {
   Plus,
   Search,
   Filter,
+  ArrowUpDown,
+  Grid3x3,
+  LayoutList,
   MoreVertical,
   Edit2,
   Eye,
@@ -49,6 +52,7 @@ import {
 import { cn } from "@/lib/utils";
 import { designTokens } from "@/lib/design-tokens";
 import { toast } from "sonner";
+import { ViewMode, SortOption } from "@/lib/browse-utils";
 
 const initialVendorProducts: any[] = [];
 
@@ -234,12 +238,13 @@ function ProductRow({
 }
 
 export default function VendorProductsPage() {
-  const { user } = useUser();
   const router = useRouter();
   const [products, setProducts] = useState(initialVendorProducts);
   const [filteredProducts, setFilteredProducts] = useState(initialVendorProducts);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<ProductStatus>("all");
+  const [sortOption, setSortOption] = useState<SortOption>("newest");
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
   // Calculate stats
   const stats: ProductStats = {
@@ -252,9 +257,9 @@ export default function VendorProductsPage() {
     totalRevenue: products.filter(p => p.status === "sold").reduce((sum, p) => sum + p.price, 0),
   };
 
-  // Filter products
+  // Filter and sort products
   useEffect(() => {
-    let filtered = products;
+    let filtered = [...products];
 
     // Apply status filter
     if (statusFilter !== "all") {
@@ -276,8 +281,25 @@ export default function VendorProductsPage() {
       );
     }
 
+    // Apply sorting
+    switch (sortOption) {
+      case "price-asc":
+        filtered.sort((a, b) => a.price - b.price);
+        break;
+      case "price-desc":
+        filtered.sort((a, b) => b.price - a.price);
+        break;
+      case "name-asc":
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "newest":
+      default:
+        filtered.sort((a, b) => new Date(b.dateCreated || 0).getTime() - new Date(a.dateCreated || 0).getTime());
+        break;
+    }
+
     setFilteredProducts(filtered);
-  }, [products, statusFilter, searchQuery]);
+  }, [products, statusFilter, searchQuery, sortOption]);
 
   const handleEdit = (productId: string) => {
     router.push(`/vendor/products/${productId}/edit`);
@@ -322,20 +344,23 @@ export default function VendorProductsPage() {
       >
         {/* Header Actions */}
         <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-3">
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search products..."
-                className="pl-9 w-[300px]"
-              />
-            </div>
-          </div>
+          <VendorStyleFilterBar
+            search={searchQuery}
+            onSearchChange={setSearchQuery}
+            sortOption={sortOption}
+            onSortChange={setSortOption}
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
+            activeFilterCount={searchQuery ? 1 : 0}
+            activeFilters={searchQuery ? [{ type: "search", value: searchQuery, label: `Search: ${searchQuery}` }] : []}
+            onRemoveFilter={(type) => {
+              if (type === "search") setSearchQuery("");
+            }}
+            onClearAllFilters={() => setSearchQuery("")}
+            className="flex-1 max-w-4xl"
+          />
 
-          <Button asChild>
+          <Button asChild className="ml-4">
             <Link href="/vendor/products/new">
               <Plus className="mr-2 h-4 w-4" />
               Add Product
@@ -379,6 +404,46 @@ export default function VendorProductsPage() {
                     </Link>
                   </Button>
                 </div>
+              </div>
+            ) : viewMode === "grid" ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {filteredProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={{
+                      id: product.id,
+                      name: product.name,
+                      slug: product.name.toLowerCase().replace(/\s+/g, '-'),
+                      description: product.description,
+                      price: product.price,
+                      originalPrice: product.price,
+                      image: product.images?.[0] || "/placeholder.jpg",
+                      images: product.images || ["/placeholder.jpg"],
+                      category: product.category,
+                      categorySlug: product.category.toLowerCase().replace(/\s+/g, '-'),
+                      vendor: "You",
+                      vendorId: "current-vendor",
+                      condition: product.condition || "new",
+                      state: "sealed" as const,
+                      stock: product.stock,
+                      tags: [],
+                      views: product.views || 0,
+                      rating: 0,
+                      reviewCount: 0,
+                      year: new Date().getFullYear(),
+                      manufacturer: "Unknown",
+                      featured: false,
+                      createdAt: product.dateCreated || new Date().toISOString(),
+                      updatedAt: product.lastUpdated || new Date().toISOString(),
+                    }}
+                    viewMode="grid"
+                    showQuickView={false}
+                    onAddToCart={() => {}}
+                    onAddToWishlist={() => {}}
+                    onBuyNow={() => handleView(product.id)}
+                    onShare={() => {}}
+                  />
+                ))}
               </div>
             ) : (
               <div className="space-y-3">

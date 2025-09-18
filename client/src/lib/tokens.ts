@@ -103,6 +103,133 @@ export const tokens = {
       "9xl": "8rem", // 128px
     },
 
+    // Semantic typography scale
+    semantic: {
+      // Display text (largest headings for hero sections)
+      "display-2xl": {
+        fontSize: "4.5rem", // 72px
+        lineHeight: "1.1",
+        fontWeight: "800",
+        letterSpacing: "-0.025em",
+      },
+      "display-xl": {
+        fontSize: "3.75rem", // 60px
+        lineHeight: "1.1",
+        fontWeight: "800",
+        letterSpacing: "-0.025em",
+      },
+      "display-lg": {
+        fontSize: "3rem", // 48px
+        lineHeight: "1.2",
+        fontWeight: "700",
+        letterSpacing: "-0.025em",
+      },
+
+      // Headings
+      "heading-xl": {
+        fontSize: "2.25rem", // 36px
+        lineHeight: "1.25",
+        fontWeight: "700",
+        letterSpacing: "-0.025em",
+      },
+      "heading-lg": {
+        fontSize: "1.875rem", // 30px
+        lineHeight: "1.3",
+        fontWeight: "600",
+        letterSpacing: "-0.025em",
+      },
+      "heading-md": {
+        fontSize: "1.5rem", // 24px
+        lineHeight: "1.35",
+        fontWeight: "600",
+        letterSpacing: "0em",
+      },
+      "heading-sm": {
+        fontSize: "1.25rem", // 20px
+        lineHeight: "1.4",
+        fontWeight: "600",
+        letterSpacing: "0em",
+      },
+      "heading-xs": {
+        fontSize: "1.125rem", // 18px
+        lineHeight: "1.45",
+        fontWeight: "600",
+        letterSpacing: "0em",
+      },
+
+      // Body text
+      "body-xl": {
+        fontSize: "1.25rem", // 20px
+        lineHeight: "1.6",
+        fontWeight: "400",
+        letterSpacing: "0em",
+      },
+      "body-lg": {
+        fontSize: "1.125rem", // 18px
+        lineHeight: "1.6",
+        fontWeight: "400",
+        letterSpacing: "0em",
+      },
+      "body-md": {
+        fontSize: "1rem", // 16px
+        lineHeight: "1.5",
+        fontWeight: "400",
+        letterSpacing: "0em",
+      },
+      "body-sm": {
+        fontSize: "0.875rem", // 14px
+        lineHeight: "1.5",
+        fontWeight: "400",
+        letterSpacing: "0em",
+      },
+      "body-xs": {
+        fontSize: "0.75rem", // 12px
+        lineHeight: "1.5",
+        fontWeight: "400",
+        letterSpacing: "0em",
+      },
+
+      // Labels and captions
+      "label-lg": {
+        fontSize: "1rem", // 16px
+        lineHeight: "1.5",
+        fontWeight: "500",
+        letterSpacing: "0em",
+      },
+      "label-md": {
+        fontSize: "0.875rem", // 14px
+        lineHeight: "1.45",
+        fontWeight: "500",
+        letterSpacing: "0em",
+      },
+      "label-sm": {
+        fontSize: "0.75rem", // 12px
+        lineHeight: "1.4",
+        fontWeight: "500",
+        letterSpacing: "0.025em",
+      },
+
+      // Captions and helper text
+      "caption-lg": {
+        fontSize: "0.875rem", // 14px
+        lineHeight: "1.45",
+        fontWeight: "400",
+        letterSpacing: "0em",
+      },
+      "caption-md": {
+        fontSize: "0.75rem", // 12px
+        lineHeight: "1.4",
+        fontWeight: "400",
+        letterSpacing: "0.025em",
+      },
+      "caption-sm": {
+        fontSize: "0.6875rem", // 11px
+        lineHeight: "1.35",
+        fontWeight: "400",
+        letterSpacing: "0.025em",
+      },
+    },
+
     // Line heights
     lineHeight: {
       none: "1",

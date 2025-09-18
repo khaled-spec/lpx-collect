@@ -1,25 +1,19 @@
 // API Client Factory - Central point for creating API instances
 import { IAPIFactory, IProductAPI, ICategoryAPI, IVendorAPI } from "./types";
-import { RealProductAPI, RealCategoryAPI, RealVendorAPI } from "./real";
+import { MockProductAPI, MockCategoryAPI, MockVendorAPI } from "./mock";
 
-// Real API Factory - Only implementation, no mock API
-class RealAPIFactory implements IAPIFactory {
-  private apiUrl: string;
-
-  constructor(apiUrl: string = process.env.NEXT_PUBLIC_API_URL || "") {
-    this.apiUrl = apiUrl;
-  }
-
+// Mock API Factory - Uses mock data instead of HTTP calls
+class MockAPIFactory implements IAPIFactory {
   createProductAPI(): IProductAPI {
-    return new RealProductAPI(this.apiUrl);
+    return new MockProductAPI();
   }
 
   createCategoryAPI(): ICategoryAPI {
-    return new RealCategoryAPI(this.apiUrl);
+    return new MockCategoryAPI();
   }
 
   createVendorAPI(): IVendorAPI {
-    return new RealVendorAPI(this.apiUrl);
+    return new MockVendorAPI();
   }
 }
 
@@ -29,8 +23,12 @@ let apiFactory: IAPIFactory;
 // Get or create the API factory
 export function getAPIFactory(): IAPIFactory {
   if (!apiFactory) {
-    console.info("Using Real API implementation with MongoDB");
-    apiFactory = new RealAPIFactory();
+    console.log("🏠 Creating new MockAPIFactory instance");
+    console.info("Using Mock API implementation with static data");
+    apiFactory = new MockAPIFactory();
+    console.log("✅ MockAPIFactory created:", apiFactory);
+  } else {
+    console.log("🔄 Reusing existing APIFactory instance");
   }
   return apiFactory;
 }
@@ -45,7 +43,12 @@ export function getCategoryAPI(): ICategoryAPI {
 }
 
 export function getVendorAPI(): IVendorAPI {
-  return getAPIFactory().createVendorAPI();
+  console.log("🏢 getVendorAPI() called");
+  const factory = getAPIFactory();
+  console.log("🏠 Got factory, creating vendor API...");
+  const vendorAPI = factory.createVendorAPI();
+  console.log("✅ VendorAPI created:", vendorAPI);
+  return vendorAPI;
 }
 
 // Export types for convenience

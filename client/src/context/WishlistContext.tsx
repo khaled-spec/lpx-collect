@@ -10,7 +10,6 @@ import {
 } from "react";
 import { Product } from "@/types";
 import { toast } from "sonner";
-import { useUser } from "@clerk/nextjs";
 
 interface WishlistContextType {
   items: Product[];
@@ -30,61 +29,17 @@ const USER_WISHLIST_PREFIX = "lpx_wishlist_user_";
 
 export function WishlistProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<Product[]>([]);
-  const { user } = useUser();
 
-  // Get the appropriate storage key based on auth status
+  // Get the appropriate storage key (always use guest key since no auth)
   const getStorageKey = useCallback(() => {
-    return user ? `${USER_WISHLIST_PREFIX}${user.id}` : GUEST_WISHLIST_KEY;
-  }, [user]);
+    return GUEST_WISHLIST_KEY;
+  }, []);
 
-  // Load wishlist from localStorage when user changes and merge if logging in
+  // Load wishlist from localStorage on component mount
   useEffect(() => {
     const storageKey = getStorageKey();
-
-    // If user just logged in, merge guest wishlist first
-    if (user) {
-      const guestWishlist = localStorage.getItem(GUEST_WISHLIST_KEY);
-      const userWishlist = localStorage.getItem(storageKey);
-
-      if (guestWishlist) {
-        try {
-          const guestItems: Product[] = JSON.parse(guestWishlist);
-          const userItems: Product[] = userWishlist
-            ? JSON.parse(userWishlist)
-            : [];
-
-          // Merge unique items
-          const mergedItems = [...userItems];
-          let addedCount = 0;
-
-          guestItems.forEach((guestItem) => {
-            if (!mergedItems.some((item) => item.id === guestItem.id)) {
-              mergedItems.push(guestItem);
-              addedCount++;
-            }
-          });
-
-          if (addedCount > 0) {
-            setItems(mergedItems);
-            localStorage.setItem(storageKey, JSON.stringify(mergedItems));
-            toast.success(
-              `${addedCount} item${addedCount > 1 ? "s" : ""} merged from your guest wishlist`,
-            );
-          } else {
-            setItems(userItems);
-          }
-
-          // Clear guest wishlist after merge
-          localStorage.removeItem(GUEST_WISHLIST_KEY);
-          return;
-        } catch (error) {
-          console.error("Failed to merge guest wishlist:", error);
-        }
-      }
-    }
-
-    // Normal loading of wishlist
     const storedWishlist = localStorage.getItem(storageKey);
+
     if (storedWishlist) {
       try {
         const parsed = JSON.parse(storedWishlist);
@@ -96,7 +51,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     } else {
       setItems([]);
     }
-  }, [user, getStorageKey]);
+  }, [getStorageKey]);
 
   // Save wishlist to localStorage whenever items change
   useEffect(() => {

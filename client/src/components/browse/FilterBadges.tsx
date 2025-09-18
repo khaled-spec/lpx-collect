@@ -47,13 +47,6 @@ export function FilterBadges({
     });
   });
 
-  filters.rarities.forEach((rarity) => {
-    activeBadges.push({
-      type: "rarity",
-      value: rarity,
-      label: formatFilterLabel("rarity", rarity),
-    });
-  });
 
   if (filters.priceRange.min > 0 || filters.priceRange.max < 10000) {
     activeBadges.push({
@@ -79,21 +72,7 @@ export function FilterBadges({
     });
   }
 
-  if (filters.verified) {
-    activeBadges.push({
-      type: "verified",
-      value: "true",
-      label: "Verified",
-    });
-  }
 
-  if (filters.featured) {
-    activeBadges.push({
-      type: "featured",
-      value: "true",
-      label: "Featured",
-    });
-  }
 
   filters.tags.forEach((tag) => {
     activeBadges.push({

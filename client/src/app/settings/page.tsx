@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import PageLayout from "@/components/layout/PageLayout";
 import { EmptyStates } from "@/components/shared/EmptyState";
@@ -123,7 +122,6 @@ function PersonalInfoForm({
   settings: UserSettings;
   onUpdate: (settings: UserSettings) => void;
 }) {
-  const { user } = useUser();
   const {
     register,
     handleSubmit,
@@ -818,8 +816,9 @@ function PrivacySettings({
 }
 
 export default function SettingsPage() {
-  const { user } = useUser();
   const router = useRouter();
+  // Mock user for frontend-only app
+  const user = { id: '1', email: 'test@gmail.com', name: 'Test User' };
   const [settings, setSettings] = useState<UserSettings>(() => {
     // Load settings from localStorage or use defaults
     const savedSettings =

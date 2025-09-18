@@ -2,14 +2,12 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
 import { getProductAPI, getCategoryAPI } from "@/lib/api/client";
 import { Product, Category } from "@/lib/api/types";
 import PageLayout from "@/components/layout/PageLayout";
+import { ProductGrid } from "@/components/browse/ProductGrid";
+import { VendorStyleFilterBar } from "@/components/browse/VendorStyleFilterBar";
 import { EmptyStates } from "@/components/shared/EmptyState";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -18,17 +16,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ShoppingCart, Heart, Grid3x3, List, ArrowUpDown } from "lucide-react";
+import { Grid3x3, List, ArrowUpDown } from "lucide-react";
+import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { ViewMode, SortOption } from "@/lib/browse-utils";
 
 export default function CategoryPage() {
   const params = useParams();
   const categorySlug = params.slug as string;
-  const [sortBy, setSortBy] = useState("newest");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [sortBy, setSortBy] = useState<SortOption>("newest");
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState<Category | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
+  const { addToWishlist } = useWishlist();
 
   useEffect(() => {
     async function fetchData() {
@@ -61,6 +66,16 @@ export default function CategoryPage() {
   const categoryProducts = useMemo(() => {
     let filtered = [...products];
 
+    // Apply search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        p =>
+          p.name.toLowerCase().includes(query) ||
+          p.description.toLowerCase().includes(query)
+      );
+    }
+
     // Sort products
     switch (sortBy) {
       case "price-asc":
@@ -69,7 +84,7 @@ export default function CategoryPage() {
       case "price-desc":
         filtered.sort((a, b) => b.price - a.price);
         break;
-      case "name":
+      case "name-asc":
         filtered.sort((a, b) => a.name.localeCompare(b.name));
         break;
       case "newest":
@@ -79,7 +94,120 @@ export default function CategoryPage() {
     }
 
     return filtered;
-  }, [categorySlug, sortBy]);
+  }, [products, sortBy, searchQuery]);
+
+  // Handle product actions
+  const handleAddToCart = (product: Product) => {
+    // Convert API Product to Cart Product format
+    const cartProduct = {
+      id: product.id,
+      title: product.name,
+      slug: product.id,
+      description: product.description,
+      price: product.price,
+      images: product.images || [product.image],
+      category: {
+        id: product.categorySlug,
+        name: product.category,
+        slug: product.categorySlug,
+        productCount: 0,
+      },
+      vendor: {
+        id: product.vendorId,
+        userId: product.vendorId,
+        storeName: product.vendor,
+        description: "",
+        rating: 0,
+        totalSales: 0,
+        totalProducts: 0,
+        responseTime: "",
+        shippingInfo: "",
+        returnPolicy: "",
+        verified: false,
+        createdAt: new Date(),
+      },
+      condition: product.condition || ("good" as any),
+      stock: product.stock,
+      sold: 0,
+      views: 0,
+      likes: 0,
+      tags: product.tags || [],
+      createdAt: new Date(product.createdAt || Date.now()),
+      updatedAt: new Date(product.updatedAt || Date.now()),
+    };
+
+    addToCart(cartProduct as any, 1);
+    toast.success(`${product.name} added to cart`);
+  };
+
+  const handleAddToWishlist = (product: Product) => {
+    // Convert Product to old format expected by wishlist
+    const wishlistProduct = {
+      id: product.id,
+      title: product.name,
+      slug: product.id,
+      description: product.description,
+      price: product.price,
+      images: product.images || [product.image],
+      category: {
+        id: "cat-1",
+        name: product.category,
+        slug: product.categorySlug,
+      },
+      vendor: {
+        id: product.vendorId,
+        storeName: product.vendor,
+        rating: 0,
+      },
+      condition: product.condition as any,
+      stock: product.stock,
+      sold: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      views: 0,
+      likes: 0,
+      tags: product.tags || [],
+    };
+    addToWishlist(wishlistProduct as any);
+    toast.success(`${product.name} added to wishlist`);
+  };
+
+  const handleBuyNow = (product: Product) => {
+    // TODO: Implement buy now functionality
+    console.log("Buy now clicked for:", product.id);
+    toast.info("Buy now functionality coming soon!");
+  };
+
+  const handleShare = (product: Product) => {
+    // TODO: Implement share functionality
+    if (navigator.share) {
+      navigator
+        .share({
+          title: product.name,
+          text: `Check out ${product.name} on LPX Collect`,
+          url: window.location.origin + `/product/${product.id}`,
+        })
+        .catch(() => {});
+    } else {
+      navigator.clipboard.writeText(
+        window.location.origin + `/product/${product.id}`,
+      );
+      toast.success("Product link copied to clipboard!");
+    }
+  };
+
+  if (loading) {
+    return (
+      <PageLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading category...</p>
+          </div>
+        </div>
+      </PageLayout>
+    );
+  }
 
   if (!category) {
     return (
@@ -106,133 +234,32 @@ export default function CategoryPage() {
     >
       <div className="space-y-6">
         {/* Controls */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <div className="flex items-center gap-4">
-            {/* Sort */}
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-48">
-                <ArrowUpDown className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="price-asc">Price: Low to High</SelectItem>
-                <SelectItem value="price-desc">Price: High to Low</SelectItem>
-                <SelectItem value="name">Name A-Z</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* View Mode */}
-          <div className="flex items-center border rounded-md">
-            <Button
-              variant={viewMode === "grid" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setViewMode("grid")}
-              className="rounded-r-none border-0"
-            >
-              <Grid3x3 className="h-4 w-4" />
-            </Button>
-            <Button
-              variant={viewMode === "list" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setViewMode("list")}
-              className="rounded-l-none border-0"
-            >
-              <List className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+        <VendorStyleFilterBar
+          search={searchQuery}
+          onSearchChange={setSearchQuery}
+          sortOption={sortBy}
+          onSortChange={setSortBy}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          activeFilterCount={searchQuery ? 1 : 0}
+          activeFilters={searchQuery ? [{ type: "search", value: searchQuery, label: `Search: ${searchQuery}` }] : []}
+          onRemoveFilter={(type) => {
+            if (type === "search") setSearchQuery("");
+          }}
+          onClearAllFilters={() => setSearchQuery("")}
+          className="mb-6"
+        />
 
         {/* Products Grid/List */}
-        {categoryProducts.length === 0 ? (
-          <EmptyStates.NoProducts />
-        ) : (
-          <div
-            className={cn(
-              viewMode === "grid"
-                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-                : "space-y-4",
-            )}
-          >
-            {categoryProducts.map((product) => (
-              <Card
-                key={product.id}
-                className="overflow-hidden hover:shadow-lg transition-shadow"
-              >
-                <div className={cn(viewMode === "grid" ? "" : "flex")}>
-                  {/* Product Image */}
-                  <div
-                    className={cn(
-                      "relative bg-gray-100",
-                      viewMode === "grid"
-                        ? "aspect-square"
-                        : "w-48 h-48 flex-shrink-0",
-                    )}
-                  >
-                    <Link href={`/product/${product.id}`}>
-                      <Image
-                        src={product.image}
-                        alt={product.name}
-                        fill
-                        className="object-cover hover:scale-105 transition-transform"
-                      />
-                    </Link>
-                    {product.authenticity?.verified && (
-                      <Badge className="absolute top-2 left-2 bg-green-100 text-green-800 text-xs">
-                        ✓ Verified
-                      </Badge>
-                    )}
-                  </div>
-
-                  {/* Product Info */}
-                  <CardContent
-                    className={cn("p-4", viewMode === "list" ? "flex-1" : "")}
-                  >
-                    <div className="flex flex-col h-full">
-                      <div className="flex-1 mb-3">
-                        <Link
-                          href={`/product/${product.id}`}
-                          className="text-lg font-semibold hover:text-primary transition-colors line-clamp-2"
-                        >
-                          {product.name}
-                        </Link>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Sold by {product.vendor}
-                        </p>
-                        <div className="flex items-center gap-2 mt-2">
-                          <Badge variant="secondary">{product.condition}</Badge>
-                          <Badge variant="outline">{product.rarity}</Badge>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="text-2xl font-bold">
-                            ${product.price}
-                          </span>
-                          <p className="text-sm text-muted-foreground">
-                            {product.stock > 5
-                              ? "In Stock"
-                              : `${product.stock} left`}
-                          </p>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline">
-                            <Heart className="h-4 w-4" />
-                          </Button>
-                          <Button size="sm">
-                            <ShoppingCart className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </div>
-              </Card>
-            ))}
-          </div>
-        )}
+        <ProductGrid
+          products={categoryProducts}
+          viewMode={viewMode}
+          isLoading={loading}
+          onAddToCart={handleAddToCart}
+          onAddToWishlist={handleAddToWishlist}
+          onBuyNow={handleBuyNow}
+          onShare={handleShare}
+        />
       </div>
     </PageLayout>
   );

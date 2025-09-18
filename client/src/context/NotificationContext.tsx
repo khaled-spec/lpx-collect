@@ -8,7 +8,6 @@ import {
   useEffect,
   useCallback,
 } from "react";
-import { useUser } from "@clerk/nextjs";
 
 export type NotificationType =
   | "order"
@@ -150,15 +149,12 @@ export function NotificationProvider({
 }: {
   children: ReactNode;
 }) {
-  const { user } = useUser();
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   // Load notifications from localStorage on mount
   useEffect(() => {
     const loadNotifications = () => {
-      const storageKey = user
-        ? `lpx_notifications_${user.id}`
-        : "lpx_notifications_guest";
+      const storageKey = "lpx_notifications_guest";
       const stored = localStorage.getItem(storageKey);
 
       if (stored) {
@@ -181,15 +177,13 @@ export function NotificationProvider({
     };
 
     loadNotifications();
-  }, [user]);
+  }, []);
 
   // Save notifications to localStorage whenever they change
   useEffect(() => {
-    const storageKey = user
-      ? `lpx_notifications_${user.id}`
-      : "lpx_notifications_guest";
+    const storageKey = "lpx_notifications_guest";
     localStorage.setItem(storageKey, JSON.stringify(notifications));
-  }, [notifications, user]);
+  }, [notifications]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 

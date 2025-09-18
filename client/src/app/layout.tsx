@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Toaster } from "@/components/ui/sonner";
-import { ClerkProvider } from "@clerk/nextjs";
+import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import { NotificationProvider } from "@/context/NotificationContext";
@@ -26,8 +26,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
         <Script src="/noflash.js" strategy="beforeInteractive" />
-        <ClerkProvider>
-          <ThemeProvider>
+        <ThemeProvider>
+          <AuthProvider>
             <NotificationProvider>
               <WishlistProvider>
                 <PaymentMethodsProvider>
@@ -38,8 +38,8 @@ export default function RootLayout({
                 </PaymentMethodsProvider>
               </WishlistProvider>
             </NotificationProvider>
-          </ThemeProvider>
-        </ClerkProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -7,14 +7,27 @@ import {
   FilterSidebar,
   MobileFilterSheet,
 } from "@/components/browse/FilterSidebar";
-import { SearchBar } from "@/components/browse/SearchBar";
+import { VendorStyleFilterBar } from "@/components/browse/VendorStyleFilterBar";
 import { ProductGrid } from "@/components/browse/ProductGrid";
 import { FilterBadges } from "@/components/browse/FilterBadges";
 import { QuickView } from "@/components/browse/QuickView";
 import { Pagination } from "@/components/browse/Pagination";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 import { useBrowseFilters } from "@/hooks/useBrowseFilters";
+import { CONDITIONS, getUniqueVendors } from "@/lib/browse-utils";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { getProductAPI, getCategoryAPI } from "@/lib/api/client";
@@ -23,6 +36,7 @@ import { Filter } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { designTokens } from "@/lib/design-tokens";
+import { productStyles } from "@/components/custom/product-styles";
 
 function BrowsePageContent() {
   const searchParams = useSearchParams();
@@ -36,6 +50,9 @@ function BrowsePageContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Get unique vendors for filtering
+  const vendors = getUniqueVendors(products);
 
   useEffect(() => {
     async function fetchData() {
@@ -107,6 +124,71 @@ function BrowsePageContent() {
     setCurrentPage(1);
   };
 
+  // Generate active filter pills for VendorStyleFilterBar
+  const getActiveFilterPills = () => {
+    const pills = [];
+
+    // Categories
+    filters.categories.forEach(categorySlug => {
+      const category = categories.find(c => c.slug === categorySlug);
+      if (category) {
+        pills.push({
+          type: "category",
+          value: categorySlug,
+          label: category.name
+        });
+      }
+    });
+
+    // Conditions
+    filters.conditions.forEach(condition => {
+      pills.push({
+        type: "condition",
+        value: condition,
+        label: `Condition: ${condition}`
+      });
+    });
+
+
+    // Price range
+    if (filters.priceRange.min > 0 || filters.priceRange.max < 10000) {
+      pills.push({
+        type: "price",
+        value: "price",
+        label: `$${filters.priceRange.min}-$${filters.priceRange.max}`
+      });
+    }
+
+    // Vendors
+    filters.vendors.forEach(vendorId => {
+      pills.push({
+        type: "vendor",
+        value: vendorId,
+        label: `Vendor: ${vendorId}`
+      });
+    });
+
+    // In stock
+    if (filters.inStock) {
+      pills.push({
+        type: "inStock",
+        value: "true",
+        label: "In Stock Only"
+      });
+    }
+
+    // Tags
+    filters.tags.forEach(tag => {
+      pills.push({
+        type: "tag",
+        value: tag,
+        label: `Tag: ${tag}`
+      });
+    });
+
+    return pills;
+  };
+
   // Handle filter removal from badges
   const handleRemoveFilter = (type: string, value: string) => {
     switch (type) {
@@ -125,12 +207,6 @@ function BrowsePageContent() {
           filters.conditions.filter((c) => c !== value),
         );
         break;
-      case "rarity":
-        updateFilter(
-          "rarities",
-          filters.rarities.filter((r) => r !== value),
-        );
-        break;
       case "price":
         updateFilter("priceRange", { min: 0, max: 10000 });
         break;
@@ -142,12 +218,6 @@ function BrowsePageContent() {
         break;
       case "inStock":
         updateFilter("inStock", false);
-        break;
-      case "verified":
-        updateFilter("verified", false);
-        break;
-      case "featured":
-        updateFilter("featured", false);
         break;
       case "tag":
         updateFilter(
@@ -194,7 +264,6 @@ function BrowsePageContent() {
       views: 0,
       likes: 0,
       tags: product.tags || [],
-      featured: product.featured || false,
       createdAt: new Date(product.createdAt || Date.now()),
       updatedAt: new Date(product.updatedAt || Date.now()),
     };
@@ -223,10 +292,9 @@ function BrowsePageContent() {
         rating: 0,
       },
       condition: product.condition as any,
-      rarity: product.rarity as any,
+      rarity: "common" as any,
       stock: product.stock,
       sold: 0,
-      featured: product.featured || false,
       createdAt: new Date(),
       updatedAt: new Date(),
       views: 0,
@@ -312,7 +380,7 @@ function BrowsePageContent() {
 
       {/* Search and Controls */}
       <div className="mb-6">
-        <SearchBar
+        <VendorStyleFilterBar
           search={filters.search}
           onSearchChange={(value) => updateFilter("search", value)}
           sortOption={sortOption}
@@ -320,33 +388,147 @@ function BrowsePageContent() {
           viewMode={viewMode}
           onViewModeChange={setViewMode}
           activeFilterCount={activeFilterCount}
-          onOpenFilters={() => {}}
-          showDesktopFilters={true}
-          filterContent={
-            <div className="max-h-96 overflow-y-auto">
-              <FilterSidebar
-                filters={filters}
-                onUpdateFilter={updateFilter}
-                onClearFilters={clearFilters}
-                categories={categories}
-                products={products}
-                className="bg-transparent border-none shadow-none p-0"
-              />
+          activeFilters={getActiveFilterPills()}
+          onRemoveFilter={handleRemoveFilter}
+          onClearAllFilters={clearFilters}
+          advancedFilterContent={
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Categories Filter */}
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground mb-2 block">
+                  Categories
+                </Label>
+                <Select
+                  value={filters.categories.length > 0 ? filters.categories[0] : "all"}
+                  onValueChange={(value) => {
+                    if (value && value !== "all") {
+                      updateFilter("categories", [value]);
+                    } else {
+                      updateFilter("categories", []);
+                    }
+                  }}
+                >
+                  <SelectTrigger className={cn(productStyles.forms.select.md)}>
+                    <SelectValue placeholder="Select categories..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.slug}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Price Range Filter */}
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground mb-2 block">
+                  Price Range
+                </Label>
+                <div className="space-y-3">
+                  <Slider
+                    min={0}
+                    max={10000}
+                    step={100}
+                    value={[filters.priceRange.min, filters.priceRange.max]}
+                    onValueChange={([min, max]) => {
+                      updateFilter("priceRange", { min, max });
+                    }}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>${filters.priceRange.min}</span>
+                    <span>${filters.priceRange.max}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Condition Filter */}
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground mb-2 block">
+                  Condition
+                </Label>
+                <Select
+                  value={filters.conditions.length > 0 ? filters.conditions[0] : "all"}
+                  onValueChange={(value) => {
+                    if (value && value !== "all") {
+                      updateFilter("conditions", [value]);
+                    } else {
+                      updateFilter("conditions", []);
+                    }
+                  }}
+                >
+                  <SelectTrigger className={cn(productStyles.forms.select.md)}>
+                    <SelectValue placeholder="Select condition..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Conditions</SelectItem>
+                    {CONDITIONS.map((condition) => (
+                      <SelectItem key={condition.value} value={condition.value}>
+                        <div className="flex items-center gap-2">
+                          <div className={cn("w-2 h-2 rounded-full", condition.color)} />
+                          {condition.label}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+
+              {/* Vendors Filter */}
+              {vendors.length > 0 && (
+                <div>
+                  <Label className="text-sm font-medium text-muted-foreground mb-2 block">
+                    Vendors
+                  </Label>
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    {vendors.slice(0, 5).map((vendor) => (
+                      <div key={vendor.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={vendor.id}
+                          checked={filters.vendors.includes(vendor.id)}
+                          onCheckedChange={() => {
+                            const newVendors = filters.vendors.includes(vendor.id)
+                              ? filters.vendors.filter((v) => v !== vendor.id)
+                              : [...filters.vendors, vendor.id];
+                            updateFilter("vendors", newVendors);
+                          }}
+                        />
+                        <Label
+                          htmlFor={vendor.id}
+                          className="text-sm font-normal cursor-pointer flex-1"
+                        >
+                          {vendor.name}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* In Stock Toggle */}
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground mb-2 block">
+                  Availability
+                </Label>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="in-stock"
+                    checked={filters.inStock}
+                    onCheckedChange={(checked) => updateFilter("inStock", checked)}
+                  />
+                  <Label htmlFor="in-stock" className="text-sm font-normal cursor-pointer">
+                    In Stock Only
+                  </Label>
+                </div>
+              </div>
             </div>
           }
         />
       </div>
-
-      {/* Filter Badges */}
-      {activeFilterCount > 0 && (
-        <div className="mb-6">
-          <FilterBadges
-            filters={filters}
-            onRemoveFilter={handleRemoveFilter}
-            onClearAll={clearFilters}
-          />
-        </div>
-      )}
 
       {/* Product Grid */}
       <div className="mb-8">

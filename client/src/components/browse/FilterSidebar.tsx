@@ -34,7 +34,6 @@ import { cn } from "@/lib/utils";
 import {
   BrowseFilters,
   CONDITIONS,
-  RARITIES,
   getPriceHistogram,
   getUniqueVendors,
   getActiveFilterCount,
@@ -117,12 +116,6 @@ export function FilterSidebar({
     onUpdateFilter("conditions", newConditions);
   };
 
-  const handleRarityToggle = (rarity: string) => {
-    const newRarities = filters.rarities.includes(rarity)
-      ? filters.rarities.filter((r) => r !== rarity)
-      : [...filters.rarities, rarity];
-    onUpdateFilter("rarities", newRarities);
-  };
 
   const handleVendorToggle = (vendorId: string) => {
     const newVendors = filters.vendors.includes(vendorId)
@@ -354,45 +347,6 @@ export function FilterSidebar({
               </AccordionContent>
             </AccordionItem>
 
-            {/* Rarity */}
-            <AccordionItem value="rarity">
-              <AccordionTrigger className="hover:no-underline">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4" />
-                  <span>Rarity</span>
-                  {filters.rarities.length > 0 && (
-                    <Badge variant="secondary" className="ml-2 h-5 px-1.5">
-                      {filters.rarities.length}
-                    </Badge>
-                  )}
-                </div>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-2 pt-2">
-                  {RARITIES.map((rarity) => (
-                    <div
-                      key={rarity.value}
-                      className="flex items-center space-x-2"
-                    >
-                      <Checkbox
-                        id={rarity.value}
-                        checked={filters.rarities.includes(rarity.value)}
-                        onCheckedChange={() => handleRarityToggle(rarity.value)}
-                      />
-                      <Label
-                        htmlFor={rarity.value}
-                        className="text-sm font-normal cursor-pointer flex-1 flex items-center gap-2"
-                      >
-                        <div
-                          className={cn("w-2 h-2 rounded-full", rarity.color)}
-                        />
-                        {rarity.label}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-              </AccordionContent>
-            </AccordionItem>
 
             {/* Vendors */}
             {vendors.length > 0 && (
@@ -457,39 +411,7 @@ export function FilterSidebar({
                 />
               </div>
 
-              <div className="flex items-center justify-between">
-                <Label
-                  htmlFor="verified"
-                  className="text-sm font-normal cursor-pointer flex items-center gap-2"
-                >
-                  <Shield className="h-4 w-4" />
-                  Verified Only
-                </Label>
-                <Switch
-                  id="verified"
-                  checked={filters.verified}
-                  onCheckedChange={(checked) =>
-                    onUpdateFilter("verified", checked)
-                  }
-                />
-              </div>
 
-              <div className="flex items-center justify-between">
-                <Label
-                  htmlFor="featured"
-                  className="text-sm font-normal cursor-pointer flex items-center gap-2"
-                >
-                  <TrendingUp className="h-4 w-4" />
-                  Featured Only
-                </Label>
-                <Switch
-                  id="featured"
-                  checked={filters.featured}
-                  onCheckedChange={(checked) =>
-                    onUpdateFilter("featured", checked)
-                  }
-                />
-              </div>
             </div>
           </div>
         </div>

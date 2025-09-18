@@ -15,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { Product } from "@/lib/api/types";
-import { CONDITIONS, RARITIES } from "@/lib/browse-utils";
+import { CONDITIONS } from "@/lib/browse-utils";
 import {
   Heart,
   ShoppingCart,
@@ -54,13 +54,12 @@ export function QuickView({
   if (!product) return null;
 
   const condition = CONDITIONS.find((c) => c.value === product.condition);
-  const rarity = RARITIES.find((r) => r.value === product.rarity);
   const images = product.images || [product.image];
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("en-AE", {
       style: "currency",
-      currency: "USD",
+      currency: "AED",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(price);
@@ -201,23 +200,17 @@ export function QuickView({
               </div>
             </div>
 
-            {/* Condition and Rarity */}
-            <div className="flex flex-wrap gap-2 mb-6">
-              {condition && (
+            {/* Condition */}
+            {condition && (
+              <div className="flex flex-wrap gap-2 mb-6">
                 <Badge variant="outline" className="gap-1">
                   <div
                     className={cn("w-2 h-2 rounded-full", condition.color)}
                   />
                   Condition: {condition.label}
                 </Badge>
-              )}
-              {rarity && (
-                <Badge variant="secondary" className="gap-1">
-                  <Sparkles className="h-3 w-3" />
-                  Rarity: {rarity.label}
-                </Badge>
-              )}
-            </div>
+              </div>
+            )}
 
             <Separator className="my-4" />
 
@@ -250,12 +243,6 @@ export function QuickView({
                       <div className="flex justify-between">
                         <dt className="text-muted-foreground">Condition:</dt>
                         <dd>{condition?.label}</dd>
-                      </div>
-                    )}
-                    {product.rarity && (
-                      <div className="flex justify-between">
-                        <dt className="text-muted-foreground">Rarity:</dt>
-                        <dd>{rarity?.label}</dd>
                       </div>
                     )}
                     <div className="flex justify-between">

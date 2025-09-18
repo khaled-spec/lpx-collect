@@ -1,7 +1,6 @@
 "use client";
 
 import { useWishlist } from "@/context/WishlistContext";
-import { useUser } from "@clerk/nextjs";
 import PageLayout from "@/components/layout/PageLayout";
 import { ProductCard } from "@/components/shared/ProductCard";
 import { EmptyStates } from "@/components/shared/EmptyState";
@@ -13,7 +12,6 @@ import { designTokens } from "@/lib/design-tokens";
 
 function WishlistContent() {
   const { items, clearWishlist, removeFromWishlist } = useWishlist();
-  const { user } = useUser();
 
   const breadcrumbs = [{ label: "Wishlist" }];
 

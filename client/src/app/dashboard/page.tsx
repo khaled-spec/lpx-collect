@@ -1,8 +1,6 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
 import { useWishlist } from "@/context/WishlistContext";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import PageLayout from "@/components/layout/PageLayout";
 import {
   Card,
@@ -30,13 +28,12 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 function DashboardContent() {
-  const { user } = useUser();
   const { wishlistCount } = useWishlist();
 
   const stats = [
     {
       label: "Total Orders",
-      value: user?.publicMetadata?.orderCount || 0,
+      value: 3,
       icon: ShoppingBag,
       color: "text-blue-600",
     },
@@ -103,14 +100,13 @@ function DashboardContent() {
       <div className="mb-8">
         <div className="flex items-center gap-4">
           <Avatar className="h-16 w-16">
-            <AvatarImage src={user?.imageUrl} alt={user?.firstName || "User"} />
             <AvatarFallback>
-              {user?.firstName?.charAt(0).toUpperCase() || "U"}
+              U
             </AvatarFallback>
           </Avatar>
           <div>
             <h1 className="text-2xl font-bold tracking-tight mb-1">
-              Welcome back, {user?.fullName || user?.firstName || "User"}!
+              Welcome back!
             </h1>
             <p className="text-muted-foreground">
               Manage your orders, wishlist, and account settings
@@ -279,9 +275,5 @@ function DashboardContent() {
 }
 
 export default function DashboardPage() {
-  return (
-    // <ProtectedRoute>
-    <DashboardContent />
-    // </ProtectedRoute>
-  );
+  return <DashboardContent />;
 }

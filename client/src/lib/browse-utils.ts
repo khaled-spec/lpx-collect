@@ -37,12 +37,9 @@ export interface BrowseFilters {
   search: string;
   categories: string[];
   conditions: string[];
-  rarities: string[];
   priceRange: PriceRange;
   vendors: string[];
   inStock: boolean;
-  verified: boolean;
-  featured: boolean;
   tags: string[];
 }
 
@@ -50,12 +47,9 @@ export const defaultFilters: BrowseFilters = {
   search: "",
   categories: [],
   conditions: [],
-  rarities: [],
   priceRange: { min: 0, max: 10000 },
   vendors: [],
   inStock: false,
-  verified: false,
-  featured: false,
   tags: [],
 };
 
@@ -68,13 +62,6 @@ export const CONDITIONS = [
   { value: "poor", label: "Poor", color: "bg-red-500" },
 ];
 
-export const RARITIES = [
-  { value: "common", label: "Common", color: "bg-gray-500" },
-  { value: "uncommon", label: "Uncommon", color: "bg-green-500" },
-  { value: "rare", label: "Rare", color: "bg-blue-500" },
-  { value: "ultra-rare", label: "Ultra Rare", color: "bg-purple-500" },
-  { value: "legendary", label: "Legendary", color: "bg-yellow-500" },
-];
 
 export const SORT_OPTIONS = [
   { value: "newest", label: "Newest First", icon: "clock" },
@@ -97,8 +84,8 @@ export function filterProducts(
       const matchesSearch =
         product.name.toLowerCase().includes(searchLower) ||
         product.description.toLowerCase().includes(searchLower) ||
-        (typeof product.category === 'string' ? product.category : product.category.name).toLowerCase().includes(searchLower) ||
-        (typeof product.vendor === 'string' ? product.vendor : product.vendor.name).toLowerCase().includes(searchLower) ||
+        product.category.toLowerCase().includes(searchLower) ||
+        product.vendor.toLowerCase().includes(searchLower) ||
         product.tags?.some((tag) => tag.toLowerCase().includes(searchLower));
 
       if (!matchesSearch) return false;
@@ -115,11 +102,6 @@ export function filterProducts(
         return false;
     }
 
-    // Rarity filter
-    if (filters.rarities.length > 0) {
-      if (!product.rarity || !filters.rarities.includes(product.rarity))
-        return false;
-    }
 
     // Price range filter
     if (
@@ -137,11 +119,7 @@ export function filterProducts(
     // Stock filter
     if (filters.inStock && product.stock === 0) return false;
 
-    // Verified filter
-    if (filters.verified && !product.authenticity?.verified) return false;
 
-    // Featured filter
-    if (filters.featured && !product.featured) return false;
 
     // Tags filter
     if (filters.tags.length > 0) {
@@ -175,20 +153,6 @@ export function sortProducts(
         return sorted.sort((a, b) => {
           const comp = a.name.localeCompare(b.name);
           return order === 'asc' ? comp : -comp;
-        });
-      case 'rarity':
-        const rarityOrder: { [key: string]: number } = {
-          'legendary': 4,
-          'epic': 3,
-          'rare': 2,
-          'uncommon': 1,
-          'common': 0
-        };
-        return sorted.sort((a, b) => {
-          const aVal = rarityOrder[a.rarity || 'common'] || 0;
-          const bVal = rarityOrder[b.rarity || 'common'] || 0;
-          const diff = aVal - bVal;
-          return order === 'asc' ? diff : -diff;
         });
       default:
         return sorted;
@@ -232,12 +196,9 @@ export function getActiveFilterCount(filters: BrowseFilters): number {
   if (filters.search) count++;
   if (filters.categories.length > 0) count += filters.categories.length;
   if (filters.conditions.length > 0) count += filters.conditions.length;
-  if (filters.rarities.length > 0) count += filters.rarities.length;
   if (filters.priceRange.min > 0 || filters.priceRange.max < 10000) count++;
   if (filters.vendors.length > 0) count += filters.vendors.length;
   if (filters.inStock) count++;
-  if (filters.verified) count++;
-  if (filters.featured) count++;
   if (filters.tags.length > 0) count += filters.tags.length;
 
   return count;
@@ -255,9 +216,6 @@ export function formatFilterLabel(filterType: string, value: string): string {
       const condition = CONDITIONS.find((c) => c.value === value);
       return condition?.label || value;
 
-    case "rarity":
-      const rarity = RARITIES.find((r) => r.value === value);
-      return rarity?.label || value;
 
     case "price":
       return value;
@@ -307,7 +265,7 @@ export function getUniqueVendors(
       vendor.count++;
     } else {
       if (product.vendorId) {
-        vendorMap.set(product.vendorId, { name: typeof product.vendor === 'string' ? product.vendor : product.vendor.name, count: 1 });
+        vendorMap.set(product.vendorId, { name: product.vendor, count: 1 });
       }
     }
   });
@@ -373,7 +331,7 @@ export function applyFilters(products: Product[], filters: FilterQuery): Product
 
   if (filters.category) {
     filtered = filtered.filter(p => {
-      const categorySlug = typeof p.category === 'object' ? p.category.slug : p.category;
+      const categorySlug = p.categorySlug;
       return categorySlug === filters.category;
     });
   }
@@ -390,9 +348,6 @@ export function applyFilters(products: Product[], filters: FilterQuery): Product
     filtered = filtered.filter(p => p.condition === filters.condition);
   }
 
-  if (filters.rarity) {
-    filtered = filtered.filter(p => p.rarity === filters.rarity);
-  }
 
   if (filters.search) {
     const searchFilter = createSearchFilter(filters.search);
@@ -405,7 +360,7 @@ export function applyFilters(products: Product[], filters: FilterQuery): Product
 
   if (filters.vendor) {
     filtered = filtered.filter(p => {
-      const vendorId = typeof p.vendor === 'object' ? p.vendor.id : p.vendor;
+      const vendorId = p.vendorId;
       return vendorId === filters.vendor;
     });
   }
@@ -479,17 +434,13 @@ export function createSearchFilter(searchTerm: string): (product: Product) => bo
     }
 
     // Search in category name
-    if (typeof product.category === 'object' && product.category.name) {
-      if (product.category.name.toLowerCase().includes(term)) {
-        return true;
-      }
+    if (product.category.toLowerCase().includes(term)) {
+      return true;
     }
 
     // Search in vendor name
-    if (typeof product.vendor === 'object' && product.vendor.name) {
-      if (product.vendor.name.toLowerCase().includes(term)) {
-        return true;
-      }
+    if (product.vendor.toLowerCase().includes(term)) {
+      return true;
     }
 
     return false;

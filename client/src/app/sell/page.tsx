@@ -50,7 +50,6 @@ export default function BecomeVendorPage() {
       title="Vendor Application"
       description="Complete this form to apply for a vendor account. We'll review your application within 24-48 hours."
       breadcrumbs={[{ label: "Become a Seller" }]}
-      containerClassName="max-w-3xl"
     >
       <Card>
         <CardContent>

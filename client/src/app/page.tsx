@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   FeaturedBadge,
-  VerifiedBadge,
 } from "@/components/custom/badge-variants";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -179,7 +178,7 @@ export default function Home() {
                   </span>
                 </div>
 
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
+                <h1 className="text-2xl font-bold tracking-tight mb-6">
                   Discover Rare &
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/60">
                     {" "}

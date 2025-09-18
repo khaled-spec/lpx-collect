@@ -10,7 +10,6 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Minus, Plus, X, Heart, Package } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { VerifiedBadge } from "@/components/custom/badge-variants";
 
 interface CartItemProps {
   item: CartItemType;
@@ -117,11 +116,6 @@ export default function CartItem({
               >
                 {product.rarity}
               </Badge>
-            )}
-            {product.vendor.verified && (
-              <VerifiedBadge className="h-5">
-                {product.vendor.storeName}
-              </VerifiedBadge>
             )}
           </div>
 

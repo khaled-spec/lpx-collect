@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { VendorStyleFilterBar } from "@/components/browse/VendorStyleFilterBar";
 import {
   Table,
   TableBody,
@@ -21,6 +22,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ViewMode, SortOption } from "@/lib/browse-utils";
 import {
   Search,
   MoreHorizontal,
@@ -36,6 +38,8 @@ import {
 
 export default function ProductsManagement() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortOption, setSortOption] = useState<SortOption>("newest");
+  const [viewMode, setViewMode] = useState<ViewMode>("list");
 
   // Mock data
   const products = [
@@ -113,7 +117,7 @@ export default function ProductsManagement() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Product Management</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Product Management</h1>
           <p className="text-muted-foreground">
             Review and manage marketplace listings
           </p>
@@ -160,19 +164,25 @@ export default function ProductsManagement() {
       </div>
 
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between mb-4">
             <CardTitle>All Products</CardTitle>
-            <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 w-[250px]"
-              />
-            </div>
           </div>
+          <VendorStyleFilterBar
+            search={searchQuery}
+            onSearchChange={setSearchQuery}
+            sortOption={sortOption}
+            onSortChange={setSortOption}
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
+            activeFilterCount={searchQuery ? 1 : 0}
+            activeFilters={searchQuery ? [{ type: "search", value: searchQuery, label: `Search: ${searchQuery}` }] : []}
+            onRemoveFilter={(type) => {
+              if (type === "search") setSearchQuery("");
+            }}
+            onClearAllFilters={() => setSearchQuery("")}
+            className="w-full"
+          />
         </CardHeader>
         <CardContent>
           <Table>

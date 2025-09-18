@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
 import {
   useNotifications,
   NotificationType,
@@ -254,8 +253,9 @@ function groupNotificationsByTime(
 }
 
 export default function NotificationsPage() {
-  const { user } = useUser();
   const router = useRouter();
+  // Mock user for frontend-only app
+  const user = { id: '1', email: 'test@gmail.com', name: 'Test User' };
   const {
     notifications,
     unreadCount,

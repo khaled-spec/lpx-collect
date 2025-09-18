@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode, createContext, useContext, useState, useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useAuth } from "@/context/AuthContext";
 import type { PaymentMethodUnion } from "@/types/payment";
 // Payment methods functionality will be connected to backend
 
@@ -29,7 +29,7 @@ export function PaymentMethodsProvider({
 }: {
   children: ReactNode;
 }) {
-  const { user } = useUser();
+  const { user } = useAuth();
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodUnion[]>(
     [],
   );

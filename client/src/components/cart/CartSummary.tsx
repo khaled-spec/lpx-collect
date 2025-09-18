@@ -14,7 +14,7 @@ import {
   Lock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useUser } from "@clerk/nextjs";
+import { useAuth } from "@/context/AuthContext";
 
 interface CartSummaryProps {
   subtotal: number;
@@ -36,7 +36,7 @@ export default function CartSummary({
   couponCode,
 }: CartSummaryProps) {
   const router = useRouter();
-  const { isSignedIn } = useUser();
+  const { isSignedIn } = useAuth();
 
   const FREE_SHIPPING_THRESHOLD = 100;
   const remainingForFreeShipping = Math.max(

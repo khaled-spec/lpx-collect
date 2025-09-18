@@ -19,7 +19,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Plus, AlertCircle, CheckCircle } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
 import { usePaymentMethods } from "@/context/PaymentMethodsContext";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -27,7 +26,10 @@ import { designTokens } from "@/lib/design-tokens";
 
 export default function PaymentMethodsPage() {
   const router = useRouter();
-  const { user, isLoaded } = useUser();
+  // Mock user and loading state for frontend-only app
+  const user = { id: '1', email: 'test@gmail.com', name: 'Test User' };
+  const isLoaded = true;
+  const authLoading = false;
   const {
     paymentMethods,
     isLoading,

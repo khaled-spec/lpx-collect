@@ -2,12 +2,12 @@
 
 import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
+import { useAuth } from "@/context/AuthContext";
 import { Loader2 } from "lucide-react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: "collector" | "vendor" | "admin";
+  requiredRole?: "customer" | "vendor" | "admin";
   redirectTo?: string;
 }
 
@@ -16,7 +16,7 @@ export default function ProtectedRoute({
   requiredRole,
   redirectTo = "/sign-in",
 }: ProtectedRouteProps) {
-  const { isLoaded, isSignedIn, user } = useUser();
+  const { isLoaded, isSignedIn, user } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -25,7 +25,7 @@ export default function ProtectedRoute({
       // Save the current path to redirect back after login
       const returnUrl = encodeURIComponent(pathname);
       router.push(`${redirectTo}?redirect_url=${returnUrl}`);
-    } else if (isLoaded && requiredRole && user?.publicMetadata?.role !== requiredRole) {
+    } else if (isLoaded && requiredRole && user?.role !== requiredRole) {
       // User doesn't have the required role
       router.push("/unauthorized");
     }
@@ -54,7 +54,7 @@ export default function ProtectedRoute({
     return null; // Will redirect in useEffect
   }
 
-  if (requiredRole && user?.publicMetadata?.role !== requiredRole) {
+  if (requiredRole && user?.role !== requiredRole) {
     return null; // Will redirect in useEffect
   }
 

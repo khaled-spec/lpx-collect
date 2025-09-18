@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import PageLayout from "@/components/layout/PageLayout";
 import { EmptyStates } from "@/components/shared/EmptyState";
@@ -244,8 +243,9 @@ function OrderCard({
 }
 
 export default function OrdersPage() {
-  const { user } = useUser();
   const router = useRouter();
+  // Mock user for frontend-only app
+  const user = { id: '1', email: 'test@gmail.com', name: 'Test User' };
   const { addToCart } = useCart();
   const [orders, setOrders] = useState<Order[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
@@ -378,7 +378,7 @@ export default function OrdersPage() {
         onValueChange={setFilterStatus}
         className="mb-6"
       >
-        <TabsList>
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-6">
           <TabsTrigger value="all">
             All Orders {orders.length > 0 && `(${orders.length})`}
           </TabsTrigger>

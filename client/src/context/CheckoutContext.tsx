@@ -10,7 +10,6 @@ import {
   Order,
 } from "@/types/checkout";
 import { useCart } from "@/context/CartContext";
-import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -42,7 +41,6 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { items, total, subtotal, shipping, tax, discount, clearCart } =
     useCart();
-  const { user } = useUser();
 
   const [currentStep, setCurrentStep] = useState<CheckoutStep>("shipping");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -160,7 +158,7 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
       const order: Order = {
         id: orderId,
         orderNumber,
-        userId: user?.id,
+        userId: undefined,
         items: items.map((item) => ({
           id: item.product.id,
           productId: item.product.id,
@@ -210,18 +208,16 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
       };
 
       // Save order to localStorage with user-specific key
-      const orderKey = user?.id ? `lpx_orders_${user.id}` : "lpx_orders_guest";
+      const orderKey = "lpx_orders_guest";
       const existingOrders = JSON.parse(localStorage.getItem(orderKey) || "[]");
       existingOrders.push(order);
       localStorage.setItem(orderKey, JSON.stringify(existingOrders));
 
-      // Also save as last order for backwards compatibility
-      if (user?.id) {
-        localStorage.setItem(
-          `lpx_order_${user.id}_last`,
-          JSON.stringify(order),
-        );
-      }
+      // Save as last order for backwards compatibility
+      localStorage.setItem(
+        "lpx_order_guest_last",
+        JSON.stringify(order),
+      );
 
       // Clear cart
       clearCart();
@@ -243,7 +239,6 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
   }, [
     checkoutData,
     items,
-    user,
     subtotal,
     shipping,
     tax,

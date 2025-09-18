@@ -69,58 +69,89 @@ import { toast } from "sonner";
 import { productStyles } from "@/components/custom/product-styles";
 import { designTokens } from "@/lib/design-tokens";
 
-// Helper function to generate extended vendor data
-const generateExtendedVendors = (vendors: Vendor[]) =>
-  vendors.map((vendor, index) => ({
+// Helper function to extend vendor data while preserving our organized data
+const generateExtendedVendors = (vendors: Vendor[]) => {
+  console.log('🔄 generateExtendedVendors called with:', vendors?.length, 'vendors', vendors);
+  const result = vendors.map((vendor) => ({
     ...vendor,
     storeName: vendor.name,
-    totalSales: Math.floor(Math.random() * 50000) + 1000,
-    totalProducts: vendor.productCount,
-    responseTime: `${Math.floor(Math.random() * 24) + 1}h`,
-    verified: Math.random() > 0.3,
-    featured: Math.random() > 0.7,
-    specialties: [
-      "Trading Cards",
-      "Comics",
-      "Vintage Toys",
-      "Sports Memorabilia",
-    ].filter(() => Math.random() > 0.5),
-    badges: [
-      "Top Seller",
-      "Fast Shipper",
-      "Trusted Vendor",
-      "Premium Quality",
-    ].filter(() => Math.random() > 0.6),
+    // Keep existing data and only add missing fields
+    totalSales: vendor.totalSales || Math.floor(Math.random() * 5000) + 500,
+    totalProducts: vendor.totalProducts || vendor.productCount || 0,
+    // Keep vendor specialties if they exist, otherwise use fallback
+    specialties: vendor.specialties && vendor.specialties.length > 0
+      ? vendor.specialties
+      : ["General Merchandise"],
+    // Convert location object to string if needed
+    location: typeof vendor.location === 'string'
+      ? vendor.location
+      : vendor.location?.city
+        ? `${vendor.location.city}, ${vendor.location.state || ''} ${vendor.location.country || ''}`.trim()
+        : 'Location not specified',
+    // Add computed fields that don't exist in mock data
+    badges: vendor.verified
+      ? ["Verified Vendor", ...(vendor.featured ? ["Featured"] : [])]
+      : [],
     stats: {
-      positiveReviews: Math.floor(Math.random() * 20) + 80,
-      shipOnTime: Math.floor(Math.random() * 15) + 85,
-      responseRate: Math.floor(Math.random() * 10) + 90,
-      repeatCustomers: Math.floor(Math.random() * 30) + 40,
+      positiveReviews: Math.floor((vendor.rating || 4.0) * 20),
+      shipOnTime: 85 + Math.floor((vendor.rating || 4.0) * 3),
+      responseRate: 90 + Math.floor((vendor.rating || 4.0) * 2),
+      repeatCustomers: 40 + Math.floor((vendor.rating || 4.0) * 10),
     },
-    joinedDate: new Date(
-      2020 + Math.floor(Math.random() * 4),
-      Math.floor(Math.random() * 12),
-      Math.floor(Math.random() * 28) + 1,
-    ),
-    location: [
-      "New York, USA",
-      "Los Angeles, USA",
-      "London, UK",
-      "Tokyo, Japan",
-      "Toronto, Canada",
-    ][index % 5],
-    followers: Math.floor(Math.random() * 10000) + 500,
+    joinedDate: vendor.joinedDate ? new Date(vendor.joinedDate) : new Date(),
+    followers: Math.floor((vendor.totalSales || 1000) / 5) + Math.floor((vendor.rating || 4.0) * 200),
   }));
+  console.log('✅ generateExtendedVendors result:', result?.length, 'extended vendors', result);
+  return result;
+};
 
 const specialtyOptions = [
   "Trading Cards",
   "Comics",
-  "Coins",
-  "Stamps",
-  "Vintage Toys",
+  "Pokémon",
+  "Magic: The Gathering",
+  "Sports Cards",
+  "Gaming Cards",
+  "Yu-Gi-Oh!",
+  "Marvel",
+  "DC Comics",
+  "Manga",
+  "Graphic Novels",
+  "Vintage Comics",
+  "First Editions",
+  "Rare Comics",
+  "Collectible Cards",
+  "PSA Graded",
+  "CGC Graded",
+  "Mint Condition",
+  "Near Mint",
+  "Excellent Condition",
+  "Vintage Items",
+  "Rare Items",
+  "Limited Editions",
+  "Special Editions",
+  "Holographic Cards",
+  "Foil Cards",
+  "Promo Cards",
+  "Tournament Cards",
+  "Japanese Cards",
+  "English Cards",
+  "Arabic Comics",
+  "International Comics",
+  "Collectibles",
+  "Memorabilia",
+  "Authenticated Items",
+  "Certified Items",
+  "Investment Grade",
+  "High Value Items",
+  "Popular Characters",
+  "Superhero Comics",
+  "Anime Cards",
   "Sports Memorabilia",
-  "Art & Prints",
-  "Antiques",
+  "Rookie Cards",
+  "Hall of Fame",
+  "Championship Cards",
+  "General Merchandise",
 ];
 
 const sortOptions = [
@@ -136,7 +167,6 @@ interface VendorFilters {
   search: string;
   specialties: string[];
   rating: number;
-  verified: boolean;
   featured: boolean;
   minProducts: number;
   location: string;
@@ -199,7 +229,6 @@ function FilterContent({
     (filters.search ? 1 : 0) +
     filters.specialties.length +
     (filters.rating > 0 ? 1 : 0) +
-    (filters.verified ? 1 : 0) +
     (filters.featured ? 1 : 0) +
     (filters.minProducts > 0 ? 1 : 0) +
     (filters.location ? 1 : 0);
@@ -352,33 +381,15 @@ function FilterContent({
                 <div className="flex items-center gap-2">
                   <Shield className="h-4 w-4" />
                   <span>Features</span>
-                  {(filters.verified || filters.featured) && (
+                  {filters.featured && (
                     <Badge variant="secondary" className="ml-2 h-5 px-1.5">
-                      {(filters.verified ? 1 : 0) + (filters.featured ? 1 : 0)}
+                      1
                     </Badge>
                   )}
                 </div>
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-3 pt-2">
-                  <div className="flex items-center justify-between">
-                    <Label
-                      htmlFor="verified"
-                      className="font-normal cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                        <span>Verified Vendors</span>
-                      </div>
-                    </Label>
-                    <Switch
-                      id="verified"
-                      checked={filters.verified}
-                      onCheckedChange={(checked) =>
-                        onUpdateFilter("verified", checked)
-                      }
-                    />
-                  </div>
                   <div className="flex items-center justify-between">
                     <Label
                       htmlFor="featured"
@@ -601,10 +612,6 @@ function FilterBadges({
 
   if (filters.rating > 0) {
     badges.push({ type: "rating", label: `${filters.rating}+ stars` });
-  }
-
-  if (filters.verified) {
-    badges.push({ type: "verified", label: "Verified only" });
   }
 
   if (filters.featured) {
@@ -1009,13 +1016,13 @@ function VendorPagination({
 }
 
 export default function VendorsPage() {
+  console.log('🚀 VendorsPage component mounting/rendering');
   const [vendors, setVendors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<VendorFilters>({
     search: "",
     specialties: [],
     rating: 0,
-    verified: false,
     featured: false,
     minProducts: 0,
     location: "",
@@ -1025,12 +1032,27 @@ export default function VendorsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(24);
 
+  console.log('📊 Current state:', {
+    vendorsCount: vendors?.length,
+    loading,
+    filters,
+    sortBy,
+    viewMode,
+    currentPage,
+    itemsPerPage
+  });
+
   // Update filter
   const updateFilter = <K extends keyof VendorFilters>(
     key: K,
     value: VendorFilters[K],
   ) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
+    console.log('🔄 Filter update:', key, '=', value);
+    setFilters((prev) => {
+      const newFilters = { ...prev, [key]: value };
+      console.log('📝 New filters state:', newFilters);
+      return newFilters;
+    });
     setCurrentPage(1); // Reset to first page when filters change
   };
 
@@ -1040,7 +1062,6 @@ export default function VendorsPage() {
       search: "",
       specialties: [],
       rating: 0,
-      verified: false,
       featured: false,
       minProducts: 0,
       location: "",
@@ -1063,9 +1084,6 @@ export default function VendorsPage() {
       case "rating":
         updateFilter("rating", 0);
         break;
-      case "verified":
-        updateFilter("verified", false);
-        break;
       case "featured":
         updateFilter("featured", false);
         break;
@@ -1083,33 +1101,49 @@ export default function VendorsPage() {
     (filters.search ? 1 : 0) +
     filters.specialties.length +
     (filters.rating > 0 ? 1 : 0) +
-    (filters.verified ? 1 : 0) +
     (filters.featured ? 1 : 0) +
     (filters.minProducts > 0 ? 1 : 0) +
     (filters.location ? 1 : 0);
 
   useEffect(() => {
+    console.log('🔥 useEffect triggered - starting vendor fetch at:', new Date().toISOString());
+
     async function fetchVendors() {
+      console.log('🛠️ fetchVendors function called');
       try {
+        console.log('📡 Getting vendor API...');
         const api = getVendorAPI();
-        const response = await api.getVendors({ verified: filters.verified });
+        console.log('📡 API instance created:', api);
+
+        console.log('📡 Calling api.getVendors()...');
+        const response = await api.getVendors();
+        console.log('📦 API response received:', response);
 
         if (response.success) {
+          console.log('✅ API success - processing', response.data?.length, 'vendors');
           const extended = generateExtendedVendors(response.data);
+          console.log('💾 Setting vendors state with', extended?.length, 'extended vendors');
           setVendors(extended);
+        } else {
+          console.error('❌ API failed:', response.error);
         }
       } catch (error) {
-        console.error("Failed to fetch vendors:", error);
+        console.error("💥 Failed to fetch vendors:", error);
       } finally {
+        console.log('🏁 Setting loading to false');
         setLoading(false);
       }
     }
+
+    console.log('💡 Calling fetchVendors() function...');
     fetchVendors();
-  }, [filters.verified]);
+    console.log('📩 fetchVendors() call completed (async)');
+  }, []);
 
   // Filter and sort vendors
-
   const filteredVendors = useMemo(() => {
+    console.log('🧮 filteredVendors useMemo triggered - input vendors:', vendors?.length);
+    console.log('🧮 Filtering with:', { filters, sortBy });
     let filtered = [...vendors];
 
     // Apply filters
@@ -1134,10 +1168,6 @@ export default function VendorsPage() {
 
     if (filters.rating > 0) {
       filtered = filtered.filter((v) => v.rating >= filters.rating);
-    }
-
-    if (filters.verified) {
-      filtered = filtered.filter((v) => v.verified);
     }
 
     if (filters.featured) {
@@ -1182,21 +1212,42 @@ export default function VendorsPage() {
         filtered.sort((a, b) => b.rating - a.rating);
     }
 
+    console.log('🎯 filteredVendors result:', filtered?.length, 'vendors after filtering and sorting');
+    console.log('🎯 Final filtered vendors:', filtered);
     return filtered;
-  }, [filters, sortBy]);
+  }, [vendors, filters, sortBy]);
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredVendors.length / itemsPerPage);
   const paginatedVendors = useMemo(() => {
+    console.log('📄 paginatedVendors useMemo triggered');
+    console.log('📄 Pagination params:', {
+      filteredVendorsCount: filteredVendors?.length,
+      currentPage,
+      itemsPerPage,
+      totalPages
+    });
     const startIndex = (currentPage - 1) * itemsPerPage;
-    return filteredVendors.slice(startIndex, startIndex + itemsPerPage);
+    const result = filteredVendors.slice(startIndex, startIndex + itemsPerPage);
+    console.log('📄 paginatedVendors result:', result?.length, 'vendors for page', currentPage);
+    console.log('📄 Final paginated vendors:', result);
+    return result;
   }, [filteredVendors, currentPage, itemsPerPage]);
 
   // Handle vendor follow
   const handleFollow = (vendorId: string) => {
     // In a real app, this would make an API call
-    console.log("Following vendor:", vendorId);
+    console.log("👤 Following vendor:", vendorId);
   };
+
+  // Log render decisions
+  console.log('🎨 Render decision:', {
+    loading,
+    paginatedVendorsCount: paginatedVendors?.length,
+    filteredVendorsCount: filteredVendors?.length,
+    willShowEmptyState: paginatedVendors.length === 0,
+    willShowVendors: paginatedVendors.length > 0
+  });
 
   return (
     <PageLayout
@@ -1265,26 +1316,40 @@ export default function VendorsPage() {
 
       {/* Vendor Grid/List */}
       <div className="mb-8">
-        {paginatedVendors.length > 0 ? (
-          <div
-            className={cn(
-              viewMode === "grid"
-                ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-6"
-                : "space-y-4",
-            )}
-          >
-            {paginatedVendors.map((vendor) => (
-              <VendorCard
-                key={vendor.id}
-                vendor={vendor}
-                viewMode={viewMode}
-                onFollow={handleFollow}
-              />
-            ))}
-          </div>
-        ) : (
-          <EmptyStates.NoVendors />
-        )}
+        {(() => {
+          if (loading) {
+            console.log('⏳ Rendering loading state');
+            return <div>Loading vendors...</div>;
+          }
+
+          if (paginatedVendors.length > 0) {
+            console.log('✅ Rendering', paginatedVendors.length, 'vendor cards');
+            return (
+              <div
+                className={cn(
+                  viewMode === "grid"
+                    ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-6"
+                    : "space-y-4",
+                )}
+              >
+                {paginatedVendors.map((vendor) => {
+                  console.log('🏢 Rendering vendor card for:', vendor.id, vendor.storeName || vendor.name);
+                  return (
+                    <VendorCard
+                      key={vendor.id}
+                      vendor={vendor}
+                      viewMode={viewMode}
+                      onFollow={handleFollow}
+                    />
+                  );
+                })}
+              </div>
+            );
+          } else {
+            console.log('🚫 Rendering empty state - no vendors to show');
+            return <EmptyStates.NoVendors />;
+          }
+        })()}
       </div>
 
       {/* Pagination */}

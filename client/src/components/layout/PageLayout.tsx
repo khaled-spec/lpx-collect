@@ -110,7 +110,53 @@ export default function PageLayout({
               {children}
             </div>
           ) : (
-            children
+            <>
+              {/* Breadcrumbs for non-card layout */}
+              {allBreadcrumbs.length > 0 && (
+                <Breadcrumb className="mb-8">
+                  <BreadcrumbList>
+                    {allBreadcrumbs.map((crumb, index) => (
+                      <Fragment key={index}>
+                        <BreadcrumbItem>
+                          {index < allBreadcrumbs.length - 1 ? (
+                            <BreadcrumbLink
+                              href={crumb.href || "#"}
+                              className="hover:text-primary transition-colors"
+                            >
+                              {crumb.label}
+                            </BreadcrumbLink>
+                          ) : (
+                            <BreadcrumbPage className="text-foreground font-medium">
+                              {crumb.label}
+                            </BreadcrumbPage>
+                          )}
+                        </BreadcrumbItem>
+                        {index < allBreadcrumbs.length - 1 && (
+                          <BreadcrumbSeparator />
+                        )}
+                      </Fragment>
+                    ))}
+                  </BreadcrumbList>
+                </Breadcrumb>
+              )}
+
+              {/* Page Header for non-card layout */}
+              {(title || description) && (
+                <div className="mb-8">
+                  {title && (
+                    <h1 className={cn(designTokens.typography.h1, "mb-2")}>
+                      {title}
+                    </h1>
+                  )}
+                  {description && (
+                    <p className="text-muted-foreground">{description}</p>
+                  )}
+                </div>
+              )}
+
+              {/* Page Content */}
+              {children}
+            </>
           )}
         </div>
       </main>

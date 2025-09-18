@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, ReactNode } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -96,7 +96,7 @@ export default function UsersManagement() {
       pending: "secondary",
       inactive: "outline",
     };
-    const icons: Record<string, JSX.Element> = {
+    const icons: Record<string, ReactNode> = {
       active: <CheckCircle className="h-3 w-3 mr-1" />,
       suspended: <Ban className="h-3 w-3 mr-1" />,
       pending: <AlertCircle className="h-3 w-3 mr-1" />,
@@ -125,7 +125,7 @@ export default function UsersManagement() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
+          <h1 className="text-2xl font-bold tracking-tight">User Management</h1>
           <p className="text-muted-foreground">
             Manage users, roles, and permissions
           </p>

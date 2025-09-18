@@ -41,48 +41,52 @@ export const designTokens = {
 
     // Semantic spacing
     page: {
-      padding: "px-6 py-8",
+      padding: {
+        sm: "px-4 py-6",
+        md: "px-6 py-8",
+        lg: "px-8 py-12",
+      },
       container: "max-w-7xl mx-auto",
-      section: "py-16",
+      section: {
+        sm: "py-12",
+        md: "py-16",
+        lg: "py-24",
+      },
     },
     card: {
-      padding: "p-8",
-      compact: "p-4",
-      content: "p-6",
-    },
-    section: {
-      xs: "py-8",
-      sm: "py-12",
-      md: "py-16",
-      lg: "py-20",
-      xl: "py-24",
+      padding: {
+        xs: "p-3",
+        sm: "p-4",
+        md: "p-6",
+        lg: "p-8",
+      },
+      gap: {
+        xs: "gap-2",
+        sm: "gap-3",
+        md: "gap-4",
+        lg: "gap-6",
+      },
     },
     component: {
-      xs: "p-2",
-      sm: "p-3",
-      md: "p-4",
-      lg: "p-6",
-      xl: "p-8",
-    },
-    gap: {
-      xs: "gap-2",
-      sm: "gap-3",
-      md: "gap-4",
-      lg: "gap-6",
-      xl: "gap-8",
-    },
-    inline: {
-      xs: "space-x-1",
-      sm: "space-x-2",
-      md: "space-x-3",
-      lg: "space-x-4",
-    },
-    stack: {
-      xs: "space-y-1",
-      sm: "space-y-2",
-      md: "space-y-4",
-      lg: "space-y-6",
-      xl: "space-y-8",
+      padding: {
+        xs: "p-2",
+        sm: "p-3",
+        md: "p-4",
+        lg: "p-6",
+      },
+      margin: {
+        xs: "m-2",
+        sm: "m-3",
+        md: "m-4",
+        lg: "m-6",
+      },
+      gap: {
+        xs: "gap-1",
+        sm: "gap-2",
+        md: "gap-4",
+        lg: "gap-6",
+        xl: "gap-8",
+      },
     },
   },
 
@@ -117,10 +121,10 @@ export const designTokens = {
   // Typography presets
   typography: {
     // Headings
-    h1: "text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight",
+    h1: "text-2xl font-bold tracking-tight",
     h2: "text-3xl md:text-4xl font-bold tracking-tight",
-    h3: "text-2xl md:text-3xl font-semibold",
-    h4: "text-xl md:text-2xl font-semibold",
+    h3: "text-2xl font-semibold",
+    h4: "text-2xl font-semibold",
     h5: "text-lg md:text-xl font-medium",
     h6: "text-base md:text-lg font-medium",
 
@@ -143,10 +147,10 @@ export const designTokens = {
 
   // Heading semantic tokens (backwards compatibility)
   heading: {
-    h1: "text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight",
+    h1: "text-2xl font-bold tracking-tight",
     h2: "text-3xl md:text-4xl font-bold tracking-tight",
-    h3: "text-2xl md:text-3xl font-semibold",
-    h4: "text-xl md:text-2xl font-semibold",
+    h3: "text-2xl font-semibold",
+    h4: "text-2xl font-semibold",
     h5: "text-lg md:text-xl font-medium",
     h6: "text-base md:text-lg font-medium",
     pageTitle: "text-2xl font-bold tracking-tight",
@@ -322,7 +326,7 @@ export const designTokens = {
 // Type exports for TypeScript support
 export type ContainerSize = keyof typeof designTokens.container;
 export type ButtonSize = keyof typeof designTokens.button.sizes;
-export type SpacingSize = keyof typeof designTokens.spacing.section;
+export type SpacingSize = Exclude<keyof typeof designTokens.spacing, 'page'>;
 export type RadiusSize = keyof typeof designTokens.radius;
 export type ShadowSize = keyof typeof designTokens.shadow;
 export type GridCols = keyof typeof designTokens.grid.cols;

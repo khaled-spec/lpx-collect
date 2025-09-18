@@ -42,9 +42,10 @@ Container.displayName = "Container";
 
 // Section Container with consistent spacing
 interface SectionProps extends React.HTMLAttributes<HTMLElement> {
-  size?: keyof typeof designTokens.spacing.section;
+  size?: keyof typeof designTokens.spacing.page.section;
   background?: "default" | "muted" | "primary" | "dark";
   containerSize?: ContainerSize;
+  paddingSize?: keyof typeof designTokens.spacing.page.padding;
 }
 
 export const Section = React.forwardRef<HTMLElement, SectionProps>(
@@ -54,6 +55,7 @@ export const Section = React.forwardRef<HTMLElement, SectionProps>(
       size = "md",
       background = "default",
       containerSize = "default",
+      paddingSize = "md",
       children,
       ...props
     },
@@ -70,13 +72,16 @@ export const Section = React.forwardRef<HTMLElement, SectionProps>(
       <section
         ref={ref}
         className={cn(
-          designTokens.spacing.section[size],
+          designTokens.spacing.page.section[size],
+          designTokens.spacing.page.padding[paddingSize],
           backgroundClasses[background],
           className,
         )}
         {...props}
       >
-        <Container size={containerSize}>{children}</Container>
+        <Container size={containerSize} noPadding>
+          {children}
+        </Container>
       </section>
     );
   },
@@ -86,7 +91,7 @@ Section.displayName = "Section";
 // Grid Layout Component
 interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
   cols?: keyof typeof designTokens.grid.cols;
-  gap?: keyof typeof designTokens.spacing.gap;
+  gap?: keyof typeof designTokens.spacing.component.gap;
 }
 
 export const Grid = React.forwardRef<HTMLDivElement, GridProps>(
@@ -97,7 +102,7 @@ export const Grid = React.forwardRef<HTMLDivElement, GridProps>(
         className={cn(
           "grid",
           designTokens.grid.cols[cols],
-          designTokens.spacing.gap[gap],
+          designTokens.spacing.component.gap[gap],
           className,
         )}
         {...props}
@@ -115,7 +120,7 @@ interface FlexProps extends React.HTMLAttributes<HTMLDivElement> {
   justify?: "start" | "end" | "center" | "between" | "around" | "evenly";
   align?: "start" | "end" | "center" | "baseline" | "stretch";
   wrap?: boolean;
-  gap?: keyof typeof designTokens.spacing.gap;
+  gap?: keyof typeof designTokens.spacing.component.gap;
 }
 
 export const Flex = React.forwardRef<HTMLDivElement, FlexProps>(
@@ -165,7 +170,7 @@ export const Flex = React.forwardRef<HTMLDivElement, FlexProps>(
           justifyClasses[justify],
           alignClasses[align],
           wrap && "flex-wrap",
-          designTokens.spacing.gap[gap],
+          designTokens.spacing.component.gap[gap],
           className,
         )}
         {...props}
@@ -179,7 +184,7 @@ Flex.displayName = "Flex";
 
 // Stack Component (vertical flex with gap)
 interface StackProps extends React.HTMLAttributes<HTMLDivElement> {
-  gap?: keyof typeof designTokens.spacing.gap;
+  gap?: keyof typeof designTokens.spacing.component.gap;
   align?: "start" | "end" | "center" | "stretch";
 }
 

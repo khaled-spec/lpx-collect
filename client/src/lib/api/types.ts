@@ -3,25 +3,30 @@
 export interface Product {
   id: string;
   name: string;
-  slug?: string;
+  slug: string;
   description: string;
   price: number;
-  originalPrice?: number;
-  image?: string;
-  images?: string[];
-  category: Category | string;  // Can be object or string
-  categorySlug?: string;
-  vendor: Vendor | string;  // Can be object or string
-  vendorId?: string;
+  originalPrice: number;
+  image: string;
+  images: string[];
+  category: string;
+  categorySlug: string;
+  vendor: string;
+  vendorId: string;
   stock: number;
-  condition?: string;  // More flexible for conditions
-  rarity?: string;  // More flexible for rarities
+  state: "sealed" | "open";  // Product state: sealed or open
+  condition?: string;  // For open/raw products - conditions like mint, near-mint, etc.
+  grading?: {
+    company: string;  // PSA, CGC, BGS, etc.
+    grade: string;    // 10, 9.5, BGS 9, etc.
+    certificate?: string;
+  };
   cardNumber?: string;  // For card games
-  views?: number;
-  rating?: number;
-  reviewCount?: number;
-  year?: number;
-  manufacturer?: string;
+  views: number;
+  rating: number;
+  reviewCount: number;
+  year: number;
+  manufacturer: string;
   authenticity?: {
     verified: boolean;
     certificate?: string;
@@ -29,10 +34,10 @@ export interface Product {
     verificationDate?: string;
   };
   specifications?: Record<string, string>;
-  tags?: string[];
-  featured?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
+  tags: string[];
+  featured: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Category {

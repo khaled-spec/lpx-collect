@@ -6,12 +6,11 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  FeaturedBadge,
-  VerifiedBadge,
-  StockBadge,
+  SealedBadge,
+  GradingBadge,
   ConditionBadge,
-  RarityBadge,
 } from "@/components/custom/badge-variants";
+import { useWishlist } from "@/context/WishlistContext";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -28,7 +27,6 @@ import {
   ShoppingCart,
   Eye,
   Shield,
-  TrendingUp,
   Package,
   Sparkles,
   Share2,
@@ -81,7 +79,7 @@ export function ProductCardSkeleton({
   return (
     <Card className="overflow-hidden">
       <Skeleton className="h-64" />
-      <CardContent className="p-4 space-y-3">
+      <CardContent size="sm" className="space-y-3">
         <Skeleton className="h-4 w-20" />
         <Skeleton className="h-5 w-full" />
         <Skeleton className="h-5 w-3/4" />
@@ -112,16 +110,40 @@ export function ProductCard({
 }: ProductCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const { isInWishlist, removeFromWishlist } = useWishlist();
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("en-AE", {
       style: "currency",
-      currency: "USD",
+      currency: "AED",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(price);
   };
+
+  const getVendorLink = () => {
+    if (product.vendorId) {
+      return `/vendor/${product.vendorId}`;
+    }
+    return null;
+  };
+
+  const getVendorName = () => {
+    return product.vendor;
+  };
+
+  const handleWishlistClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isInWishlist(product.id)) {
+      removeFromWishlist(product.id);
+    } else {
+      onAddToWishlist?.(product);
+    }
+  };
+
+  const isProductInWishlist = isInWishlist(product.id);
 
   // List View Layout
   if (viewMode === "list") {
@@ -154,39 +176,31 @@ export function ProductCard({
                 </div>
               )}
 
-              {/* Badges */}
-              <div className="absolute top-2 left-2 flex flex-col gap-1">
-                {product.featured && (
-                  <FeaturedBadge>
-                    <TrendingUp className="h-3 w-3 mr-1" />
-                    Featured
-                  </FeaturedBadge>
-                )}
-                {product.stock <= 5 && product.stock > 0 && (
-                  <StockBadge stock={product.stock} />
-                )}
-                {product.authenticity?.verified && (
-                  <VerifiedBadge>
-                    <Shield className="h-3 w-3 mr-1" />
-                    Verified
-                  </VerifiedBadge>
-                )}
-              </div>
             </div>
 
             {/* Content Section */}
             <div className="flex-1 p-4">
               <div className="flex justify-between items-start">
                 <div className="flex-1 pr-4">
-                  <h3 className="font-semibold text-lg hover:text-primary transition-colors line-clamp-1">
+                  <h3 className="typography-heading-xs hover:text-primary transition-colors line-clamp-1">
                     {product.name}
                   </h3>
 
                   <div className="flex items-center gap-1 mt-1">
                     <Store className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">
-                      {typeof product.vendor === 'string' ? product.vendor : product.vendor?.name}
-                    </span>
+                    {getVendorLink() ? (
+                      <Link
+                        href={getVendorLink()!}
+                        className="typography-body-sm text-muted-foreground hover:text-primary transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {getVendorName()}
+                      </Link>
+                    ) : (
+                      <span className="typography-body-sm text-muted-foreground">
+                        {getVendorName()}
+                      </span>
+                    )}
                   </div>
 
                   <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
@@ -194,15 +208,26 @@ export function ProductCard({
                   </p>
 
                   <div className="flex items-center gap-2 mt-3">
-                    {product.condition && (
+                    {product.state === "sealed" && (
+                      <SealedBadge>
+                        <Package className="h-3 w-3 mr-1" />
+                        Sealed
+                      </SealedBadge>
+                    )}
+                    {product.state === "open" && product.grading && (
+                      <GradingBadge
+                        company={product.grading.company}
+                        grade={product.grading.grade}
+                      />
+                    )}
+                    {product.state === "open" && !product.grading && product.condition && (
                       <ConditionBadge condition={product.condition} />
                     )}
-                    {product.rarity && <RarityBadge rarity={product.rarity} />}
                   </div>
                 </div>
 
                 <div className="text-right">
-                  <p className="text-2xl font-bold">
+                  <p className="text-xl font-bold">
                     {formatPrice(product.price)}
                   </p>
                   {product.stock === 0 ? (
@@ -254,48 +279,6 @@ export function ProductCard({
                   Buy Now
                 </Button>
 
-                <Button
-                  size="icon"
-                  variant="outline"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsWishlisted(!isWishlisted);
-                    onAddToWishlist?.(product);
-                  }}
-                >
-                  <Heart
-                    className={cn(
-                      "h-4 w-4",
-                      isWishlisted && "fill-red-500 text-red-500",
-                    )}
-                  />{" "}
-                  {/* Keep as is - wishlist heart uses specific red */}
-                </Button>
-
-                <Button
-                  size="icon"
-                  variant="outline"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onShare?.(product);
-                  }}
-                >
-                  <Share2 className="h-4 w-4" />
-                </Button>
-
-                {showQuickView && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      onQuickView?.(product);
-                    }}
-                  >
-                    <Eye className="h-4 w-4 mr-2" />
-                    Quick View
-                  </Button>
-                )}
               </div>
             </div>
           </div>
@@ -342,7 +325,7 @@ export function ProductCard({
           {showQuickView && (
             <div
               className={cn(
-                "absolute top-2 right-2 transition-opacity duration-300",
+                "absolute top-2 right-2 transition-opacity duration-300 flex flex-col gap-2",
                 isHovered ? "opacity-100" : "opacity-0",
               )}
             >
@@ -364,27 +347,51 @@ export function ProductCard({
                   <TooltipContent>Quick View</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      onClick={handleWishlistClick}
+                      className="h-8 w-8"
+                    >
+                      <Heart
+                        className={cn(
+                          "h-4 w-4",
+                          isProductInWishlist && "fill-red-500 text-red-500",
+                        )}
+                      />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {isProductInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        onShare?.(product);
+                      }}
+                      className="h-8 w-8"
+                    >
+                      <Share2 className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Share</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           )}
 
-          {/* Badges */}
-          <div className="absolute top-2 left-2 flex flex-col gap-1">
-            {product.featured && (
-              <FeaturedBadge className="text-xs">
-                <TrendingUp className="h-3 w-3 mr-1" />
-                Featured
-              </FeaturedBadge>
-            )}
-            {product.stock <= 5 && product.stock > 0 && (
-              <StockBadge stock={product.stock} />
-            )}
-            {product.authenticity?.verified && (
-              <VerifiedBadge className="text-xs">
-                <Shield className="h-3 w-3 mr-1" />
-                Verified
-              </VerifiedBadge>
-            )}
-          </div>
         </div>
       </Link>
 
@@ -393,7 +400,7 @@ export function ProductCard({
       >
         <div className="flex items-start justify-between mb-2">
           <p className="text-xs text-muted-foreground uppercase tracking-wide">
-            {typeof product.category === 'string' ? product.category : product.category?.name}
+            {product.category}
           </p>
         </div>
 
@@ -403,100 +410,88 @@ export function ProductCard({
           </h3>
         </Link>
 
-        <p className="text-sm text-muted-foreground h-5">{typeof product.vendor === 'string' ? product.vendor : product.vendor?.name}</p>
+        {getVendorLink() ? (
+          <Link
+            href={getVendorLink()!}
+            className="text-sm text-muted-foreground hover:text-primary transition-colors h-5 block"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {getVendorName()}
+          </Link>
+        ) : (
+          <p className="text-sm text-muted-foreground h-5">{getVendorName()}</p>
+        )}
 
         <div className="flex gap-1 h-7 items-center my-2">
-          {product.condition && (
-            <ConditionBadge condition={product.condition} className="text-xs" />
+          {product.state === "sealed" && (
+            <SealedBadge className="text-xs">
+              <Package className="h-3 w-3 mr-1" />
+              Sealed
+            </SealedBadge>
           )}
-          {product.rarity && (
-            <RarityBadge rarity={product.rarity} className="text-xs" />
+          {product.state === "open" && product.grading && (
+            <GradingBadge
+              company={product.grading.company}
+              grade={product.grading.grade}
+              className="text-xs"
+            />
+          )}
+          {product.state === "open" && !product.grading && product.condition && (
+            <ConditionBadge condition={product.condition} className="text-xs" />
           )}
         </div>
 
-        <div className="flex items-start justify-between mt-auto">
-          <div>
-            <p
-              className={cn(
-                "font-bold",
-                viewMode === "compact" ? "text-xl" : "text-2xl",
-              )}
-            >
-              {formatPrice(product.price)}
-            </p>
-            <div className="h-4 mt-1">
-              {product.stock === 0 ? (
-                <p className={cn("text-xs", designTokens.colors.status.error)}>
-                  Out of Stock
-                </p>
-              ) : product.stock <= 5 ? (
-                <p
-                  className={cn("text-xs", designTokens.colors.status.warning)}
-                >
-                  Only {product.stock} left
-                </p>
-              ) : (
-                <span className="text-xs">&nbsp;</span>
-              )}
+        <div className="mt-auto">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <p className="text-xl font-bold">
+                {formatPrice(product.price)}
+              </p>
+              <div className="h-4 mt-1">
+                {product.stock === 0 ? (
+                  <p className={cn("text-xs", designTokens.colors.status.error)}>
+                    Out of Stock
+                  </p>
+                ) : product.stock <= 5 ? (
+                  <p
+                    className={cn("text-xs", designTokens.colors.status.warning)}
+                  >
+                    Only {product.stock} left
+                  </p>
+                ) : (
+                  <span className="text-xs">&nbsp;</span>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Action Buttons - Standard Order */}
-          <div className="flex items-center gap-1">
+          {/* Action Buttons - Full Width */}
+          <div className="grid grid-cols-2 gap-2">
             <Button
-              size="icon"
+              size="sm"
               onClick={(e) => {
                 e.preventDefault();
                 onAddToCart?.(product);
               }}
               disabled={product.stock === 0}
-              className="h-8 w-8"
+              className="text-xs w-full"
             >
-              <ShoppingCart className="h-4 w-4" />
+              <ShoppingCart className="h-4 w-4 mr-1" />
+              Add to Cart
             </Button>
 
             <Button
-              size="icon"
+              size="sm"
               variant="outline"
               onClick={(e) => {
                 e.preventDefault();
                 onBuyNow?.(product);
               }}
               disabled={product.stock === 0}
-              className="h-8 w-8"
+              className="text-xs w-full"
             >
-              <Zap className="h-4 w-4" />
-            </Button>
-
-            <Button
-              size="icon"
-              variant="outline"
-              onClick={(e) => {
-                e.preventDefault();
-                setIsWishlisted(!isWishlisted);
-                onAddToWishlist?.(product);
-              }}
-              className="h-8 w-8"
-            >
-              <Heart
-                className={cn(
-                  "h-4 w-4",
-                  isWishlisted && "fill-red-500 text-red-500",
-                )}
-              />{" "}
-              {/* Keep as is - wishlist heart uses specific red */}
-            </Button>
-
-            <Button
-              size="icon"
-              variant="outline"
-              onClick={(e) => {
-                e.preventDefault();
-                onShare?.(product);
-              }}
-              className="h-8 w-8"
-            >
-              <Share2 className="h-4 w-4" />
+              <Zap className="h-4 w-4 mr-1" />
+              Buy Now
             </Button>
           </div>
         </div>

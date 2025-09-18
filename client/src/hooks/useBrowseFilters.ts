@@ -61,8 +61,6 @@ export function useBrowseFilters(products: Product[]): UseBrowseFiltersReturn {
     const conditions = searchParams.get("conditions");
     if (conditions) initial.conditions = conditions.split(",");
 
-    const rarities = searchParams.get("rarities");
-    if (rarities) initial.rarities = rarities.split(",");
 
     const minPrice = searchParams.get("min_price");
     const maxPrice = searchParams.get("max_price");
@@ -75,11 +73,7 @@ export function useBrowseFilters(products: Product[]): UseBrowseFiltersReturn {
     const inStock = searchParams.get("in_stock");
     if (inStock === "true") initial.inStock = true;
 
-    const verified = searchParams.get("verified");
-    if (verified === "true") initial.verified = true;
 
-    const featured = searchParams.get("featured");
-    if (featured === "true") initial.featured = true;
 
     const tags = searchParams.get("tags");
     if (tags) initial.tags = tags.split(",");
@@ -111,8 +105,6 @@ export function useBrowseFilters(products: Product[]): UseBrowseFiltersReturn {
     }
     if (filters.conditions.length > 0)
       params.set("conditions", filters.conditions.join(","));
-    if (filters.rarities.length > 0)
-      params.set("rarities", filters.rarities.join(","));
     if (filters.priceRange.min > 0)
       params.set("min_price", filters.priceRange.min.toString());
     if (filters.priceRange.max < 10000)
@@ -120,8 +112,6 @@ export function useBrowseFilters(products: Product[]): UseBrowseFiltersReturn {
     if (filters.vendors.length > 0)
       params.set("vendors", filters.vendors.join(","));
     if (filters.inStock) params.set("in_stock", "true");
-    if (filters.verified) params.set("verified", "true");
-    if (filters.featured) params.set("featured", "true");
     if (filters.tags.length > 0) params.set("tags", filters.tags.join(","));
     if (sortOption !== "newest") params.set("sort", sortOption);
     if (viewMode !== "grid") params.set("view", viewMode);

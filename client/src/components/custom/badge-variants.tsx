@@ -70,17 +70,43 @@ export const StockBadge = React.forwardRef<
 });
 StockBadge.displayName = "StockBadge";
 
-// Verified Badge
-export const VerifiedBadge = React.forwardRef<HTMLDivElement, BadgeProps>(
+// Sealed Badge
+export const SealedBadge = React.forwardRef<HTMLDivElement, BadgeProps>(
   ({ className, children, ...props }, ref) => {
     return (
-      <Badge variant="success" className={cn("w-fit", className)} {...props}>
-        {children || "Verified"}
+      <Badge variant="info" className={cn("w-fit font-semibold", className)} {...props}>
+        {children || "Sealed"}
       </Badge>
     );
   },
 );
-VerifiedBadge.displayName = "VerifiedBadge";
+SealedBadge.displayName = "SealedBadge";
+
+// Grading Badge
+export const GradingBadge = React.forwardRef<
+  HTMLDivElement,
+  BadgeProps & { company: string; grade: string }
+>(({ className, company, grade, children, ...props }, ref) => {
+  const gradingColors: Record<string, string> = {
+    PSA: "text-blue-600 dark:text-blue-400 border-blue-500/20 bg-blue-500/10",
+    CGC: "text-purple-600 dark:text-purple-400 border-purple-500/20 bg-purple-500/10",
+    BGS: "text-green-600 dark:text-green-400 border-green-500/20 bg-green-500/10",
+    SGC: "text-orange-600 dark:text-orange-400 border-orange-500/20 bg-orange-500/10",
+  };
+
+  const color = gradingColors[company.toUpperCase()] || "text-gray-600 dark:text-gray-400 border-gray-500/20 bg-gray-500/10";
+
+  return (
+    <Badge
+      variant="outline"
+      className={cn("w-fit font-semibold", color, className)}
+      {...props}
+    >
+      {children || `${company} ${grade}`}
+    </Badge>
+  );
+});
+GradingBadge.displayName = "GradingBadge";
 
 // Category Badge
 export const CategoryBadge = React.forwardRef<HTMLDivElement, BadgeProps>(
