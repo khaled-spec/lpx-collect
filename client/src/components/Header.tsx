@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useUser, useClerk } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
@@ -18,14 +18,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -70,6 +62,9 @@ export default function Header() {
     getNavigationCategories().then(setCategories);
   }, []);
 
+  // Memoize categories to prevent unnecessary re-renders
+  const memoizedCategories = useMemo(() => categories, [categories]);
+
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border w-full">
       {/* Main Header */}
@@ -93,43 +88,40 @@ export default function Header() {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-6 header-auth-section">
               {/* Categories Dropdown */}
-              <NavigationMenu>
-                <NavigationMenuList>
-                  <NavigationMenuItem>
-                    <NavigationMenuTrigger
-                      className={cn(
-                        "transition",
-                        designTokens.colors.text.secondary,
-                        "hover:text-primary",
-                      )}
-                    >
-                      Categories
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2">
-                        {categories.map((category) => (
-                          <li key={category.slug}>
-                            <NavigationMenuLink asChild>
-                              <Link
-                                href={`/category/${category.slug}`}
-                                className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                              >
-                                <div className="text-sm font-medium leading-none">
-                                  {category.name}
-                                </div>
-                                <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                  Browse our collection of{" "}
-                                  {category.name.toLowerCase()}
-                                </p>
-                              </Link>
-                            </NavigationMenuLink>
-                          </li>
-                        ))}
-                      </ul>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                </NavigationMenuList>
-              </NavigationMenu>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className={cn(
+                      "transition",
+                      designTokens.colors.text.secondary,
+                      "hover:text-primary",
+                    )}
+                  >
+                    Categories
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-[400px] md:w-[500px]">
+                  <div className="grid gap-3 p-4 md:grid-cols-2">
+                    {memoizedCategories.map((category) => (
+                      <DropdownMenuItem key={category.slug}>
+                        <Link
+                          href={`/category/${category.slug}`}
+                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground cursor-pointer w-full"
+                        >
+                          <div className="text-sm font-medium leading-none">
+                            {category.name}
+                          </div>
+                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                            Browse our collection of{" "}
+                            {category.name.toLowerCase()}
+                          </p>
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <Link
                 href="/browse"
                 className={cn(
@@ -317,7 +309,7 @@ export default function Header() {
                   {/* Mobile Navigation */}
                   <nav className="flex flex-col gap-3">
                     <p className="text-sm font-semibold mb-2">Categories</p>
-                    {categories.map((category) => (
+                    {memoizedCategories.map((category) => (
                       <Link
                         key={category.slug}
                         href={`/category/${category.slug}`}

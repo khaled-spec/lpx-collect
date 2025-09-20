@@ -306,8 +306,11 @@ export default function OrderConfirmationPage() {
           </CardContent>
         </Card>
 
-        {/* Continue Shopping */}
-        <div className="text-center mt-8">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+          <SecondaryButton asChild size="lg">
+            <Link href={`/orders/${order.id}`}>View Order Details</Link>
+          </SecondaryButton>
           <PrimaryButton asChild size="lg">
             <Link href="/browse">Continue Shopping</Link>
           </PrimaryButton>

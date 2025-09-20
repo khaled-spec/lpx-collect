@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import PageLayout from "@/components/layout/PageLayout";
 import { EmptyStates } from "@/components/shared/EmptyState";
 import { Button } from "@/components/ui/button";
@@ -9,12 +10,11 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Package,
   ChevronDown,
@@ -28,12 +28,14 @@ import {
   AlertCircle,
   FileText,
   RefreshCw,
+  Eye,
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import type { Order, OrderStatus } from "@/types/checkout";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
+import { loadUserOrders } from "@/lib/mock-orders";
 
 const statusConfig: Record<
   OrderStatus,
@@ -115,6 +117,12 @@ function OrderCard({
             <p className="text-xl font-bold">${order.total.toFixed(2)}</p>
           </div>
           <div className="flex gap-2">
+            <Button variant="outline" size="sm" asChild>
+              <Link href={`/orders/${order.id}`}>
+                <Eye className="h-4 w-4 mr-1" />
+                View Details
+              </Link>
+            </Button>
             <Button
               variant="outline"
               size="sm"
@@ -253,50 +261,19 @@ export default function OrdersPage() {
   const [sortBy, setSortBy] = useState<string>("newest");
 
   useEffect(() => {
-    if (!user) {
-      router.push("/login?redirect=/orders");
+    // Only proceed if user is loaded and has an ID
+    if (!user?.id) {
+      if (user === null) {
+        router.push("/login?redirect=/orders");
+      }
       return;
     }
 
-    // Load orders from localStorage
-    const loadOrders = () => {
-      const userOrderKey = `lpx_orders_${user.id}`;
-      const storedOrders = localStorage.getItem(userOrderKey);
-
-      if (storedOrders) {
-        try {
-          const parsedOrders = JSON.parse(storedOrders);
-          // Ensure orders is an array
-          const ordersArray = Array.isArray(parsedOrders)
-            ? parsedOrders
-            : [parsedOrders];
-          setOrders(ordersArray);
-          setFilteredOrders(ordersArray);
-        } catch (error) {
-          console.error("Failed to parse orders:", error);
-          setOrders([]);
-          setFilteredOrders([]);
-        }
-      } else {
-        // Check for any order from checkout (backwards compatibility)
-        const lastOrder = localStorage.getItem(`lpx_order_${user.id}_last`);
-        if (lastOrder) {
-          try {
-            const order = JSON.parse(lastOrder);
-            const ordersArray = [order];
-            setOrders(ordersArray);
-            setFilteredOrders(ordersArray);
-            // Save to new format
-            localStorage.setItem(userOrderKey, JSON.stringify(ordersArray));
-          } catch (error) {
-            console.error("Failed to parse last order:", error);
-          }
-        }
-      }
-    };
-
-    loadOrders();
-  }, [user, router]);
+    // Load orders using the new mock orders system only once per user
+    const userOrders = loadUserOrders(user.id);
+    setOrders(userOrders);
+    setFilteredOrders(userOrders);
+  }, [user?.id, router]); // Use user.id instead of user object
 
   useEffect(() => {
     let filtered = [...orders];
@@ -359,17 +336,31 @@ export default function OrdersPage() {
     >
       {/* Header Actions */}
       <div className="flex justify-end -mt-16 mb-8">
-        <Select value={sortBy} onValueChange={setSortBy}>
-          <SelectTrigger className="w-[140px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="newest">Newest First</SelectItem>
-            <SelectItem value="oldest">Oldest First</SelectItem>
-            <SelectItem value="highest">Highest Value</SelectItem>
-            <SelectItem value="lowest">Lowest Value</SelectItem>
-          </SelectContent>
-        </Select>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="w-[140px] justify-between">
+              {sortBy === "newest" && "Newest First"}
+              {sortBy === "oldest" && "Oldest First"}
+              {sortBy === "highest" && "Highest Value"}
+              {sortBy === "lowest" && "Lowest Value"}
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-[140px]">
+            <DropdownMenuItem onClick={() => setSortBy("newest")}>
+              Newest First
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setSortBy("oldest")}>
+              Oldest First
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setSortBy("highest")}>
+              Highest Value
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setSortBy("lowest")}>
+              Lowest Value
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Filters */}

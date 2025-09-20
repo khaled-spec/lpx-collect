@@ -928,7 +928,7 @@ export class MockVendorAPI implements IVendorAPI {
 }
 
 // Mock addresses for settings
-export const mockAddresses = [
+const mockAddresses = [
   {
     label: "Home",
     fullName: "John Doe",
@@ -956,7 +956,7 @@ export const mockAddresses = [
 ];
 
 // Mock vendor products (subset of mockProducts with vendor-specific data)
-export const mockVendorProducts = [
+const mockVendorProducts = [
   {
     id: "vp-1",
     name: "Charizard VMAX Rainbow Rare - Champions Path",
@@ -1109,7 +1109,7 @@ export const mockVendorProducts = [
 ];
 
 // Mock vendor orders
-export const mockVendorOrders = [
+const mockVendorOrders = [
   {
     id: "order-001",
     orderNumber: "LPX-2024-001234",
@@ -1295,7 +1295,7 @@ export const mockVendorOrders = [
 ];
 
 // Mock vendor analytics/stats
-export const mockVendorAnalytics = {
+const mockVendorAnalytics = {
   revenue: {
     total: 5240,
     thisMonth: 1665,

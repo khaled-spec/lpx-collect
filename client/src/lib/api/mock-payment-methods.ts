@@ -145,7 +145,7 @@ export class MockPaymentMethodsService {
       ...currentMethods[methodIndex],
       ...updates,
       updatedAt: new Date().toISOString()
-    };
+    } as PaymentMethodUnion;
     const updatedMethods = [...currentMethods];
     updatedMethods[methodIndex] = updatedMethod;
 

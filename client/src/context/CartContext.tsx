@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import { CartItem, Product } from "@/types";
 import { toast } from "sonner";
-import { cartMockService } from "@/lib/mock/cart";
+import { cartMockService, CartSummary } from "@/lib/mock/cart";
 
 interface CartContextType {
   items: CartItem[];
@@ -32,7 +32,7 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [summary, setSummary] = useState(() => ({
+  const [summary, setSummary] = useState<CartSummary>(() => ({
     items: [],
     itemCount: 0,
     subtotal: 0,

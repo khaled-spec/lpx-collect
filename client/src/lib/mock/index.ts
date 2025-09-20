@@ -16,6 +16,11 @@ export {
   type WishlistSummary,
 } from "./wishlist";
 
+// Import for local use
+import { cartMockService } from "./cart";
+import { wishlistMockService } from "./wishlist";
+import { AUTO_POPULATE_SETTINGS, DEMO_MODE } from "./data";
+
 // Console utilities for development
 export { setupGlobalMockUtils } from "./console-utils";
 
