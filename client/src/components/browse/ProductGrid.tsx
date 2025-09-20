@@ -69,7 +69,7 @@ export function ProductGrid({
     "w-full",
     {
       "grid gap-6 grid-cols-1": viewMode === "list",
-      "grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5":
+      "grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4":
         viewMode === "grid",
     },
     className,
