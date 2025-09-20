@@ -1,95 +1,32 @@
-1. **Remove API Calls**:  
-   Remove the following endpoints from the `/api` route:
+Frontend Task To-Do List:
+Remove "New Payments Method" and "New Address" Options
 
-   - Authentication endpoints (`/signin`, `/signup`, `/forgot-password`, `/change-password`).
-   - Vendor management endpoints (`/vendor/list`, `/vendor/create`, `/vendor/update`).
-   - Product-related endpoints (`/product/create`, `/product/list`, `/product/buy`).
+Remove the options that allow users to add new payment methods and new address. These features are not required at this stage.
+Update the UI to reflect these changes.
+Handle Product Specifications and Editing
 
-2. **Mock Data**:  
-   For each page, replace dynamic API data with hardcoded mock data. For example:
+Currently, we are not passing the product specifications and edit functionality, but it is still being displayed on the frontend.
+Modify the frontend to hide these specifications or add functionality to pass these details dynamically.
+Ensure that new product posting incorporates specification handling, and update the UI accordingly.
+Hide "Add User" Button
 
-   - **Products Page**:  
-     Replace the API response with a list of products like this:
-     ```javascript
-     const products = [
-       {
-         id: 1,
-         name: "Product 1",
-         price: 100,
-         description: "Product 1 description",
-         imageUrl: "path/to/image",
-       },
-       {
-         id: 2,
-         name: "Product 2",
-         price: 200,
-         description: "Product 2 description",
-         imageUrl: "path/to/image",
-       },
-       // Add more products as necessary
-     ];
-     ```
-   - **Vendor Page**:  
-     Use hardcoded vendor details:
-     ```javascript
-     const vendor = {
-       id: 1,
-       name: "Vendor 1",
-       description: "This is vendor 1",
-       products: products,
-     };
-     ```
-   - **Customer Dashboard**:  
-     Hardcode customer data, e.g., `test@gmail.com` for testing:
-     ```javascript
-     const customer = { email: "test@gmail.com", name: "Test User" };
-     ```
+The "Add User" button is not functional.
+You need to make the button functional or hide it completely from the UI until its functionality is implemented.
+Remove "Select Filter Option"
 
-3. **Remove Authentication Logic**:
+The "Select Filter Option" should be hidden from the UI as it is not needed.
+Show Dummy Data for Product Details
 
-   - **Login/SignUp**: Replace the login functionality with a dummy check.
-     For example:
-     ```javascript
-     const user = { email: "test@gmail.com", password: "password" };
-     const login = (email, password) => {
-       if (email === user.email && password === user.password) {
-         // Proceed with user dashboard
-       }
-     };
-     ```
-   - **Remove Clerk or Any Authentication Logic**: Delete any references to Clerk, Firebase, or other authentication services.
+Since the backend is not passing product details dynamically yet, populate the UI with some dummy product data so we can visualize how the frontend will look with real data.
+Analytics Section
 
-4. **Clean Up Routes**:
+Implement a basic analytics display on the frontend to show dummy analytics data (e.g., sales data, product views, etc.).
+This is for visual representation until the backend functionality is available.
+Update Wishlist and Cart Lists
 
-   - Ensure the front-end routes do not rely on real API data. All data should be either static or mock data for testing purposes.
-   - Example:
-     - In the `routes.js` or `App.js`, make sure the routes for `/login`, `/signup`, `/dashboard` are hardcoded and have dummy data.
+Add some items to the wishlist and cart list to showcase these features on the frontend.
+Ensure the cart and wishlist UI components are styled and working properly with dummy data.
+Simplify User Profile
 
-5. **UI Components**:
-
-   - For all pages (login, signup, vendor dashboard, product listing, etc.), display the hardcoded data.
-   - Ensure all UI components are working and displaying mock data correctly.
-
-6. **Testing**:
-   - Test the frontend by ensuring the app functions with dummy data (you can manually enter data like `test@gmail.com` to simulate login).
-   - Verify that no API calls are being made (or that any leftover ones are replaced with static data).
-
-### Final Structure
-
-Once completed, your frontend should have the following structure:
-
-- **Authentication Pages**: Login and Signup using hardcoded dummy data.
-- **Product Pages**: Display product details using mock data.
-- **Vendor Pages**: Vendor list and profile management using mock data.
-- **Dashboard**: Show user/vendor data using dummy values like `test@gmail.com`.
-
-### PHASE 2:
-
-Create the Authentication System:
-
-- Login Page: Design and implement the login page.
-- Register Page: Design and implement the registration page.
-- Forgot Password Page: Design and implement the forgot password page.
-- Verification E-mail Page: Design and implement the verification e-mail page.
-- Use Dummy Data: Populate all pages with dummy data for now.
-- Completion: Once done, let me know so I can pull the code.
+Update the user profile UI to only show "Name" instead of "First Name" and "Last Name" separately.
+This will improve the consistency of the profile details shown.

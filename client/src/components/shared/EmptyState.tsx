@@ -296,7 +296,7 @@ export const EmptyStates = {
       title="No products yet"
       description="Start listing your products to reach customers."
       actionLabel="Add Your First Product"
-      actionHref="/vendor/products"
+      actionHref="/vendor/dashboard"
       {...props}
     />
   ),

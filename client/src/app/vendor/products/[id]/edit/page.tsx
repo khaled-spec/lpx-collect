@@ -439,7 +439,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
     console.log("Updating product:", productData);
 
     toast.success("Product updated successfully!");
-    router.push("/vendor/products");
+    router.push("/vendor/dashboard");
   };
 
   const handleDelete = async () => {
@@ -449,7 +449,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     toast.success("Product deleted successfully!");
-    router.push("/vendor/products");
+    router.push("/vendor/dashboard");
   };
 
   const handleExistingImageRemove = (index: number) => {
@@ -464,7 +464,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
         description={`Edit "${product.name}"`}
         breadcrumbs={[
           { label: "Dashboard", href: "/vendor/dashboard" },
-          { label: "Products", href: "/vendor/products" },
+          { label: "Products", href: "/vendor/dashboard" },
           { label: "Edit Product" },
         ]}
       >
@@ -838,7 +838,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => router.push("/vendor/products")}
+                onClick={() => router.push("/vendor/dashboard")}
               >
                 Cancel
               </Button>

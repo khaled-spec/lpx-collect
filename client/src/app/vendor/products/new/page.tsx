@@ -337,7 +337,7 @@ export default function NewProductPage() {
         : "Product saved as draft!"
     );
 
-    router.push("/vendor/products");
+    router.push("/vendor/dashboard");
   };
 
   return (
@@ -347,7 +347,7 @@ export default function NewProductPage() {
         description="Create a new product listing for your store"
         breadcrumbs={[
           { label: "Dashboard", href: "/vendor/dashboard" },
-          { label: "Products", href: "/vendor/products" },
+          { label: "Products", href: "/vendor/dashboard" },
           { label: "New Product" },
         ]}
       >
@@ -670,7 +670,7 @@ export default function NewProductPage() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push("/vendor/products")}
+              onClick={() => router.push("/vendor/dashboard")}
             >
               Cancel
             </Button>
