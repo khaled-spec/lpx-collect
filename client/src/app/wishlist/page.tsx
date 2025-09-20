@@ -32,9 +32,10 @@ function WishlistContent() {
     ...item,
     image: item.images?.[0] || "",
     categorySlug: item.categorySlug || "uncategorized",
-    vendor: item.vendor || "Unknown Vendor",
+    vendor: typeof item.vendor === 'object' ? item.vendor?.storeName || "Unknown Vendor" : item.vendor || "Unknown Vendor",
+    vendorId: typeof item.vendor === 'object' ? item.vendor?.id : undefined,
     name: item.title || item.name || "Untitled",
-    category: item.category || "Uncategorized",
+    category: typeof item.category === 'object' ? item.category?.name || "Uncategorized" : item.category || "Uncategorized",
   }));
 
   return (

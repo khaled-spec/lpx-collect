@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { CartItem, Product } from "@/types";
 import { toast } from "sonner";
+import { cartMockService } from "@/lib/mock/cart";
 
 interface CartContextType {
   items: CartItem[];
@@ -30,198 +31,125 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-const STORAGE_KEY = "lpx-cart";
-const TAX_RATE = 0.08; // 8% tax
-const FREE_SHIPPING_THRESHOLD = 100;
-const SHIPPING_COST = 9.99;
-
-// Mock coupon codes
-const MOCK_COUPONS: Record<string, number> = {
-  SAVE10: 0.1,
-  SAVE20: 0.2,
-  WELCOME15: 0.15,
-  FREESHIP: 0, // Special handling for free shipping
-};
-
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [discount, setDiscount] = useState(0);
-  const [couponCode, setCouponCode] = useState<string | null>(null);
+  const [summary, setSummary] = useState(() => ({
+    items: [],
+    itemCount: 0,
+    subtotal: 0,
+    shipping: 0,
+    tax: 0,
+    total: 0,
+    discount: 0,
+    couponCode: null,
+  }));
+  const [mounted, setMounted] = useState(false);
 
-  // Load cart from localStorage on mount
+  // Update summary whenever cart changes
+  const refreshSummary = useCallback(() => {
+    if (!mounted) return;
+    setSummary(cartMockService.getCartSummary());
+  }, [mounted]);
+
+  // Load cart summary on mount (client-side only)
   useEffect(() => {
-    const savedCart = localStorage.getItem(STORAGE_KEY);
-    if (savedCart) {
-      try {
-        const parsed = JSON.parse(savedCart);
-        setItems(parsed.items || []);
-        setDiscount(parsed.discount || 0);
-        setCouponCode(parsed.couponCode || null);
-      } catch (error) {
-        console.error("Failed to load cart from localStorage:", error);
-      }
+    setMounted(true);
+
+    // Force load sample data if cart is empty and we're in development
+    const currentSummary = cartMockService.getCartSummary();
+    if (currentSummary.itemCount === 0 && process.env.NODE_ENV === 'development') {
+      console.log('🛒 Cart is empty, loading sample data...');
+      cartMockService.loadSampleData();
     }
-  }, []);
 
-  // Save cart to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        items,
-        discount,
-        couponCode,
-      }),
-    );
-  }, [items, discount, couponCode]);
-
-  // Calculate totals
-  const subtotal = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0,
-  );
-  const discountAmount = subtotal * discount;
-  const discountedSubtotal = subtotal - discountAmount;
-
-  // Free shipping for orders over threshold or with FREESHIP coupon
-  const shipping =
-    couponCode === "FREESHIP" || subtotal >= FREE_SHIPPING_THRESHOLD
-      ? 0
-      : SHIPPING_COST;
-
-  const tax = discountedSubtotal * TAX_RATE;
-  const total = discountedSubtotal + shipping + tax;
-  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+    refreshSummary();
+  }, [refreshSummary]);
 
   const addToCart = useCallback((product: Product, quantity = 1) => {
-    setItems((prevItems) => {
-      const existingItem = prevItems.find(
-        (item) => item.product.id === product.id,
-      );
+    if (!mounted) return;
 
-      if (existingItem) {
-        // Update quantity if item already in cart
-        const newQuantity = Math.min(
-          existingItem.quantity + quantity,
-          product.stock,
-        );
+    const result = cartMockService.addToCart(product, quantity);
 
-        if (newQuantity === existingItem.quantity) {
-          toast.error("Maximum stock reached");
-          return prevItems;
-        }
-
-        toast.success(`Updated ${product.title} quantity`);
-
-        return prevItems.map((item) =>
-          item.id === existingItem.id
-            ? { ...item, quantity: newQuantity }
-            : item,
-        );
-      } else {
-        // Add new item to cart
-        if (quantity > product.stock) {
-          toast.error("Not enough stock available");
-          return prevItems;
-        }
-
-        const newItem: CartItem = {
-          id: `cart-${Date.now()}-${product.id}`,
-          product,
-          quantity: Math.min(quantity, product.stock),
-          addedAt: new Date(),
-        };
-
-        toast.success(`Added ${product.title} to cart`);
-        return [...prevItems, newItem];
-      }
-    });
-  }, []);
-
-  const removeFromCart = useCallback((itemId: string) => {
-    setItems((prevItems) => {
-      const item = prevItems.find((i) => i.id === itemId);
-      if (item) {
-        toast.success(`Removed ${item.product.title} from cart`);
-      }
-      return prevItems.filter((item) => item.id !== itemId);
-    });
-  }, []);
-
-  const updateQuantity = useCallback(
-    (itemId: string, quantity: number) => {
-      if (quantity < 1) {
-        removeFromCart(itemId);
-        return;
-      }
-
-      setItems((prevItems) => {
-        return prevItems.map((item) => {
-          if (item.id === itemId) {
-            const newQuantity = Math.min(quantity, item.product.stock);
-            if (newQuantity !== quantity) {
-              toast.error("Maximum stock reached");
-            }
-            return { ...item, quantity: newQuantity };
-          }
-          return item;
-        });
-      });
-    },
-    [removeFromCart],
-  );
-
-  const clearCart = useCallback(() => {
-    setItems([]);
-    setDiscount(0);
-    setCouponCode(null);
-    toast.success("Cart cleared");
-  }, []);
-
-  const isInCart = useCallback(
-    (productId: string) => {
-      return items.some((item) => item.product.id === productId);
-    },
-    [items],
-  );
-
-  const getItemQuantity = useCallback(
-    (productId: string) => {
-      const item = items.find((item) => item.product.id === productId);
-      return item?.quantity || 0;
-    },
-    [items],
-  );
-
-  const applyCoupon = useCallback((code: string) => {
-    const upperCode = code.toUpperCase();
-
-    if (MOCK_COUPONS[upperCode] !== undefined) {
-      setDiscount(MOCK_COUPONS[upperCode]);
-      setCouponCode(upperCode);
-
-      if (upperCode === "FREESHIP") {
-        toast.success("Free shipping applied!");
-      } else {
-        toast.success(
-          `Coupon applied! ${MOCK_COUPONS[upperCode] * 100}% discount`,
-        );
-      }
-
-      return { valid: true, discount: MOCK_COUPONS[upperCode] };
+    if (result.success) {
+      toast.success(result.message);
+    } else {
+      toast.error(result.message);
     }
 
-    toast.error("Invalid coupon code");
-    return { valid: false, discount: 0 };
-  }, []);
+    refreshSummary();
+  }, [refreshSummary, mounted]);
+
+  const removeFromCart = useCallback((itemId: string) => {
+    if (!mounted) return;
+
+    const result = cartMockService.removeFromCart(itemId);
+
+    if (result.success) {
+      toast.success(result.message);
+    } else {
+      toast.error(result.message);
+    }
+
+    refreshSummary();
+  }, [refreshSummary, mounted]);
+
+  const updateQuantity = useCallback((itemId: string, quantity: number) => {
+    if (!mounted) return;
+
+    const result = cartMockService.updateQuantity(itemId, quantity);
+
+    if (result.success) {
+      // Don't show toast for quantity updates unless requested
+    } else {
+      toast.error(result.message);
+    }
+
+    refreshSummary();
+  }, [refreshSummary, mounted]);
+
+  const clearCart = useCallback(() => {
+    if (!mounted) return;
+
+    const result = cartMockService.clearCart();
+
+    if (result.success) {
+      toast.success(result.message);
+    }
+
+    refreshSummary();
+  }, [refreshSummary, mounted]);
+
+  const isInCart = useCallback((productId: string) => {
+    if (!mounted) return false;
+    return cartMockService.isInCart(productId);
+  }, [mounted]);
+
+  const getItemQuantity = useCallback((productId: string) => {
+    if (!mounted) return 0;
+    return cartMockService.getItemQuantity(productId);
+  }, [mounted]);
+
+  const applyCoupon = useCallback((code: string) => {
+    if (!mounted) return { valid: false, discount: 0 };
+
+    const result = cartMockService.applyCoupon(code);
+
+    if (result.valid) {
+      toast.success(result.message);
+    } else {
+      toast.error(result.message);
+    }
+
+    refreshSummary();
+    return { valid: result.valid, discount: result.discount };
+  }, [refreshSummary, mounted]);
 
   const value: CartContextType = {
-    items,
-    itemCount,
-    subtotal,
-    shipping,
-    tax,
-    total,
+    items: summary.items,
+    itemCount: summary.itemCount,
+    subtotal: summary.subtotal,
+    shipping: summary.shipping,
+    tax: summary.tax,
+    total: summary.total,
     addToCart,
     removeFromCart,
     updateQuantity,
@@ -229,8 +157,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     isInCart,
     getItemQuantity,
     applyCoupon,
-    discount,
-    couponCode,
+    discount: summary.discount,
+    couponCode: summary.couponCode,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

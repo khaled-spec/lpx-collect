@@ -10,6 +10,7 @@ import {
 } from "react";
 import { Product } from "@/types";
 import { toast } from "sonner";
+import { wishlistMockService } from "@/lib/mock/wishlist";
 
 interface WishlistContextType {
   items: Product[];
@@ -24,81 +25,74 @@ const WishlistContext = createContext<WishlistContextType | undefined>(
   undefined,
 );
 
-const GUEST_WISHLIST_KEY = "lpx_wishlist";
-const USER_WISHLIST_PREFIX = "lpx_wishlist_user_";
-
 export function WishlistProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<Product[]>([]);
+  const [mounted, setMounted] = useState(false);
 
-  // Get the appropriate storage key (always use guest key since no auth)
-  const getStorageKey = useCallback(() => {
-    return GUEST_WISHLIST_KEY;
-  }, []);
+  // Refresh items from the mock service
+  const refreshItems = useCallback(() => {
+    if (!mounted) return;
+    const wishlistItems = wishlistMockService.getWishlist();
+    const products = wishlistItems.map(item => item.product);
+    setItems(products);
+  }, [mounted]);
 
-  // Load wishlist from localStorage on component mount
+  // Load wishlist on mount (client-side only)
   useEffect(() => {
-    const storageKey = getStorageKey();
-    const storedWishlist = localStorage.getItem(storageKey);
+    setMounted(true);
 
-    if (storedWishlist) {
-      try {
-        const parsed = JSON.parse(storedWishlist);
-        setItems(parsed);
-      } catch (error) {
-        console.error("Failed to parse wishlist from storage:", error);
-        setItems([]);
-      }
-    } else {
-      setItems([]);
+    // Force load sample data if wishlist is empty and we're in development
+    const currentItems = wishlistMockService.getWishlist();
+    if (currentItems.length === 0 && process.env.NODE_ENV === 'development') {
+      console.log('❤️ Wishlist is empty, loading sample data...');
+      wishlistMockService.loadSampleData();
     }
-  }, [getStorageKey]);
 
-  // Save wishlist to localStorage whenever items change
-  useEffect(() => {
-    const storageKey = getStorageKey();
-    if (items.length > 0) {
-      localStorage.setItem(storageKey, JSON.stringify(items));
-    } else {
-      // Don't remove the key, just set it to empty array
-      localStorage.setItem(storageKey, JSON.stringify([]));
-    }
-  }, [items, getStorageKey]);
+    refreshItems();
+  }, [refreshItems]);
 
   const addToWishlist = useCallback((product: Product) => {
-    setItems((prevItems) => {
-      const exists = prevItems.some((item) => item.id === product.id);
-      if (exists) {
-        toast.info("Item already in wishlist");
-        return prevItems;
-      }
-      toast.success("Added to wishlist");
-      return [...prevItems, product];
-    });
-  }, []);
+    if (!mounted) return;
+
+    const result = wishlistMockService.addToWishlist(product);
+
+    if (result.success) {
+      toast.success(result.message);
+    } else {
+      toast.info(result.message);
+    }
+
+    refreshItems();
+  }, [refreshItems, mounted]);
 
   const removeFromWishlist = useCallback((productId: string) => {
-    setItems((prevItems) => {
-      const newItems = prevItems.filter((item) => item.id !== productId);
-      if (newItems.length < prevItems.length) {
-        toast.success("Removed from wishlist");
-      }
-      return newItems;
-    });
-  }, []);
+    if (!mounted) return;
 
-  const isInWishlist = useCallback(
-    (productId: string) => {
-      return items.some((item) => item.id === productId);
-    },
-    [items],
-  );
+    const result = wishlistMockService.removeFromWishlist(productId);
+
+    if (result.success) {
+      toast.success(result.message);
+    }
+
+    refreshItems();
+  }, [refreshItems, mounted]);
+
+  const isInWishlist = useCallback((productId: string) => {
+    if (!mounted) return false;
+    return wishlistMockService.isInWishlist(productId);
+  }, [mounted]);
 
   const clearWishlist = useCallback(() => {
-    setItems([]);
-    const storageKey = getStorageKey();
-    localStorage.setItem(storageKey, JSON.stringify([]));
-    toast.success("Wishlist cleared");
-  }, [getStorageKey]);
+    if (!mounted) return;
+
+    const result = wishlistMockService.clearWishlist();
+
+    if (result.success) {
+      toast.success(result.message);
+    }
+
+    refreshItems();
+  }, [refreshItems, mounted]);
 
   return (
     <WishlistContext.Provider
