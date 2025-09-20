@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +20,8 @@ import {
   ArrowDownRight,
   MoreHorizontal,
   Database,
+  Star,
+  Eye,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -35,10 +38,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
+import adminMockService, { AdminStats, AdminActivity } from "@/lib/admin-mock";
 
 export default function AdminDashboard() {
-  // TODO: Replace with actual API call
-  const stats = {
+  const [stats, setStats] = useState<AdminStats>({
     totalUsers: 0,
     usersChange: 0,
     totalProducts: 0,
@@ -51,16 +56,44 @@ export default function AdminDashboard() {
     vendorsChange: 0,
     pendingApprovals: 0,
     approvalsChange: 0,
-  };
+  });
+  const [recentActivity, setRecentActivity] = useState<AdminActivity[]>([]);
+  const [topVendors, setTopVendors] = useState<any[]>([]);
 
-  // TODO: Replace with actual API call
-  const recentActivity: any[] = [];
+  useEffect(() => {
+    // Load data from admin mock service
+    const platformStats = adminMockService.getPlatformStats();
+    const activities = adminMockService.getRecentActivity();
+    const vendors = adminMockService.getTopVendors();
 
-  // TODO: Replace with actual API call
-  const topVendors: any[] = [];
+    setStats(platformStats);
+    setRecentActivity(activities);
+    setTopVendors(vendors);
+  }, []);
 
-  // TODO: Replace with actual API call
-  const systemHealth: any[] = [];
+  // Mock system health data
+  const systemHealth = [
+    {
+      name: "Database",
+      status: "operational",
+      uptime: 99.9,
+    },
+    {
+      name: "API Gateway",
+      status: "operational",
+      uptime: 99.8,
+    },
+    {
+      name: "Payment Service",
+      status: "operational",
+      uptime: 99.5,
+    },
+    {
+      name: "Image CDN",
+      status: "degraded",
+      uptime: 98.2,
+    },
+  ];
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -73,7 +106,7 @@ export default function AdminDashboard() {
       case "error":
         return <Ban className="h-4 w-4 text-red-500" />;
       default:
-        return null;
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
     }
   };
 
@@ -87,6 +120,21 @@ export default function AdminDashboard() {
         return "bg-red-500";
       default:
         return "bg-gray-500";
+    }
+  };
+
+  const getActivityTypeIcon = (type: string) => {
+    switch (type) {
+      case "order":
+        return <ShoppingCart className="h-4 w-4 text-blue-500" />;
+      case "product":
+        return <Package className="h-4 w-4 text-green-500" />;
+      case "vendor":
+        return <Store className="h-4 w-4 text-purple-500" />;
+      case "user":
+        return <Users className="h-4 w-4 text-orange-500" />;
+      default:
+        return <AlertCircle className="h-4 w-4 text-gray-500" />;
     }
   };
 
@@ -218,8 +266,11 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Recent Activity</CardTitle>
-            <Button variant="ghost" size="icon">
-              <MoreHorizontal className="h-4 w-4" />
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/admin/orders">
+                <Eye className="h-4 w-4 mr-1" />
+                View All
+              </Link>
             </Button>
           </CardHeader>
           <CardContent>
@@ -233,7 +284,7 @@ export default function AdminDashboard() {
               ) : (
                 recentActivity.map((activity) => (
                   <div key={activity.id} className="flex items-start gap-3">
-                    {getStatusIcon(activity.status)}
+                    {getActivityTypeIcon(activity.type)}
                     <div className="flex-1 space-y-1">
                       <p className="text-sm font-medium">{activity.action}</p>
                       <p className="text-xs text-muted-foreground">
@@ -254,8 +305,10 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Top Vendors</CardTitle>
-            <Button variant="ghost" size="sm">
-              View All
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/admin/vendors">
+                View All
+              </Link>
             </Button>
           </CardHeader>
           <CardContent>
@@ -281,14 +334,17 @@ export default function AdminDashboard() {
                   </TableRow>
                 ) : (
                   topVendors.map((vendor, index) => (
-                    <TableRow key={index}>
+                    <TableRow key={vendor.id}>
                       <TableCell className="font-medium">{vendor.name}</TableCell>
                       <TableCell className="text-center">{vendor.sales}</TableCell>
                       <TableCell className="text-right">
                         ${vendor.revenue.toLocaleString()}
                       </TableCell>
                       <TableCell className="text-center">
-                        <Badge variant="secondary">{vendor.rating}</Badge>
+                        <div className="flex items-center justify-center gap-1">
+                          <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
+                          <span className="text-sm">{vendor.rating}</span>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))
@@ -306,40 +362,32 @@ export default function AdminDashboard() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {systemHealth.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <Database className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p>System health monitoring unavailable</p>
-                <p className="text-sm">Connect your monitoring services to view system status</p>
-              </div>
-            ) : (
-              systemHealth.map((service) => (
-                <div key={service.name} className="flex items-center gap-4">
-                  <div
-                    className={`h-2 w-2 rounded-full ${getHealthColor(
-                      service.status
-                    )}`}
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium">{service.name}</p>
-                      <Badge
-                        variant={
-                          service.status === "operational" ? "default" : "destructive"
-                        }
-                        className="text-xs"
-                      >
-                        {service.status}
-                      </Badge>
-                    </div>
-                    <Progress value={service.uptime} className="mt-2 h-1" />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {service.uptime}% uptime
-                    </p>
+            {systemHealth.map((service) => (
+              <div key={service.name} className="flex items-center gap-4">
+                <div
+                  className={`h-2 w-2 rounded-full ${getHealthColor(
+                    service.status
+                  )}`}
+                />
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium">{service.name}</p>
+                    <Badge
+                      variant={
+                        service.status === "operational" ? "default" : "destructive"
+                      }
+                      className="text-xs"
+                    >
+                      {service.status}
+                    </Badge>
                   </div>
+                  <Progress value={service.uptime} className="mt-2 h-1" />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {service.uptime}% uptime
+                  </p>
                 </div>
-              ))
-            )}
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>

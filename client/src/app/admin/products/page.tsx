@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,60 +35,19 @@ import {
   Trash2,
   Download,
 } from "lucide-react";
+import adminMockService, { AdminProduct } from "@/lib/admin-mock";
 
 export default function ProductsManagement() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState<SortOption>("newest");
   const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const [products, setProducts] = useState<AdminProduct[]>([]);
 
-  // Mock data
-  const products = [
-    {
-      id: 1,
-      name: "Charizard Base Set",
-      category: "Pokemon Cards",
-      vendor: "Pokemon Masters",
-      price: 299.99,
-      stock: 5,
-      status: "active",
-      listed: "2024-01-15",
-      sales: 12,
-    },
-    {
-      id: 2,
-      name: "Amazing Spider-Man #1",
-      category: "Comics",
-      vendor: "Vintage Comics Co",
-      price: 599.99,
-      stock: 2,
-      status: "active",
-      listed: "2024-01-10",
-      sales: 3,
-    },
-    {
-      id: 3,
-      name: "Michael Jordan Rookie Card",
-      category: "Sports Cards",
-      vendor: "Sports Cards Hub",
-      price: 1299.99,
-      stock: 1,
-      status: "pending",
-      listed: "2024-03-01",
-      sales: 0,
-    },
-    {
-      id: 4,
-      name: "Suspicious Item",
-      category: "Unknown",
-      vendor: "New Vendor",
-      price: 9.99,
-      stock: 100,
-      status: "flagged",
-      listed: "2024-03-05",
-      sales: 0,
-      flagReason: "Possible counterfeit",
-    },
-  ];
+  useEffect(() => {
+    // Load products from admin mock service
+    const allProducts = adminMockService.getAllProducts();
+    setProducts(allProducts);
+  }, []);
 
   const stats = {
     total: products.length,
@@ -96,6 +55,16 @@ export default function ProductsManagement() {
     pending: products.filter((p) => p.status === "pending").length,
     flagged: products.filter((p) => p.status === "flagged").length,
   };
+
+  // Filter products based on search query
+  const filteredProducts = products.filter((product) => {
+    if (!searchQuery) return true;
+    return (
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.vendor.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, any> = {
@@ -199,7 +168,7 @@ export default function ProductsManagement() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell className="font-medium">{product.name}</TableCell>
                   <TableCell>{product.category}</TableCell>

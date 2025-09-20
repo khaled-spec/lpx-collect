@@ -7,7 +7,6 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
-  Users,
   Package,
   ShoppingCart,
   Store,
@@ -34,11 +33,6 @@ const adminNavItems = [
     href: "/admin",
     icon: LayoutDashboard,
     exact: true,
-  },
-  {
-    title: "Users",
-    href: "/admin/users",
-    icon: Users,
   },
   {
     title: "Products",
