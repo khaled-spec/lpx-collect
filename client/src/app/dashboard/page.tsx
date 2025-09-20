@@ -222,7 +222,7 @@ function DashboardContent() {
                 variant="outline"
                 className="w-full justify-start"
               >
-                <Link href="/addresses">
+                <Link href="/settings?tab=addresses">
                   <Truck className="mr-2 h-4 w-4" />
                   Shipping Addresses
                 </Link>
@@ -230,44 +230,6 @@ function DashboardContent() {
             </CardContent>
           </Card>
 
-          {/* Recommendations */}
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5" />
-                Trending Now
-              </CardTitle>
-              <CardDescription>Based on your interests</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded bg-muted"></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium line-clamp-1">
-                      Vintage Pokemon Card
-                    </p>
-                    <p className="text-sm text-muted-foreground">$299.99</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded bg-muted"></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium line-clamp-1">
-                      Rare Comic Book
-                    </p>
-                    <p className="text-sm text-muted-foreground">$149.99</p>
-                  </div>
-                </div>
-              </div>
-              <Button asChild variant="link" className="w-full mt-2 px-0">
-                <Link href="/browse">
-                  Explore More
-                  <ArrowRight className="ml-1 h-3 w-3" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </PageLayout>
