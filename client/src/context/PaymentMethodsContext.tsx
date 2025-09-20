@@ -3,7 +3,7 @@
 import { ReactNode, createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import type { PaymentMethodUnion } from "@/types/payment";
-// Payment methods functionality will be connected to backend
+import { mockPaymentMethodsService } from "@/lib/api/mock-payment-methods";
 
 interface PaymentMethodsContextType {
   paymentMethods: PaymentMethodUnion[];
@@ -53,8 +53,7 @@ export function PaymentMethodsProvider({
     setError(null);
 
     try {
-      // No backend yet - return empty array
-      const methods: PaymentMethodUnion[] = [];
+      const methods = await mockPaymentMethodsService.getPaymentMethods(user.id);
       setPaymentMethods(methods);
     } catch (err) {
       setError(
@@ -71,8 +70,10 @@ export function PaymentMethodsProvider({
 
     try {
       setError(null);
-      // No backend yet
-      throw new Error("Payment methods are not connected to backend");
+      await mockPaymentMethodsService.addPaymentMethod(user.id, method);
+
+      // Refresh the payment methods list
+      await loadPaymentMethods();
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to add payment method",
@@ -89,8 +90,10 @@ export function PaymentMethodsProvider({
 
     try {
       setError(null);
-      // No backend yet
-      throw new Error("Payment methods are not connected to backend");
+      await mockPaymentMethodsService.updatePaymentMethod(user.id, id, updates);
+
+      // Refresh the payment methods list
+      await loadPaymentMethods();
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to update payment method",
@@ -102,16 +105,12 @@ export function PaymentMethodsProvider({
   const deleteMethod = async (id: string) => {
     if (!user) throw new Error("User not authenticated");
 
-    // Prevent deleting the default method if it's the only one
-    const method = paymentMethods.find((m) => m.id === id);
-    if (method?.isDefault && paymentMethods.length === 1) {
-      throw new Error("Cannot delete your only payment method");
-    }
-
     try {
       setError(null);
-      // No backend yet
-      throw new Error("Payment methods are not connected to backend");
+      await mockPaymentMethodsService.deletePaymentMethod(user.id, id);
+
+      // Refresh the payment methods list
+      await loadPaymentMethods();
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to delete payment method",
@@ -125,8 +124,10 @@ export function PaymentMethodsProvider({
 
     try {
       setError(null);
-      // No backend yet
-      throw new Error("Payment methods are not connected to backend");
+      await mockPaymentMethodsService.setDefaultPaymentMethod(user.id, id);
+
+      // Refresh the payment methods list
+      await loadPaymentMethods();
     } catch (err) {
       setError(
         err instanceof Error

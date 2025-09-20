@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import PageLayout from "@/components/layout/PageLayout";
 import { EmptyStates } from "@/components/shared/EmptyState";
 import { Button } from "@/components/ui/button";
@@ -41,6 +41,7 @@ import {
   Lock,
   MapPin,
   Shield,
+  CreditCard,
   Bell,
   Trash2,
   Save,
@@ -59,6 +60,8 @@ import { designTokens } from "@/lib/design-tokens";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { PaymentMethodsManager } from "@/components/settings/PaymentMethodsManager";
+import { PaymentMethodsProvider } from "@/context/PaymentMethodsContext";
 
 // Form schemas
 const personalInfoSchema = z.object({
@@ -817,6 +820,9 @@ function PrivacySettings({
 
 export default function SettingsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get('tab');
+
   // Mock user for frontend-only app
   const user = { id: '1', email: 'test@gmail.com', name: 'Test User' };
   const [settings, setSettings] = useState<UserSettings>(() => {
@@ -882,8 +888,8 @@ export default function SettingsPage() {
       ]}
     >
       {/* Settings Tabs */}
-      <Tabs defaultValue="personal" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
+      <Tabs defaultValue={tabParam || "personal"} className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-6">
           <TabsTrigger value="personal" className="text-xs md:text-sm">
             <User className="mr-2 h-4 w-4 hidden md:inline" />
             Personal
@@ -899,6 +905,10 @@ export default function SettingsPage() {
           <TabsTrigger value="addresses" className="text-xs md:text-sm">
             <MapPin className="mr-2 h-4 w-4 hidden md:inline" />
             Addresses
+          </TabsTrigger>
+          <TabsTrigger value="payments" className="text-xs md:text-sm">
+            <CreditCard className="mr-2 h-4 w-4 hidden md:inline" />
+            Payment
           </TabsTrigger>
           <TabsTrigger value="privacy" className="text-xs md:text-sm">
             <Shield className="mr-2 h-4 w-4 hidden md:inline" />
@@ -956,6 +966,22 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent>
               <AddressManager settings={settings} onUpdate={setSettings} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="payments" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Payment Methods</CardTitle>
+              <CardDescription>
+                Manage your payment methods for faster checkout
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <PaymentMethodsProvider>
+                <PaymentMethodsManager />
+              </PaymentMethodsProvider>
             </CardContent>
           </Card>
         </TabsContent>

@@ -1,16 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import PageLayout from "@/components/layout/PageLayout";
-import { EmptyStates } from "@/components/shared/EmptyState";
-import { PaymentMethodCard } from "@/components/PaymentMethodCard";
-import { AddPaymentMethodForm } from "@/components/AddPaymentMethodForm";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Dialog,
   DialogContent,
@@ -18,18 +9,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Plus, AlertCircle, CheckCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Plus, CheckCircle, AlertCircle } from "lucide-react";
+import { EmptyStates } from "@/components/shared/EmptyState";
+import { PaymentMethodCard } from "@/components/PaymentMethodCard";
+import { AddPaymentMethodForm } from "@/components/AddPaymentMethodForm";
 import { usePaymentMethods } from "@/context/PaymentMethodsContext";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import { designTokens } from "@/lib/design-tokens";
 
-export default function PaymentMethodsPage() {
-  const router = useRouter();
-  // Mock user and loading state for frontend-only app
-  const user = { id: '1', email: 'test@gmail.com', name: 'Test User' };
-  const isLoaded = true;
-  const authLoading = false;
+export function PaymentMethodsManager() {
   const {
     paymentMethods,
     isLoading,
@@ -37,18 +26,10 @@ export default function PaymentMethodsPage() {
     addMethod,
     deleteMethod,
     setDefaultMethod,
-    refreshMethods,
   } = usePaymentMethods();
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (isLoaded && !user) {
-      router.push("/sign-in?redirect_url=/payment-methods");
-    }
-  }, [user, isLoaded, router]);
 
   // Clear success message after 5 seconds
   useEffect(() => {
@@ -97,36 +78,24 @@ export default function PaymentMethodsPage() {
     }
   };
 
-  if (authLoading || !user) {
+  if (isLoading) {
     return (
-      <PageLayout>
-        <div className="space-y-4">
-          <Skeleton className="h-8 w-64" />
-          <Skeleton className="h-96" />
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-10 w-40" />
         </div>
-      </PageLayout>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-64" />
+          ))}
+        </div>
+      </div>
     );
   }
 
   return (
-    <PageLayout
-      title="Payment Methods"
-      description="Manage your payment methods for faster checkout"
-      breadcrumbs={[
-        { label: "Account Settings", href: "/settings" },
-        { label: "Payment Methods" },
-      ]}
-    >
-      {/* Page Header Actions */}
-      {paymentMethods.length > 0 && (
-        <div className="flex justify-end mb-8">
-          <Button onClick={() => setShowAddForm(true)} size="lg">
-            <Plus className="h-5 w-5 mr-2" />
-            Add Payment Method
-          </Button>
-        </div>
-      )}
-
+    <div className="space-y-6">
       {/* Success Message */}
       {successMessage && (
         <Alert className="border-green-200 bg-green-50">
@@ -145,17 +114,21 @@ export default function PaymentMethodsPage() {
         </Alert>
       )}
 
-      {/* Payment Methods List */}
-      {isLoading ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-64" />
-          ))}
+      {/* Header with Add Button */}
+      {paymentMethods.length > 0 && (
+        <div className="flex justify-end items-center">
+          <Button onClick={() => setShowAddForm(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Payment Method
+          </Button>
         </div>
-      ) : paymentMethods.length === 0 ? (
+      )}
+
+      {/* Payment Methods List */}
+      {paymentMethods.length === 0 ? (
         <EmptyStates.NoPaymentMethods onAction={() => setShowAddForm(true)} />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2">
           {paymentMethods.map((method) => (
             <PaymentMethodCard
               key={method.id}
@@ -167,15 +140,13 @@ export default function PaymentMethodsPage() {
         </div>
       )}
 
-      <Separator className="my-8" />
-
       {/* Add Payment Method Dialog */}
       <Dialog open={showAddForm} onOpenChange={setShowAddForm}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Add Payment Method</DialogTitle>
             <DialogDescription>
-              Choose a payment method to add to your account
+              Add a credit or debit card to your account
             </DialogDescription>
           </DialogHeader>
           <AddPaymentMethodForm
@@ -184,6 +155,6 @@ export default function PaymentMethodsPage() {
           />
         </DialogContent>
       </Dialog>
-    </PageLayout>
+    </div>
   );
 }

@@ -269,15 +269,6 @@ export default function Header() {
                           Settings
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href="/payment-methods"
-                          className="cursor-pointer"
-                        >
-                          <CreditCard className="mr-2 h-4 w-4" />
-                          Payment Methods
-                        </Link>
-                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
                         <Link href="/sell" className="cursor-pointer">
@@ -421,13 +412,6 @@ export default function Header() {
                           onClick={() => setIsMenuOpen(false)}
                         >
                           Settings
-                        </Link>
-                        <Link
-                          href="/payment-methods"
-                          className="py-2 hover:text-primary transition"
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          Payment Methods
                         </Link>
                         {user?.role !== "vendor" && (
                           <Link
