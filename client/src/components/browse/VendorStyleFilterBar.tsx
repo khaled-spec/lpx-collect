@@ -74,51 +74,36 @@ export function VendorStyleFilterBar({
       {/* Filter Toggle & Quick Actions */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
-          {/* Filters Button */}
-          {showDesktopFilters && filterContent ? (
-            <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  className={cn(
-                    productStyles.forms.button.md,
-                    "flex items-center gap-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors",
-                  )}
-                >
-                  <SlidersHorizontal className={productStyles.forms.icon.md} />
-                  <span>Filters</span>
-                  {activeFilterCount > 0 && (
-                    <Badge variant="secondary" className="h-5 px-1.5">
-                      {activeFilterCount}
-                    </Badge>
-                  )}
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80" align="start">
-                {filterContent}
-              </PopoverContent>
-            </Popover>
-          ) : (
+          {/* View Mode */}
+          <div className="flex items-center border border-input rounded-md overflow-hidden">
             <button
-              onClick={() => setIsFilterExpanded(!isFilterExpanded)}
+              onClick={() => onViewModeChange("grid")}
               className={cn(
-                productStyles.forms.button.md,
-                "flex items-center gap-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors",
+                "h-9 px-3 flex items-center justify-center",
+                "rounded-none border-0 transition-colors",
+                viewMode === "grid"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground",
               )}
+              aria-label="Grid view"
             >
-              <SlidersHorizontal className={productStyles.forms.icon.md} />
-              <span>Filters</span>
-              {activeFilterCount > 0 && (
-                <Badge variant="secondary" className="h-5 px-1.5">
-                  {activeFilterCount}
-                </Badge>
-              )}
-              {isFilterExpanded ? (
-                <ChevronUp className={productStyles.forms.icon.md} />
-              ) : (
-                <ChevronDown className={productStyles.forms.icon.md} />
-              )}
+              <Grid3x3 className={productStyles.forms.icon.md} />
             </button>
-          )}
+            <div className="w-px h-6 bg-input" />
+            <button
+              onClick={() => onViewModeChange("list")}
+              className={cn(
+                "h-9 px-3 flex items-center justify-center",
+                "rounded-none border-0 transition-colors",
+                viewMode === "list"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+              )}
+              aria-label="List view"
+            >
+              <LayoutList className={productStyles.forms.icon.md} />
+            </button>
+          </div>
 
           {/* Quick Search */}
           <div className="relative hidden sm:block">
@@ -175,6 +160,52 @@ export function VendorStyleFilterBar({
         </div>
 
         <div className="flex items-center gap-4">
+          {/* Filters Button */}
+          {showDesktopFilters && filterContent ? (
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  className={cn(
+                    productStyles.forms.button.md,
+                    "flex items-center gap-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors",
+                  )}
+                >
+                  <SlidersHorizontal className={productStyles.forms.icon.md} />
+                  <span>Filters</span>
+                  {activeFilterCount > 0 && (
+                    <Badge variant="secondary" className="h-5 px-1.5">
+                      {activeFilterCount}
+                    </Badge>
+                  )}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80" align="start">
+                {filterContent}
+              </PopoverContent>
+            </Popover>
+          ) : (
+            <button
+              onClick={() => setIsFilterExpanded(!isFilterExpanded)}
+              className={cn(
+                productStyles.forms.button.md,
+                "flex items-center gap-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors",
+              )}
+            >
+              <SlidersHorizontal className={productStyles.forms.icon.md} />
+              <span>Filters</span>
+              {activeFilterCount > 0 && (
+                <Badge variant="secondary" className="h-5 px-1.5">
+                  {activeFilterCount}
+                </Badge>
+              )}
+              {isFilterExpanded ? (
+                <ChevronUp className={productStyles.forms.icon.md} />
+              ) : (
+                <ChevronDown className={productStyles.forms.icon.md} />
+              )}
+            </button>
+          )}
+
           {/* Sort */}
           <div className="relative">
             <button
@@ -182,7 +213,7 @@ export function VendorStyleFilterBar({
               onBlur={() => setTimeout(() => setIsSortOpen(false), 200)}
               className={cn(
                 productStyles.forms.select.md,
-                "flex items-center justify-between gap-2 w-48 border border-input bg-background hover:bg-accent transition-colors",
+                "flex items-center justify-between gap-2 border border-input bg-background hover:bg-accent transition-colors",
               )}
             >
               <span className="flex items-center gap-2 truncate">
@@ -216,37 +247,6 @@ export function VendorStyleFilterBar({
                 ))}
               </div>
             )}
-          </div>
-
-          {/* View Mode */}
-          <div className="flex items-center border border-input rounded-md overflow-hidden">
-            <button
-              onClick={() => onViewModeChange("grid")}
-              className={cn(
-                "h-9 px-3 flex items-center justify-center",
-                "rounded-none border-0 transition-colors",
-                viewMode === "grid"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-              )}
-              aria-label="Grid view"
-            >
-              <Grid3x3 className={productStyles.forms.icon.md} />
-            </button>
-            <div className="w-px h-6 bg-input" />
-            <button
-              onClick={() => onViewModeChange("list")}
-              className={cn(
-                "h-9 px-3 flex items-center justify-center",
-                "rounded-none border-0 transition-colors",
-                viewMode === "list"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-              )}
-              aria-label="List view"
-            >
-              <LayoutList className={productStyles.forms.icon.md} />
-            </button>
           </div>
         </div>
       </div>

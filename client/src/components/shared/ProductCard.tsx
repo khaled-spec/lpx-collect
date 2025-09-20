@@ -189,13 +189,16 @@ export function ProductCard({
                   <div className="flex items-center gap-1 mt-1">
                     <Store className="h-4 w-4 text-muted-foreground" />
                     {getVendorLink() ? (
-                      <Link
-                        href={getVendorLink()!}
-                        className="typography-body-sm text-muted-foreground hover:text-primary transition-colors"
-                        onClick={(e) => e.stopPropagation()}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          window.location.href = getVendorLink()!;
+                        }}
+                        className="typography-body-sm text-muted-foreground hover:text-primary transition-colors text-left"
                       >
                         {getVendorName()}
-                      </Link>
+                      </button>
                     ) : (
                       <span className="typography-body-sm text-muted-foreground">
                         {getVendorName()}
@@ -404,20 +407,21 @@ export function ProductCard({
           </p>
         </div>
 
-        <Link href={`/product/${product.id}`}>
-          <h3 className="font-semibold hover:text-primary transition-colors line-clamp-2 h-12">
-            {product.name}
-          </h3>
-        </Link>
+        <h3 className="font-semibold hover:text-primary transition-colors line-clamp-2 h-12">
+          {product.name}
+        </h3>
 
         {getVendorLink() ? (
-          <Link
-            href={getVendorLink()!}
-            className="text-sm text-muted-foreground hover:text-primary transition-colors h-5 block"
-            onClick={(e) => e.stopPropagation()}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              window.location.href = getVendorLink()!;
+            }}
+            className="text-sm text-muted-foreground hover:text-primary transition-colors h-5 block text-left"
           >
             {getVendorName()}
-          </Link>
+          </button>
         ) : (
           <p className="text-sm text-muted-foreground h-5">{getVendorName()}</p>
         )}

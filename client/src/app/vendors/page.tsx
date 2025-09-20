@@ -26,7 +26,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Sheet,
   SheetContent,
@@ -62,12 +68,13 @@ import {
   Heart,
   MessageSquare,
   ShoppingBag,
-  Zap,
   Calendar,
 } from "lucide-react";
 import { toast } from "sonner";
 import { productStyles } from "@/components/custom/product-styles";
 import { designTokens } from "@/lib/design-tokens";
+import { VendorStyleFilterBar } from "@/components/browse/VendorStyleFilterBar";
+import { ViewMode, SortOption } from "@/lib/browse-utils";
 
 // Helper function to extend vendor data while preserving our organized data
 const generateExtendedVendors = (vendors: Vendor[]) => {
@@ -154,14 +161,6 @@ const specialtyOptions = [
   "General Merchandise",
 ];
 
-const sortOptions = [
-  { value: "rating-desc", label: "Highest Rated", icon: Star },
-  { value: "sales-desc", label: "Most Sales", icon: TrendingUp },
-  { value: "newest", label: "Newest First", icon: Calendar },
-  { value: "response", label: "Fastest Response", icon: Zap },
-  { value: "products-desc", label: "Most Products", icon: Package },
-  { value: "followers-desc", label: "Most Followers", icon: Users },
-];
 
 interface VendorFilters {
   search: string;
@@ -455,136 +454,6 @@ function FilterContent({
   );
 }
 
-// Search Bar Component
-function VendorSearchBar({
-  search,
-  onSearchChange,
-  sortOption,
-  onSortChange,
-  viewMode,
-  onViewModeChange,
-  activeFilterCount,
-  showDesktopFilters = false,
-  filterContent,
-}: {
-  search: string;
-  onSearchChange: (value: string) => void;
-  sortOption: string;
-  onSortChange: (value: string) => void;
-  viewMode: "grid" | "list";
-  onViewModeChange: (mode: "grid" | "list") => void;
-  activeFilterCount: number;
-  showDesktopFilters?: boolean;
-  filterContent?: React.ReactNode;
-}) {
-  const [inputValue, setInputValue] = useState(search);
-
-  // Debounce search
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (inputValue !== search) {
-        onSearchChange(inputValue);
-      }
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [inputValue, search, onSearchChange]);
-
-  return (
-    <div className="flex items-center gap-3">
-      {/* Search Input */}
-      <div className="flex-1 relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Search vendors by name, specialty, or location..."
-          className="pl-9 pr-9 h-9"
-        />
-        {inputValue && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              setInputValue("");
-              onSearchChange("");
-            }}
-            className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0"
-          >
-            <X className="h-3 w-3" />
-          </Button>
-        )}
-      </div>
-
-      {/* Desktop Filter Button */}
-      {showDesktopFilters && filterContent && (
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="outline" size="default" className="hidden lg:flex">
-              <Filter className="h-4 w-4 mr-2" />
-              Filters
-              {activeFilterCount > 0 && (
-                <Badge variant="secondary" className="ml-2">
-                  {activeFilterCount}
-                </Badge>
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-80" align="start">
-            {filterContent}
-          </PopoverContent>
-        </Popover>
-      )}
-
-      {/* Sort Dropdown */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="default" className="gap-2">
-            <ArrowUpDown className="h-4 w-4" />
-            <span className="hidden sm:inline">
-              {sortOptions.find((o) => o.value === sortOption)?.label || "Sort"}
-            </span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-[200px]">
-          {sortOptions.map((option) => {
-            const Icon = option.icon;
-            return (
-              <DropdownMenuItem
-                key={option.value}
-                onClick={() => onSortChange(option.value)}
-                className={cn(
-                  "gap-2",
-                  sortOption === option.value && "bg-accent",
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {option.label}
-              </DropdownMenuItem>
-            );
-          })}
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      {/* View Mode Toggle */}
-      <ToggleGroup
-        type="single"
-        value={viewMode}
-        onValueChange={(value) =>
-          value && onViewModeChange(value as "grid" | "list")
-        }
-        className="hidden sm:flex"
-      >
-        <ToggleGroupItem value="grid" aria-label="Grid view">
-          <Grid3x3 className="h-4 w-4" />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="list" aria-label="List view">
-          <LayoutList className="h-4 w-4" />
-        </ToggleGroupItem>
-      </ToggleGroup>
-    </div>
-  );
-}
 
 // Filter Badges Component
 function FilterBadges({
@@ -1027,8 +896,8 @@ export default function VendorsPage() {
     minProducts: 0,
     location: "",
   });
-  const [sortBy, setSortBy] = useState("rating-desc");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [sortBy, setSortBy] = useState<SortOption>("newest");
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(24);
 
@@ -1186,28 +1055,24 @@ export default function VendorsPage() {
 
     // Sort
     switch (sortBy) {
-      case "sales-desc":
-        filtered.sort((a, b) => b.totalSales - a.totalSales);
-        break;
       case "newest":
         filtered.sort(
           (a, b) => b.joinedDate.getTime() - a.joinedDate.getTime(),
         );
         break;
-      case "response":
-        filtered.sort((a, b) => {
-          const aTime = parseInt(a.responseTime);
-          const bTime = parseInt(b.responseTime);
-          return aTime - bTime;
-        });
+      case "name-asc":
+        filtered.sort((a, b) => a.storeName.localeCompare(b.storeName));
         break;
-      case "products-desc":
-        filtered.sort((a, b) => b.totalProducts - a.totalProducts);
+      case "name-desc":
+        filtered.sort((a, b) => b.storeName.localeCompare(a.storeName));
         break;
-      case "followers-desc":
-        filtered.sort((a, b) => b.followers - a.followers);
+      case "price-asc":
+        // For vendors, we might sort by average product price or another metric
+        filtered.sort((a, b) => a.rating - b.rating);
         break;
-      case "rating-desc":
+      case "price-desc":
+        filtered.sort((a, b) => b.rating - a.rating);
+        break;
       default:
         filtered.sort((a, b) => b.rating - a.rating);
     }
@@ -1281,7 +1146,7 @@ export default function VendorsPage() {
 
       {/* Search and Controls */}
       <div className="mb-6">
-        <VendorSearchBar
+        <VendorStyleFilterBar
           search={filters.search}
           onSearchChange={(value) => updateFilter("search", value)}
           sortOption={sortBy}
@@ -1289,15 +1154,61 @@ export default function VendorsPage() {
           viewMode={viewMode}
           onViewModeChange={setViewMode}
           activeFilterCount={activeFilterCount}
-          showDesktopFilters={true}
-          filterContent={
-            <div className="max-h-96 overflow-y-auto">
-              <FilterContent
-                filters={filters}
-                onUpdateFilter={updateFilter}
-                onClearFilters={clearFilters}
-                vendors={vendors}
-              />
+          onRemoveFilter={handleRemoveFilter}
+          onClearAllFilters={clearFilters}
+          advancedFilterContent={
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Specialties Filter */}
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground mb-2 block">
+                  Specialties
+                </Label>
+                <Select
+                  value={filters.specialties.length > 0 ? filters.specialties[0] : "all"}
+                  onValueChange={(value) => {
+                    if (value && value !== "all") {
+                      updateFilter("specialties", [value]);
+                    } else {
+                      updateFilter("specialties", []);
+                    }
+                  }}
+                >
+                  <SelectTrigger className="h-9">
+                    <SelectValue placeholder="Select specialties..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Specialties</SelectItem>
+                    {specialtyOptions.map((specialty) => (
+                      <SelectItem key={specialty} value={specialty}>
+                        {specialty}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Rating Filter */}
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground mb-2 block">
+                  Minimum Rating
+                </Label>
+                <Select
+                  value={filters.rating.toString()}
+                  onValueChange={(value) => updateFilter("rating", parseFloat(value))}
+                >
+                  <SelectTrigger className="h-9">
+                    <SelectValue placeholder="Select rating..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0">All Ratings</SelectItem>
+                    <SelectItem value="4.5">4.5+ stars</SelectItem>
+                    <SelectItem value="4.0">4.0+ stars</SelectItem>
+                    <SelectItem value="3.5">3.5+ stars</SelectItem>
+                    <SelectItem value="3.0">3.0+ stars</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
             </div>
           }
         />

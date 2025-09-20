@@ -25,7 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import { useBrowseFilters } from "@/hooks/useBrowseFilters";
 import { CONDITIONS, getUniqueVendors } from "@/lib/browse-utils";
 import { useCart } from "@/context/CartContext";
@@ -413,21 +412,28 @@ function BrowsePageContent() {
                 <Label className="text-sm font-medium text-muted-foreground mb-2 block">
                   Price Range
                 </Label>
-                <div className="h-9 flex flex-col justify-center space-y-1">
-                  <Slider
-                    min={0}
-                    max={10000}
-                    step={100}
-                    value={[filters.priceRange.min, filters.priceRange.max]}
-                    onValueChange={([min, max]) => {
-                      updateFilter("priceRange", { min, max });
+                <div className="h-9 flex items-center gap-2">
+                  <Input
+                    type="number"
+                    value={filters.priceRange.min}
+                    onChange={(e) => {
+                      const min = Number(e.target.value) || 0;
+                      updateFilter("priceRange", { ...filters.priceRange, min });
                     }}
-                    className="w-full"
+                    className="h-9 flex-1"
+                    placeholder="Min"
                   />
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>{filters.priceRange.min}</span>
-                    <span>{filters.priceRange.max}+</span>
-                  </div>
+                  <span className="text-muted-foreground">-</span>
+                  <Input
+                    type="number"
+                    value={filters.priceRange.max}
+                    onChange={(e) => {
+                      const max = Number(e.target.value) || 10000;
+                      updateFilter("priceRange", { ...filters.priceRange, max });
+                    }}
+                    className="h-9 flex-1"
+                    placeholder="Max"
+                  />
                 </div>
               </div>
 
@@ -465,22 +471,6 @@ function BrowsePageContent() {
 
 
 
-              {/* In Stock Toggle */}
-              <div>
-                <Label className="text-sm font-medium text-muted-foreground mb-2 block">
-                  Availability
-                </Label>
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="in-stock"
-                    checked={filters.inStock}
-                    onCheckedChange={(checked) => updateFilter("inStock", checked)}
-                  />
-                  <Label htmlFor="in-stock" className="text-sm font-normal cursor-pointer">
-                    In Stock Only
-                  </Label>
-                </div>
-              </div>
             </div>
           }
         />

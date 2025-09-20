@@ -13,7 +13,6 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -211,22 +210,6 @@ export function FilterSidebar({
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-4 pt-2">
-                  <div className="space-y-2">
-                    <Slider
-                      min={0}
-                      max={10000}
-                      step={100}
-                      value={[filters.priceRange.min, filters.priceRange.max]}
-                      onValueChange={([min, max]) => {
-                        setPriceInputs({
-                          min: min.toString(),
-                          max: max.toString(),
-                        });
-                        onUpdateFilter("priceRange", { min, max });
-                      }}
-                      className="w-full"
-                    />
-                  </div>
                   <div className="flex items-center gap-2">
                     <div className="flex-1">
                       <Label htmlFor="min-price" className="text-xs">
