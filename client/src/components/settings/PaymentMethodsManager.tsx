@@ -146,7 +146,7 @@ export function PaymentMethodsManager() {
           <DialogHeader>
             <DialogTitle>Add Payment Method</DialogTitle>
             <DialogDescription>
-              Add a credit or debit card to your account
+              Add a payment method to your account
             </DialogDescription>
           </DialogHeader>
           <AddPaymentMethodForm

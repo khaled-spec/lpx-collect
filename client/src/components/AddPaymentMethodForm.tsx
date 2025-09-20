@@ -118,12 +118,6 @@ export function AddPaymentMethodForm({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-semibold">Add Payment Method</h3>
-        <p className="text-sm text-muted-foreground mt-1">
-          Add a credit or debit card to your account
-        </p>
-      </div>
 
       <Alert>
         <Lock className="h-4 w-4" />
@@ -134,51 +128,48 @@ export function AddPaymentMethodForm({
       </Alert>
 
       <div className="w-full">
-        <div className="flex items-center gap-2 mb-6 p-3 bg-muted rounded-lg">
-          <CreditCard className="h-5 w-5 text-primary" />
-          <span className="font-medium">Credit or Debit Card</span>
-        </div>
-
         <div className="mt-6">
           <Form {...cardForm}>
             <form
               onSubmit={cardForm.handleSubmit(handleCardSubmit)}
               className="space-y-4"
             >
-              <FormField
-                control={cardForm.control}
-                name="cardNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Card Number</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="1234 5678 9012 3456"
-                        maxLength={16}
-                        onChange={(e) => {
-                          field.onChange(e.target.value.replace(/\D/g, ""));
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={cardForm.control}
+                  name="cardNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Card Number</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="1234 5678 9012 3456"
+                          maxLength={16}
+                          onChange={(e) => {
+                            field.onChange(e.target.value.replace(/\D/g, ""));
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={cardForm.control}
-                name="cardholderName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Cardholder Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="John Doe" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={cardForm.control}
+                  name="cardholderName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cardholder Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="John Doe" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <FormField
@@ -273,33 +264,35 @@ export function AddPaymentMethodForm({
               <div className="space-y-4">
                 <h4 className="font-medium">Billing Address</h4>
 
-                <FormField
-                  control={cardForm.control}
-                  name="billingAddress.line1"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Address Line 1</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="123 Main St" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={cardForm.control}
+                    name="billingAddress.line1"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Address Line 1</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="123 Main St" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={cardForm.control}
-                  name="billingAddress.line2"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Address Line 2 (Optional)</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Apt 4B" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <FormField
+                    control={cardForm.control}
+                    name="billingAddress.line2"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Address Line 2 (Optional)</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Apt 4B" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <FormField

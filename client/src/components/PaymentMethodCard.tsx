@@ -250,8 +250,8 @@ export function PaymentMethodCard({
 
   return (
     <>
-      <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-        <CardContent className="pt-6">{renderPaymentDetails()}</CardContent>
+      <Card className="overflow-hidden hover:shadow-lg transition-shadow h-64 flex flex-col">
+        <CardContent className="pt-6 flex-1">{renderPaymentDetails()}</CardContent>
         <CardFooter className="bg-muted/50 px-6 py-4">
           <div className="flex items-center justify-between w-full">
             <p className="text-xs text-muted-foreground">
