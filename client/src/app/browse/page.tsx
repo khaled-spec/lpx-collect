@@ -159,14 +159,6 @@ function BrowsePageContent() {
       });
     }
 
-    // Vendors
-    filters.vendors.forEach(vendorId => {
-      pills.push({
-        type: "vendor",
-        value: vendorId,
-        label: `Vendor: ${vendorId}`
-      });
-    });
 
     // In stock
     if (filters.inStock) {
@@ -209,12 +201,6 @@ function BrowsePageContent() {
         break;
       case "price":
         updateFilter("priceRange", { min: 0, max: 10000 });
-        break;
-      case "vendor":
-        updateFilter(
-          "vendors",
-          filters.vendors.filter((v) => v !== value),
-        );
         break;
       case "inStock":
         updateFilter("inStock", false);
@@ -427,7 +413,7 @@ function BrowsePageContent() {
                 <Label className="text-sm font-medium text-muted-foreground mb-2 block">
                   Price Range
                 </Label>
-                <div className="space-y-3">
+                <div className="h-9 flex flex-col justify-center space-y-1">
                   <Slider
                     min={0}
                     max={10000}
@@ -438,9 +424,9 @@ function BrowsePageContent() {
                     }}
                     className="w-full"
                   />
-                  <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>${filters.priceRange.min}</span>
-                    <span>${filters.priceRange.max}</span>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>{filters.priceRange.min}</span>
+                    <span>{filters.priceRange.max}+</span>
                   </div>
                 </div>
               </div>
@@ -478,36 +464,6 @@ function BrowsePageContent() {
               </div>
 
 
-              {/* Vendors Filter */}
-              {vendors.length > 0 && (
-                <div>
-                  <Label className="text-sm font-medium text-muted-foreground mb-2 block">
-                    Vendors
-                  </Label>
-                  <div className="space-y-2 max-h-32 overflow-y-auto">
-                    {vendors.slice(0, 5).map((vendor) => (
-                      <div key={vendor.id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={vendor.id}
-                          checked={filters.vendors.includes(vendor.id)}
-                          onCheckedChange={() => {
-                            const newVendors = filters.vendors.includes(vendor.id)
-                              ? filters.vendors.filter((v) => v !== vendor.id)
-                              : [...filters.vendors, vendor.id];
-                            updateFilter("vendors", newVendors);
-                          }}
-                        />
-                        <Label
-                          htmlFor={vendor.id}
-                          className="text-sm font-normal cursor-pointer flex-1"
-                        >
-                          {vendor.name}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               {/* In Stock Toggle */}
               <div>

@@ -5,8 +5,6 @@ export type SortOption =
   | "newest"
   | "price-asc"
   | "price-desc"
-  | "popular"
-  | "rating"
   | "name-asc"
   | "name-desc";
 
@@ -67,8 +65,6 @@ export const SORT_OPTIONS = [
   { value: "newest", label: "Newest First", icon: "clock" },
   { value: "price-asc", label: "Price: Low to High", icon: "arrow-up" },
   { value: "price-desc", label: "Price: High to Low", icon: "arrow-down" },
-  { value: "popular", label: "Most Popular", icon: "trending-up" },
-  { value: "rating", label: "Highest Rated", icon: "star" },
   { value: "name-asc", label: "Name: A to Z", icon: "sort-asc" },
   { value: "name-desc", label: "Name: Z to A", icon: "sort-desc" },
 ];
@@ -170,14 +166,6 @@ export function sortProducts(
 
     case "price-desc":
       return sorted.sort((a, b) => b.price - a.price);
-
-    case "popular":
-      // In real app, would sort by views/sales
-      return sorted.sort((a, b) => (b.stock || 0) - (a.stock || 0));
-
-    case "rating":
-      // Sort by stock as a proxy for popularity since Product doesn't have rating
-      return sorted.sort((a, b) => (b.stock || 0) - (a.stock || 0));
 
     case "name-asc":
       return sorted.sort((a, b) => a.name.localeCompare(b.name));
