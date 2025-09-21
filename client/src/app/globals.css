@@ -474,7 +474,7 @@
 
   .card-hover:hover {
     box-shadow: var(--shadow-lg);
-    transform: translateY(calc(var(--spacing-0 0.5) * -1));
+    transform: translateY(calc(var(--spacing-1) * -0.5));
   }
 
   /* Filter Pills using design tokens */
@@ -623,10 +623,25 @@
   }
 
   .pixelated {
-    image-rendering: -moz-crisp-edges;
-    image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
-    image-rendering: crisp-edges;
+  }
+
+  @supports (image-rendering: -moz-crisp-edges) {
+    .pixelated {
+      image-rendering: -moz-crisp-edges;
+    }
+  }
+
+  @supports (image-rendering: -webkit-crisp-edges) {
+    .pixelated {
+      image-rendering: -webkit-crisp-edges;
+    }
+  }
+
+  @supports (image-rendering: crisp-edges) {
+    .pixelated {
+      image-rendering: crisp-edges;
+    }
   }
 
   /* Prevent header layout shift during auth state changes */

@@ -1,18 +1,36 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Download,
+  Eye,
+  Mail,
+  MapPin,
+  MoreHorizontal,
+  Package,
+  Search,
+  Star,
+  Store,
+  XCircle,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,52 +39,37 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Store,
-  Star,
-  TrendingUp,
-  AlertCircle,
-  Search,
-  MoreHorizontal,
-  Eye,
-  Mail,
-  CheckCircle,
-  XCircle,
-  Download,
-  MapPin,
-  Calendar,
-  Clock,
-  FileText,
-  User,
-  Shield,
-  Package,
-} from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "sonner";
-import adminMockService, { AdminVendor } from "@/lib/admin-mock";
+import { Textarea } from "@/components/ui/textarea";
+import adminMockService, { type AdminVendor } from "@/lib/admin-mock";
 
 export default function VendorsManagement() {
   const [vendors, setVendors] = useState<AdminVendor[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedVendor, setSelectedVendor] = useState<AdminVendor | null>(null);
-  const [reviewAction, setReviewAction] = useState<"approve" | "reject" | null>(null);
+  const [selectedVendor, setSelectedVendor] = useState<AdminVendor | null>(
+    null,
+  );
+  const [reviewAction, setReviewAction] = useState<"approve" | "reject" | null>(
+    null,
+  );
   const [reviewNotes, setReviewNotes] = useState("");
   const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "verified" | "suspended">("all");
-  const [selectedVendors, setSelectedVendors] = useState<Set<string>>(new Set());
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "pending" | "verified" | "suspended"
+  >("all");
+  const [selectedVendors, setSelectedVendors] = useState<Set<string>>(
+    new Set(),
+  );
 
   useEffect(() => {
     // Load vendors from admin mock service
@@ -100,7 +103,10 @@ export default function VendorsManagement() {
   });
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+    const variants: Record<
+      string,
+      "default" | "secondary" | "destructive" | "outline"
+    > = {
       verified: "default",
       pending: "secondary",
       suspended: "destructive",
@@ -130,7 +136,10 @@ export default function VendorsManagement() {
     });
   };
 
-  const handleVendorAction = (vendor: AdminVendor, action: "approve" | "reject") => {
+  const handleVendorAction = (
+    vendor: AdminVendor,
+    action: "approve" | "reject",
+  ) => {
     setSelectedVendor(vendor);
     setReviewAction(action);
     setReviewNotes("");
@@ -144,7 +153,10 @@ export default function VendorsManagement() {
       if (vendor.id === selectedVendor.id) {
         return {
           ...vendor,
-          status: reviewAction === "approve" ? "verified" as const : "suspended" as const,
+          status:
+            reviewAction === "approve"
+              ? ("verified" as const)
+              : ("suspended" as const),
         };
       }
       return vendor;
@@ -158,7 +170,8 @@ export default function VendorsManagement() {
 
     const actionText = reviewAction === "approve" ? "approved" : "rejected";
     toast.success(`Vendor ${selectedVendor.name} has been ${actionText}`, {
-      description: reviewNotes || `The vendor application has been ${actionText}.`,
+      description:
+        reviewNotes || `The vendor application has been ${actionText}.`,
     });
   };
 
@@ -175,7 +188,7 @@ export default function VendorsManagement() {
   };
 
   const handleSelectVendor = (vendorId: string, checked: boolean) => {
-    setSelectedVendors(prev => {
+    setSelectedVendors((prev) => {
       const newSet = new Set(prev);
       if (checked) {
         newSet.add(vendorId);
@@ -189,8 +202,8 @@ export default function VendorsManagement() {
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
       const pendingVendors = filteredVendors
-        .filter(v => v.status === "pending")
-        .map(v => v.id);
+        .filter((v) => v.status === "pending")
+        .map((v) => v.id);
       setSelectedVendors(new Set(pendingVendors));
     } else {
       setSelectedVendors(new Set());
@@ -205,7 +218,10 @@ export default function VendorsManagement() {
       if (selectedVendorsList.includes(vendor.id)) {
         return {
           ...vendor,
-          status: action === "approve" ? "verified" as const : "suspended" as const,
+          status:
+            action === "approve"
+              ? ("verified" as const)
+              : ("suspended" as const),
         };
       }
       return vendor;
@@ -225,7 +241,9 @@ export default function VendorsManagement() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Vendor Management</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Vendor Management
+          </h1>
           <p className="text-muted-foreground">
             Manage and monitor all marketplace vendors and stores
           </p>
@@ -260,7 +278,9 @@ export default function VendorsManagement() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Pending Approval</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Pending Approval
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600">
@@ -283,7 +303,10 @@ export default function VendorsManagement() {
       </div>
 
       {/* Status Filter Tabs */}
-      <Tabs value={statusFilter} onValueChange={(value) => setStatusFilter(value as typeof statusFilter)}>
+      <Tabs
+        value={statusFilter}
+        onValueChange={(value) => setStatusFilter(value as typeof statusFilter)}
+      >
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="all" className="relative">
             All Vendors
@@ -295,21 +318,21 @@ export default function VendorsManagement() {
             <Clock className="h-4 w-4 mr-1" />
             Pending Review
             <Badge variant="secondary" className="ml-2">
-              {vendors.filter(v => v.status === "pending").length}
+              {vendors.filter((v) => v.status === "pending").length}
             </Badge>
           </TabsTrigger>
           <TabsTrigger value="verified" className="relative">
             <CheckCircle className="h-4 w-4 mr-1" />
             Verified
             <Badge variant="secondary" className="ml-2">
-              {vendors.filter(v => v.status === "verified").length}
+              {vendors.filter((v) => v.status === "verified").length}
             </Badge>
           </TabsTrigger>
           <TabsTrigger value="suspended" className="relative">
             <XCircle className="h-4 w-4 mr-1" />
             Suspended
             <Badge variant="secondary" className="ml-2">
-              {vendors.filter(v => v.status === "suspended").length}
+              {vendors.filter((v) => v.status === "suspended").length}
             </Badge>
           </TabsTrigger>
         </TabsList>
@@ -369,7 +392,13 @@ export default function VendorsManagement() {
                 {statusFilter === "pending" && (
                   <TableHead className="w-12">
                     <Checkbox
-                      checked={selectedVendors.size === filteredVendors.filter(v => v.status === "pending").length && filteredVendors.filter(v => v.status === "pending").length > 0}
+                      checked={
+                        selectedVendors.size ===
+                          filteredVendors.filter((v) => v.status === "pending")
+                            .length &&
+                        filteredVendors.filter((v) => v.status === "pending")
+                          .length > 0
+                      }
                       onCheckedChange={handleSelectAll}
                     />
                   </TableHead>
@@ -389,12 +418,17 @@ export default function VendorsManagement() {
             <TableBody>
               {filteredVendors.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={statusFilter === "pending" ? 11 : 10} className="text-center py-8">
+                  <TableCell
+                    colSpan={statusFilter === "pending" ? 11 : 10}
+                    className="text-center py-8"
+                  >
                     <div className="text-muted-foreground">
                       <Store className="h-8 w-8 mx-auto mb-2 opacity-50" />
                       <p>No vendors found</p>
                       <p className="text-sm">
-                        {searchQuery ? "Try adjusting your search" : "Vendors will appear here once they register"}
+                        {searchQuery
+                          ? "Try adjusting your search"
+                          : "Vendors will appear here once they register"}
                       </p>
                     </div>
                   </TableCell>
@@ -402,17 +436,19 @@ export default function VendorsManagement() {
               ) : (
                 filteredVendors.map((vendor) => (
                   <TableRow key={vendor.id}>
-                    {statusFilter === "pending" && vendor.status === "pending" && (
-                      <TableCell>
-                        <Checkbox
-                          checked={selectedVendors.has(vendor.id)}
-                          onCheckedChange={(checked) => handleSelectVendor(vendor.id, checked as boolean)}
-                        />
-                      </TableCell>
-                    )}
-                    {statusFilter === "pending" && vendor.status !== "pending" && (
-                      <TableCell></TableCell>
-                    )}
+                    {statusFilter === "pending" &&
+                      vendor.status === "pending" && (
+                        <TableCell>
+                          <Checkbox
+                            checked={selectedVendors.has(vendor.id)}
+                            onCheckedChange={(checked) =>
+                              handleSelectVendor(vendor.id, checked as boolean)
+                            }
+                          />
+                        </TableCell>
+                      )}
+                    {statusFilter === "pending" &&
+                      vendor.status !== "pending" && <TableCell></TableCell>}
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <Avatar className="h-10 w-10">
@@ -455,10 +491,14 @@ export default function VendorsManagement() {
                       {vendor.rating > 0 ? (
                         <div className="flex items-center gap-1">
                           <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
-                          <span className="text-sm font-medium">{vendor.rating}</span>
+                          <span className="text-sm font-medium">
+                            {vendor.rating}
+                          </span>
                         </div>
                       ) : (
-                        <span className="text-xs text-muted-foreground">No ratings</span>
+                        <span className="text-xs text-muted-foreground">
+                          No ratings
+                        </span>
                       )}
                     </TableCell>
                     <TableCell>
@@ -468,7 +508,9 @@ export default function VendorsManagement() {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleVendorAction(vendor, "approve")}
+                            onClick={() =>
+                              handleVendorAction(vendor, "approve")
+                            }
                             className="h-6 px-2 text-xs text-green-600 border-green-200 hover:bg-green-50"
                           >
                             <CheckCircle className="h-3 w-3 mr-1" />
@@ -489,7 +531,9 @@ export default function VendorsManagement() {
                     <TableCell>
                       <div className="flex items-center gap-1">
                         <Calendar className="h-3 w-3 text-muted-foreground" />
-                        <span className="text-sm">{formatDate(vendor.joined)}</span>
+                        <span className="text-sm">
+                          {formatDate(vendor.joined)}
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
@@ -502,7 +546,9 @@ export default function VendorsManagement() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => handleViewVendorDetails(vendor)}>
+                          <DropdownMenuItem
+                            onClick={() => handleViewVendorDetails(vendor)}
+                          >
                             <Eye className="mr-2 h-4 w-4" />
                             View Profile
                           </DropdownMenuItem>
@@ -510,7 +556,9 @@ export default function VendorsManagement() {
                             <Store className="mr-2 h-4 w-4" />
                             View Products
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleSendMessage(vendor)}>
+                          <DropdownMenuItem
+                            onClick={() => handleSendMessage(vendor)}
+                          >
                             <Mail className="mr-2 h-4 w-4" />
                             Send Message
                           </DropdownMenuItem>
@@ -518,14 +566,18 @@ export default function VendorsManagement() {
                           {vendor.status === "pending" && (
                             <>
                               <DropdownMenuItem
-                                onClick={() => handleVendorAction(vendor, "approve")}
+                                onClick={() =>
+                                  handleVendorAction(vendor, "approve")
+                                }
                                 className="text-green-600"
                               >
                                 <CheckCircle className="mr-2 h-4 w-4" />
                                 Approve Vendor
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                onClick={() => handleVendorAction(vendor, "reject")}
+                                onClick={() =>
+                                  handleVendorAction(vendor, "reject")
+                                }
                                 className="text-destructive"
                               >
                                 <XCircle className="mr-2 h-4 w-4" />
@@ -535,7 +587,9 @@ export default function VendorsManagement() {
                           )}
                           {vendor.status === "verified" && (
                             <DropdownMenuItem
-                              onClick={() => handleVendorAction(vendor, "reject")}
+                              onClick={() =>
+                                handleVendorAction(vendor, "reject")
+                              }
                               className="text-destructive"
                             >
                               <XCircle className="mr-2 h-4 w-4" />
@@ -563,7 +617,9 @@ export default function VendorsManagement() {
               ) : (
                 <XCircle className="h-5 w-5 text-red-600" />
               )}
-              {reviewAction === "approve" ? "Approve Vendor" : "Reject Application"}
+              {reviewAction === "approve"
+                ? "Approve Vendor"
+                : "Reject Application"}
             </DialogTitle>
             <DialogDescription>
               {reviewAction === "approve"
@@ -597,7 +653,8 @@ export default function VendorsManagement() {
                   <div className="flex items-center gap-2">
                     <MapPin className="h-4 w-4 text-muted-foreground" />
                     <span>
-                      {selectedVendor.location.city}, {selectedVendor.location.country}
+                      {selectedVendor.location.city},{" "}
+                      {selectedVendor.location.country}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -618,8 +675,12 @@ export default function VendorsManagement() {
               {/* Review Notes */}
               <div className="grid gap-2">
                 <Label htmlFor="review-notes">
-                  {reviewAction === "approve" ? "Approval Notes (Optional)" : "Rejection Reason"}
-                  {reviewAction === "reject" && <span className="text-red-500"> *</span>}
+                  {reviewAction === "approve"
+                    ? "Approval Notes (Optional)"
+                    : "Rejection Reason"}
+                  {reviewAction === "reject" && (
+                    <span className="text-red-500"> *</span>
+                  )}
                 </Label>
                 <Textarea
                   id="review-notes"
@@ -639,7 +700,9 @@ export default function VendorsManagement() {
                   <div className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
                     <div className="text-sm">
-                      <p className="font-medium text-green-800">Approval Effects</p>
+                      <p className="font-medium text-green-800">
+                        Approval Effects
+                      </p>
                       <ul className="mt-1 text-green-700 list-disc list-inside space-y-1">
                         <li>Vendor can start listing products</li>
                         <li>Profile becomes visible to customers</li>
@@ -656,7 +719,9 @@ export default function VendorsManagement() {
                   <div className="flex items-start gap-2">
                     <XCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
                     <div className="text-sm">
-                      <p className="font-medium text-red-800">Rejection Effects</p>
+                      <p className="font-medium text-red-800">
+                        Rejection Effects
+                      </p>
                       <ul className="mt-1 text-red-700 list-disc list-inside space-y-1">
                         <li>Application will be marked as rejected</li>
                         <li>Vendor will be notified via email</li>
@@ -686,7 +751,9 @@ export default function VendorsManagement() {
                   : "bg-red-600 hover:bg-red-700"
               }
             >
-              {reviewAction === "approve" ? "Approve Vendor" : "Reject Application"}
+              {reviewAction === "approve"
+                ? "Approve Vendor"
+                : "Reject Application"}
             </Button>
           </DialogFooter>
         </DialogContent>

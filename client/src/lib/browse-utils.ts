@@ -1,4 +1,4 @@
-import { Product } from "@/lib/api/types";
+import type { Product } from "@/lib/api/types";
 
 export type ViewMode = "grid" | "list";
 export type SortOption =
@@ -24,7 +24,7 @@ export interface FilterQuery {
   vendor?: string;
   tags?: string | string[];
   categories?: string[];
-  [key: string]: any;
+  [key: string]: string | string[] | number | boolean | undefined;
 }
 
 export interface PriceRangeValidation extends PriceRange {
@@ -60,7 +60,6 @@ export const CONDITIONS = [
   { value: "poor", label: "Poor", color: "bg-red-500" },
 ];
 
-
 export const SORT_OPTIONS = [
   { value: "newest", label: "Newest First", icon: "clock" },
   { value: "price-asc", label: "Price: Low to High", icon: "arrow-up" },
@@ -89,7 +88,11 @@ export function filterProducts(
 
     // Category filter
     if (filters.categories.length > 0) {
-      if (!product.categorySlug || !filters.categories.includes(product.categorySlug)) return false;
+      if (
+        !product.categorySlug ||
+        !filters.categories.includes(product.categorySlug)
+      )
+        return false;
     }
 
     // Condition filter
@@ -97,7 +100,6 @@ export function filterProducts(
       if (!product.condition || !filters.conditions.includes(product.condition))
         return false;
     }
-
 
     // Price range filter
     if (
@@ -109,13 +111,12 @@ export function filterProducts(
 
     // Vendor filter
     if (filters.vendors.length > 0) {
-      if (!product.vendorId || !filters.vendors.includes(product.vendorId)) return false;
+      if (!product.vendorId || !filters.vendors.includes(product.vendorId))
+        return false;
     }
 
     // Stock filter
     if (filters.inStock && product.stock === 0) return false;
-
-
 
     // Tags filter
     if (filters.tags.length > 0) {
@@ -132,23 +133,23 @@ export function filterProducts(
 export function sortProducts(
   products: Product[],
   sortOption: SortOption | string,
-  order?: 'asc' | 'desc'
+  order?: "asc" | "desc",
 ): Product[] {
   const sorted = [...products];
 
   // Handle the test's format (field, order) or the existing format (SortOption)
   if (order !== undefined) {
     // Test format: field and order are separate
-    switch(sortOption) {
-      case 'price':
+    switch (sortOption) {
+      case "price":
         return sorted.sort((a, b) => {
           const diff = a.price - b.price;
-          return order === 'asc' ? diff : -diff;
+          return order === "asc" ? diff : -diff;
         });
-      case 'name':
+      case "name":
         return sorted.sort((a, b) => {
           const comp = a.name.localeCompare(b.name);
-          return order === 'asc' ? comp : -comp;
+          return order === "asc" ? comp : -comp;
         });
       default:
         return sorted;
@@ -200,10 +201,10 @@ export function formatFilterLabel(filterType: string, value: string): string {
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
 
-    case "condition":
+    case "condition": {
       const condition = CONDITIONS.find((c) => c.value === value);
       return condition?.label || value;
-
+    }
 
     case "price":
       return value;
@@ -249,8 +250,8 @@ export function getUniqueVendors(
 
   products.forEach((product) => {
     if (product.vendorId && vendorMap.has(product.vendorId)) {
-      const vendor = vendorMap.get(product.vendorId!)!;
-      vendor.count++;
+      const vendor = vendorMap.get(product.vendorId);
+      if (vendor) vendor.count++;
     } else {
       if (product.vendorId) {
         vendorMap.set(product.vendorId, { name: product.vendor, count: 1 });
@@ -267,7 +268,9 @@ export function getUniqueTags(products: Product[]): string[] {
   const tags = new Set<string>();
 
   products.forEach((product) => {
-    product.tags?.forEach((tag) => tags.add(tag));
+    product.tags?.forEach((tag) => {
+      tags.add(tag);
+    });
   });
 
   return Array.from(tags).sort();
@@ -278,9 +281,9 @@ export function buildFilterQuery(filters: FilterQuery): string {
   const params = new URLSearchParams();
 
   Object.entries(filters).forEach(([key, value]) => {
-    if (value !== null && value !== undefined && value !== '') {
+    if (value !== null && value !== undefined && value !== "") {
       if (Array.isArray(value)) {
-        params.append(key, value.join(','));
+        params.append(key, value.join(","));
       } else {
         params.append(key, String(value));
       }
@@ -314,28 +317,30 @@ export function parseFilterQuery(query: string): FilterQuery {
 }
 
 // Apply filters to products array
-export function applyFilters(products: Product[], filters: FilterQuery): Product[] {
+export function applyFilters(
+  products: Product[],
+  filters: FilterQuery,
+): Product[] {
   let filtered = [...products];
 
   if (filters.category) {
-    filtered = filtered.filter(p => {
+    filtered = filtered.filter((p) => {
       const categorySlug = p.categorySlug;
       return categorySlug === filters.category;
     });
   }
 
   if (filters.minPrice !== null && filters.minPrice !== undefined) {
-    filtered = filtered.filter(p => p.price >= Number(filters.minPrice));
+    filtered = filtered.filter((p) => p.price >= Number(filters.minPrice));
   }
 
   if (filters.maxPrice !== null && filters.maxPrice !== undefined) {
-    filtered = filtered.filter(p => p.price <= Number(filters.maxPrice));
+    filtered = filtered.filter((p) => p.price <= Number(filters.maxPrice));
   }
 
   if (filters.condition) {
-    filtered = filtered.filter(p => p.condition === filters.condition);
+    filtered = filtered.filter((p) => p.condition === filters.condition);
   }
-
 
   if (filters.search) {
     const searchFilter = createSearchFilter(filters.search);
@@ -343,11 +348,11 @@ export function applyFilters(products: Product[], filters: FilterQuery): Product
   }
 
   if (filters.inStock) {
-    filtered = filtered.filter(p => p.stock > 0);
+    filtered = filtered.filter((p) => p.stock > 0);
   }
 
   if (filters.vendor) {
-    filtered = filtered.filter(p => {
+    filtered = filtered.filter((p) => {
       const vendorId = p.vendorId;
       return vendorId === filters.vendor;
     });
@@ -362,31 +367,35 @@ export function getPriceRange(products: Product[]): PriceRange {
     return { min: 0, max: 0 };
   }
 
-  const prices = products.map(p => p.price);
+  const prices = products.map((p) => p.price);
   return {
     min: Math.min(...prices),
-    max: Math.max(...prices)
+    max: Math.max(...prices),
   };
 }
 
 // Get unique values for a field
-export function getUniqueValues(products: Product[], field: string): Set<string> {
+export function getUniqueValues(
+  products: Product[],
+  field: string,
+): Set<string> {
   const values = new Set<string>();
 
-  products.forEach(product => {
-    let value: any = product;
+  products.forEach((product) => {
+    let value: unknown = product as unknown as Record<string, unknown>;
 
     // Handle nested properties
-    const fieldParts = field.split('.');
+    const fieldParts = field.split(".");
     for (const part of fieldParts) {
-      value = value?.[part];
+      // @ts-expect-error index dynamic access through parts
+      value = (value as Record<string, unknown>)?.[part];
     }
 
     if (value !== null && value !== undefined) {
       // Handle both object and string values
-      if (typeof value === 'object' && value.slug) {
+      if (typeof value === "object" && value.slug) {
         values.add(value.slug);
-      } else if (typeof value === 'object' && value.name) {
+      } else if (typeof value === "object" && value.name) {
         values.add(value.name);
       } else {
         values.add(String(value));
@@ -398,7 +407,9 @@ export function getUniqueValues(products: Product[], field: string): Set<string>
 }
 
 // Create search filter function
-export function createSearchFilter(searchTerm: string): (product: Product) => boolean {
+export function createSearchFilter(
+  searchTerm: string,
+): (product: Product) => boolean {
   if (!searchTerm) {
     return () => true;
   }
@@ -412,12 +423,12 @@ export function createSearchFilter(searchTerm: string): (product: Product) => bo
     }
 
     // Search in description
-    if (product.description && product.description.toLowerCase().includes(term)) {
+    if (product.description?.toLowerCase().includes(term)) {
       return true;
     }
 
     // Search in tags
-    if (product.tags && product.tags.some(tag => tag.toLowerCase().includes(term))) {
+    if (product.tags?.some((tag) => tag.toLowerCase().includes(term))) {
       return true;
     }
 
@@ -438,7 +449,7 @@ export function createSearchFilter(searchTerm: string): (product: Product) => bo
 // Validate price range
 export function validatePriceRange(
   min: number | null | undefined,
-  max: number | null | undefined
+  max: number | null | undefined,
 ): PriceRangeValidation {
   let validMin = min ?? 0;
   let validMax = max ?? Number.MAX_VALUE;
@@ -452,11 +463,12 @@ export function validatePriceRange(
     [validMin, validMax] = [validMax, validMin];
   }
 
-  const valid = (min !== null && min !== undefined) || (max !== null && max !== undefined);
+  const valid =
+    (min !== null && min !== undefined) || (max !== null && max !== undefined);
 
   return {
     min: validMin,
     max: validMax,
-    valid
+    valid,
   };
 }

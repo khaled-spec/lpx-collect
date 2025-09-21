@@ -1,12 +1,6 @@
+import { Facebook, Instagram, Package, Twitter, Youtube } from "lucide-react";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
-import {
-  Package,
-  Facebook,
-  Twitter,
-  Instagram,
-  Youtube,
-} from "lucide-react";
 
 export default function Footer() {
   return (
@@ -25,25 +19,33 @@ export default function Footer() {
             </p>
             <div className="flex gap-4">
               <a
-                href="#"
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-white transition"
               >
                 <Facebook className="h-5 w-5" />
               </a>
               <a
-                href="#"
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-white transition"
               >
                 <Twitter className="h-5 w-5" />
               </a>
               <a
-                href="#"
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-white transition"
               >
                 <Instagram className="h-5 w-5" />
               </a>
               <a
-                href="#"
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-white transition"
               >
                 <Youtube className="h-5 w-5" />
@@ -192,7 +194,6 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-
 
         {/* Bottom Bar */}
         <Separator className="my-8 bg-gray-800" />

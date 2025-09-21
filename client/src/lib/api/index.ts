@@ -1,29 +1,27 @@
 // API exports - Easy access to API functionality
 export {
   getAPIFactory,
-  getProductAPI,
   getCategoryAPI,
+  getProductAPI,
   getVendorAPI,
 } from "./client";
-
-export type {
-  Product,
-  Category,
-  Vendor,
-  ProductFilter,
-  PaginatedResponse,
-  ApiResponse,
-  ApiError,
-  IProductAPI,
-  ICategoryAPI,
-  IVendorAPI,
-  IAPIFactory,
-} from "./types";
-
 export {
+  filterProducts,
+  mockCategories,
   mockProducts,
   mockVendors,
-  mockCategories,
-  filterProducts,
   paginateData,
 } from "./mock";
+export type {
+  ApiError,
+  ApiResponse,
+  Category,
+  IAPIFactory,
+  ICategoryAPI,
+  IProductAPI,
+  IVendorAPI,
+  PaginatedResponse,
+  Product,
+  ProductFilter,
+  Vendor,
+} from "./types";

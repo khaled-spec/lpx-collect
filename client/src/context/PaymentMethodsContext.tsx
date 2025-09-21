@@ -1,15 +1,25 @@
 "use client";
 
-import { ReactNode, createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useAuth } from "@/context/AuthContext";
-import type { PaymentMethodUnion } from "@/types/payment";
 import { mockPaymentMethodsService } from "@/lib/api/mock-payment-methods";
+import type {
+  NewPaymentMethodUnion,
+  PaymentMethodUnion,
+} from "@/types/payment";
 
 interface PaymentMethodsContextType {
   paymentMethods: PaymentMethodUnion[];
   isLoading: boolean;
   error: string | null;
-  addMethod: (method: any) => Promise<void>;
+  addMethod: (method: NewPaymentMethodUnion) => Promise<void>;
   updateMethod: (
     id: string,
     updates: Partial<PaymentMethodUnion>,
@@ -24,17 +34,35 @@ const PaymentMethodsContext = createContext<
   PaymentMethodsContextType | undefined
 >(undefined);
 
-export function PaymentMethodsProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export function PaymentMethodsProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodUnion[]>(
     [],
   );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const loadPaymentMethods = useCallback(async () => {
+    if (!user) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const methods = await mockPaymentMethodsService.getPaymentMethods(
+        user.id,
+      );
+      setPaymentMethods(methods);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to load payment methods",
+      );
+      if (process.env.NODE_ENV !== "production")
+        console.error("Error loading payment methods:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user]);
 
   // Load payment methods when user changes
   useEffect(() => {
@@ -44,28 +72,9 @@ export function PaymentMethodsProvider({
       setPaymentMethods([]);
       setIsLoading(false);
     }
-  }, [user]);
+  }, [user, loadPaymentMethods]);
 
-  const loadPaymentMethods = async () => {
-    if (!user) return;
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const methods = await mockPaymentMethodsService.getPaymentMethods(user.id);
-      setPaymentMethods(methods);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to load payment methods",
-      );
-      console.error("Error loading payment methods:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const addMethod = async (method: any) => {
+  const addMethod = async (method: NewPaymentMethodUnion) => {
     if (!user) throw new Error("User not authenticated");
 
     try {

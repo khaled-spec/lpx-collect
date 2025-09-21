@@ -14,14 +14,14 @@ export interface Product {
   vendor: string;
   vendorId: string;
   stock: number;
-  state: "sealed" | "open";  // Product state: sealed or open
-  condition?: string;  // For open/raw products - conditions like mint, near-mint, etc.
+  state: "sealed" | "open"; // Product state: sealed or open
+  condition?: string; // For open/raw products - conditions like mint, near-mint, etc.
   grading?: {
-    company: string;  // PSA, CGC, BGS, etc.
-    grade: string;    // 10, 9.5, BGS 9, etc.
+    company: string; // PSA, CGC, BGS, etc.
+    grade: string; // 10, 9.5, BGS 9, etc.
     certificate?: string;
   };
-  cardNumber?: string;  // For card games
+  cardNumber?: string; // For card games
   views: number;
   rating: number;
   reviewCount: number;
@@ -55,24 +55,31 @@ export interface Category {
 }
 
 export interface ProductFilter {
-  categoryId?: string;  // Category ID for filtering
-  category?: string;  // Category slug for filtering
+  categoryId?: string; // Category ID for filtering
+  category?: string; // Category slug for filtering
   subcategory?: string;
-  vendorId?: string;  // Vendor ID for filtering
+  vendorId?: string; // Vendor ID for filtering
   minPrice?: number;
   maxPrice?: number;
-  condition?: string;  // Single condition filter
-  conditions?: string[];  // Multiple conditions
-  rarity?: string;  // Single rarity filter
-  rarities?: string[];  // Multiple rarities
+  condition?: string; // Single condition filter
+  conditions?: string[]; // Multiple conditions
+  rarity?: string; // Single rarity filter
+  rarities?: string[]; // Multiple rarities
   vendors?: string[];
   inStock?: boolean;
   featured?: boolean;
-  search?: string;  // Search query
-  searchQuery?: string;  // Alternative search query
-  sortBy?: "newest" | "price-asc" | "price-desc" | "rating" | "popular" | "featured" | "name";
+  search?: string; // Search query
+  searchQuery?: string; // Alternative search query
+  sortBy?:
+    | "newest"
+    | "price-asc"
+    | "price-desc"
+    | "rating"
+    | "popular"
+    | "featured"
+    | "name";
   limit?: number;
-  page?: number;  // Page number for pagination
+  page?: number; // Page number for pagination
   offset?: number;
 }
 
@@ -89,7 +96,7 @@ export interface ApiError {
   message: string;
   code?: string;
   status?: number;
-  details?: any;
+  details?: unknown;
 }
 
 export type ApiResponse<T> =
@@ -131,7 +138,7 @@ export interface Vendor {
   name: string;
   slug: string;
   description: string;
-  avatar?: string;  // Avatar URL
+  avatar?: string; // Avatar URL
   logo?: string;
   banner?: string;
   rating: number;
@@ -145,11 +152,13 @@ export interface Vendor {
   verified: boolean;
   featured?: boolean;
   joinedDate: string;
-  location?: {
-    city?: string;
-    state?: string;
-    country?: string;
-  } | string;  // Support both object and string formats
+  location?:
+    | {
+        city?: string;
+        state?: string;
+        country?: string;
+      }
+    | string; // Support both object and string formats
   contact?: {
     email?: string;
     phone?: string;
@@ -188,9 +197,79 @@ export interface IVendorAPI {
   ): Promise<ApiResponse<PaginatedResponse<Product>>>;
 }
 
+// Cart API Interface
+export interface ICartAPI {
+  getCart(userId: string): Promise<CartItem[]>;
+  addToCart(userId: string, item: CartItem): Promise<void>;
+  updateQuantity(
+    userId: string,
+    itemId: string,
+    quantity: number,
+  ): Promise<void>;
+  removeFromCart(userId: string, itemId: string): Promise<void>;
+  clearCart(userId: string): Promise<void>;
+}
+
+// Wishlist API Interface
+export interface IWishlistAPI {
+  getWishlist(userId: string): Promise<WishlistItem[]>;
+  addToWishlist(userId: string, item: WishlistItem): Promise<void>;
+  removeFromWishlist(userId: string, itemId: string): Promise<void>;
+  clearWishlist(userId: string): Promise<void>;
+}
+
+// Payment Methods API Interface
+export interface IPaymentMethodsAPI {
+  getPaymentMethods(userId: string): Promise<PaymentMethod[]>;
+  addPaymentMethod(userId: string, method: PaymentMethod): Promise<void>;
+  updatePaymentMethod(
+    userId: string,
+    methodId: string,
+    method: Partial<PaymentMethod>,
+  ): Promise<void>;
+  removePaymentMethod(userId: string, methodId: string): Promise<void>;
+  setDefaultPaymentMethod(userId: string, methodId: string): Promise<void>;
+}
+
+// Cart and Wishlist item types
+export interface CartItem {
+  id: string;
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+  vendor: string;
+}
+
+export interface WishlistItem {
+  id: string;
+  productId: string;
+  name: string;
+  price: number;
+  image: string;
+  vendor: string;
+  addedAt: string;
+}
+
+export interface PaymentMethod {
+  id: string;
+  type: "card" | "paypal" | "apple_pay" | "google_pay";
+  name: string;
+  last4?: string;
+  expiryMonth?: number;
+  expiryYear?: number;
+  brand?: string;
+  isDefault: boolean;
+  createdAt: string;
+}
+
 // Factory interface for creating API instances
 export interface IAPIFactory {
   createProductAPI(): IProductAPI;
   createCategoryAPI(): ICategoryAPI;
   createVendorAPI(): IVendorAPI;
+  createCartAPI(): ICartAPI;
+  createWishlistAPI(): IWishlistAPI;
+  createPaymentMethodsAPI(): IPaymentMethodsAPI;
 }

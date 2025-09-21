@@ -1,10 +1,16 @@
-import { Order, OrderStatus } from "@/types/checkout";
+import type { Order, OrderStatus } from "@/types/checkout";
 import { generateMockOrders } from "./mock-orders";
 
 // Order timeline events
 export interface OrderEvent {
   id: string;
-  type: "status_change" | "payment" | "shipping" | "delivery" | "cancellation" | "refund";
+  type:
+    | "status_change"
+    | "payment"
+    | "shipping"
+    | "delivery"
+    | "cancellation"
+    | "refund";
   status?: OrderStatus;
   title: string;
   description: string;
@@ -74,8 +80,11 @@ export function generateOrderEvents(order: Order): OrderEvent[] {
     description: `Payment of $${order.total.toFixed(2)} confirmed`,
     timestamp: new Date(orderDate.getTime() + 5 * 60 * 1000), // 5 minutes later
     metadata: {
-      paymentMethod: typeof order.paymentMethod === 'string' ? order.paymentMethod : order.paymentMethod.type
-    }
+      paymentMethod:
+        typeof order.paymentMethod === "string"
+          ? order.paymentMethod
+          : order.paymentMethod.type,
+    },
   });
 
   if (order.status !== "cancelled") {
@@ -102,8 +111,8 @@ export function generateOrderEvents(order: Order): OrderEvent[] {
         timestamp: shippedTime,
         metadata: {
           trackingNumber: order.trackingNumber,
-          carrier: "Emirates Post"
-        }
+          carrier: "Emirates Post",
+        },
       });
 
       if (order.status === "delivered") {
@@ -117,8 +126,8 @@ export function generateOrderEvents(order: Order): OrderEvent[] {
           description: "Your order has been successfully delivered",
           timestamp: deliveredTime,
           metadata: {
-            location: `${order.shippingAddress.city}, ${order.shippingAddress.country}`
-          }
+            location: `${order.shippingAddress.city}, ${order.shippingAddress.country}`,
+          },
         });
       }
     }
@@ -139,15 +148,18 @@ export function generateOrderEvents(order: Order): OrderEvent[] {
       id: `${order.id}-refund`,
       type: "refund",
       title: "Refund Processed",
-      description: "Refund has been processed and will appear in your account within 3-5 business days",
+      description:
+        "Refund has been processed and will appear in your account within 3-5 business days",
       timestamp: new Date(cancelledTime.getTime() + 2 * 60 * 60 * 1000), // 2 hours after cancellation
       metadata: {
-        refundAmount: order.total
-      }
+        refundAmount: order.total,
+      },
     });
   }
 
-  return events.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+  return events.sort(
+    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+  );
 }
 
 // Generate historical order data
@@ -163,7 +175,7 @@ export function generateOrderHistory(userId: string): {
 
   return {
     orders,
-    analytics
+    analytics,
   };
 }
 
@@ -176,10 +188,10 @@ export function calculateOrderAnalytics(orders: Order[]): OrderAnalytics {
   // Monthly stats
   const monthlyStatsMap = new Map<string, MonthlyOrderStats>();
 
-  orders.forEach(order => {
+  orders.forEach((order) => {
     const date = new Date(order.createdAt);
     const key = `${date.getFullYear()}-${date.getMonth()}`;
-    const monthName = date.toLocaleDateString('en-US', { month: 'long' });
+    const monthName = date.toLocaleDateString("en-US", { month: "long" });
     const year = date.getFullYear();
 
     if (!monthlyStatsMap.has(key)) {
@@ -188,32 +200,39 @@ export function calculateOrderAnalytics(orders: Order[]): OrderAnalytics {
         year,
         orders: 0,
         revenue: 0,
-        averageValue: 0
+        averageValue: 0,
       });
     }
 
-    const stats = monthlyStatsMap.get(key)!;
-    stats.orders++;
-    stats.revenue += order.total;
+    const stats = monthlyStatsMap.get(key);
+    if (stats) {
+      stats.orders++;
+      stats.revenue += order.total;
+    }
     stats.averageValue = stats.revenue / stats.orders;
   });
 
   const monthlyStats = Array.from(monthlyStatsMap.values()).sort((a, b) => {
-    return new Date(a.year, getMonthIndex(a.month)).getTime() -
-           new Date(b.year, getMonthIndex(b.month)).getTime();
+    return (
+      new Date(a.year, getMonthIndex(a.month)).getTime() -
+      new Date(b.year, getMonthIndex(b.month)).getTime()
+    );
   });
 
   // Status distribution
-  const statusDistribution = orders.reduce((dist, order) => {
-    dist[order.status] = (dist[order.status] || 0) + 1;
-    return dist;
-  }, {} as Record<OrderStatus, number>);
+  const statusDistribution = orders.reduce(
+    (dist, order) => {
+      dist[order.status] = (dist[order.status] || 0) + 1;
+      return dist;
+    },
+    {} as Record<OrderStatus, number>,
+  );
 
   // Top products
   const productMap = new Map<string, ProductSalesData>();
 
-  orders.forEach(order => {
-    order.items.forEach(item => {
+  orders.forEach((order) => {
+    order.items.forEach((item) => {
       const key = item.productId || item.id;
       if (!productMap.has(key)) {
         productMap.set(key, {
@@ -221,13 +240,15 @@ export function calculateOrderAnalytics(orders: Order[]): OrderAnalytics {
           productName: item.title || item.name,
           totalSold: 0,
           totalRevenue: 0,
-          averagePrice: item.price
+          averagePrice: item.price,
         });
       }
 
-      const product = productMap.get(key)!;
-      product.totalSold += item.quantity;
-      product.totalRevenue += item.price * item.quantity;
+      const product = productMap.get(key);
+      if (product) {
+        product.totalSold += item.quantity;
+        product.totalRevenue += item.price * item.quantity;
+      }
       product.averagePrice = product.totalRevenue / product.totalSold;
     });
   });
@@ -246,7 +267,7 @@ export function calculateOrderAnalytics(orders: Order[]): OrderAnalytics {
     monthlyStats,
     statusDistribution,
     topProducts,
-    orderTrends
+    orderTrends,
   };
 }
 
@@ -259,17 +280,17 @@ function generateOrderTrends(orders: Order[]): OrderTrendData[] {
   for (let i = 0; i < 30; i++) {
     const date = new Date(thirtyDaysAgo);
     date.setDate(date.getDate() + i);
-    const dateString = date.toISOString().split('T')[0];
+    const dateString = date.toISOString().split("T")[0];
 
-    const dayOrders = orders.filter(order => {
-      const orderDate = new Date(order.createdAt).toISOString().split('T')[0];
+    const dayOrders = orders.filter((order) => {
+      const orderDate = new Date(order.createdAt).toISOString().split("T")[0];
       return orderDate === dateString;
     });
 
     trends.push({
       date: dateString,
       orders: dayOrders.length,
-      revenue: dayOrders.reduce((sum, order) => sum + order.total, 0)
+      revenue: dayOrders.reduce((sum, order) => sum + order.total, 0),
     });
   }
 
@@ -279,67 +300,94 @@ function generateOrderTrends(orders: Order[]): OrderTrendData[] {
 // Helper function to get month index
 function getMonthIndex(monthName: string): number {
   const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
   return months.indexOf(monthName);
 }
 
 // Order search and filtering utilities
-export class OrderHistoryManager {
-  static searchOrders(orders: Order[], query: string): Order[] {
-    const searchTerm = query.toLowerCase();
-    return orders.filter(order => {
-      return (
-        order.orderNumber.toLowerCase().includes(searchTerm) ||
-        order.items.some(item =>
+export function searchOrders(orders: Order[], query: string): Order[] {
+  const searchTerm = query.toLowerCase();
+  return orders.filter((order) => {
+    return (
+      order.orderNumber.toLowerCase().includes(searchTerm) ||
+      order.items.some(
+        (item) =>
           item.name.toLowerCase().includes(searchTerm) ||
           item.title?.toLowerCase().includes(searchTerm) ||
-          item.vendor?.toLowerCase().includes(searchTerm)
-        ) ||
-        order.status.toLowerCase().includes(searchTerm)
-      );
-    });
-  }
+          item.vendor?.toLowerCase().includes(searchTerm),
+      ) ||
+      order.status.toLowerCase().includes(searchTerm)
+    );
+  });
+}
 
-  static filterOrdersByDateRange(orders: Order[], startDate: Date, endDate: Date): Order[] {
-    return orders.filter(order => {
-      const orderDate = new Date(order.createdAt);
-      return orderDate >= startDate && orderDate <= endDate;
-    });
-  }
+export function filterOrdersByDateRange(
+  orders: Order[],
+  startDate: Date,
+  endDate: Date,
+): Order[] {
+  return orders.filter((order) => {
+    const orderDate = new Date(order.createdAt);
+    return orderDate >= startDate && orderDate <= endDate;
+  });
+}
 
-  static filterOrdersByStatus(orders: Order[], statuses: OrderStatus[]): Order[] {
-    return orders.filter(order => statuses.includes(order.status));
-  }
+export function filterOrdersByStatus(
+  orders: Order[],
+  statuses: OrderStatus[],
+): Order[] {
+  return orders.filter((order) => statuses.includes(order.status));
+}
 
-  static filterOrdersByValueRange(orders: Order[], minValue: number, maxValue: number): Order[] {
-    return orders.filter(order => order.total >= minValue && order.total <= maxValue);
-  }
+export function filterOrdersByValueRange(
+  orders: Order[],
+  minValue: number,
+  maxValue: number,
+): Order[] {
+  return orders.filter(
+    (order) => order.total >= minValue && order.total <= maxValue,
+  );
+}
 
-  static sortOrders(orders: Order[], sortBy: 'date' | 'value' | 'status', direction: 'asc' | 'desc' = 'desc'): Order[] {
-    const sorted = [...orders];
+export function sortOrders(
+  orders: Order[],
+  sortBy: "date" | "value" | "status",
+  direction: "asc" | "desc" = "desc",
+): Order[] {
+  const sorted = [...orders];
 
-    sorted.sort((a, b) => {
-      let comparison = 0;
+  sorted.sort((a, b) => {
+    let comparison = 0;
 
-      switch (sortBy) {
-        case 'date':
-          comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-          break;
-        case 'value':
-          comparison = a.total - b.total;
-          break;
-        case 'status':
-          comparison = a.status.localeCompare(b.status);
-          break;
-      }
+    switch (sortBy) {
+      case "date":
+        comparison =
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        break;
+      case "value":
+        comparison = a.total - b.total;
+        break;
+      case "status":
+        comparison = a.status.localeCompare(b.status);
+        break;
+    }
 
-      return direction === 'desc' ? -comparison : comparison;
-    });
+    return direction === "desc" ? -comparison : comparison;
+  });
 
-    return sorted;
-  }
+  return sorted;
 }
 
 // Export historical data for different time periods
@@ -377,5 +425,5 @@ export const orderHistoryPresets = {
     const startDate = new Date();
     startDate.setFullYear(startDate.getFullYear() - 1);
     return { startDate, endDate };
-  }
+  },
 };

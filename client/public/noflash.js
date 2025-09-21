@@ -1,5 +1,5 @@
 // This script prevents theme flash on page load
-(function () {
+(() => {
   const storageKey = "lpx-theme";
 
   function getThemeConfig() {
@@ -8,7 +8,7 @@
       if (stored) {
         return JSON.parse(stored);
       }
-    } catch (e) {}
+    } catch (_e) {}
     return { mode: "system", accent: "blue" };
   }
 

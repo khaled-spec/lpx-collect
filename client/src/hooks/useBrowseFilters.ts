@@ -1,15 +1,15 @@
-import { useState, useCallback, useMemo, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { Product } from "@/lib/api/types";
 import {
-  BrowseFilters,
+  type BrowseFilters,
   defaultFilters,
   filterProducts,
-  sortProducts,
   getActiveFilterCount,
-  SortOption,
-  ViewMode,
+  type SortOption,
+  sortProducts,
+  type ViewMode,
 } from "@/lib/browse-utils";
-import { Product } from "@/lib/api/types";
 
 interface UseBrowseFiltersReturn {
   filters: BrowseFilters;
@@ -38,7 +38,7 @@ interface UseBrowseFiltersReturn {
 }
 
 export function useBrowseFilters(products: Product[]): UseBrowseFiltersReturn {
-  const router = useRouter();
+  const _router = useRouter();
   const searchParams = useSearchParams();
 
   // Initialize filters from URL params
@@ -61,7 +61,6 @@ export function useBrowseFilters(products: Product[]): UseBrowseFiltersReturn {
     const conditions = searchParams.get("conditions");
     if (conditions) initial.conditions = conditions.split(",");
 
-
     const minPrice = searchParams.get("min_price");
     const maxPrice = searchParams.get("max_price");
     if (minPrice) initial.priceRange.min = Number(minPrice);
@@ -72,8 +71,6 @@ export function useBrowseFilters(products: Product[]): UseBrowseFiltersReturn {
 
     const inStock = searchParams.get("in_stock");
     if (inStock === "true") initial.inStock = true;
-
-
 
     const tags = searchParams.get("tags");
     if (tags) initial.tags = tags.split(",");

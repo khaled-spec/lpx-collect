@@ -326,7 +326,7 @@ export const designTokens = {
 // Type exports for TypeScript support
 export type ContainerSize = keyof typeof designTokens.container;
 export type ButtonSize = keyof typeof designTokens.button.sizes;
-export type SpacingSize = Exclude<keyof typeof designTokens.spacing, 'page'>;
+export type SpacingSize = Exclude<keyof typeof designTokens.spacing, "page">;
 export type RadiusSize = keyof typeof designTokens.radius;
 export type ShadowSize = keyof typeof designTokens.shadow;
 export type GridCols = keyof typeof designTokens.grid.cols;

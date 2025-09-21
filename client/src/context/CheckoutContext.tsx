@@ -1,17 +1,23 @@
 "use client";
 
-import { ReactNode, createContext, useContext, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useState,
+} from "react";
+import { toast } from "sonner";
+import { useCart } from "@/context/CartContext";
+import type {
+  BillingAddress,
   CheckoutData,
   CheckoutStep,
-  ShippingAddress,
-  BillingAddress,
-  PaymentMethod,
   Order,
+  PaymentMethod,
+  ShippingAddress,
 } from "@/types/checkout";
-import { useCart } from "@/context/CartContext";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
 interface CheckoutContextType {
   currentStep: CheckoutStep;
@@ -170,24 +176,24 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
           vendor: item.product.vendor.storeName,
         })),
         shippingAddress: {
-          ...checkoutData.shippingAddress!,
-          fullName: `${checkoutData.shippingAddress!.firstName} ${checkoutData.shippingAddress!.lastName}`,
-          apartment: checkoutData.shippingAddress!.address2,
-          zipCode: checkoutData.shippingAddress!.postalCode,
-        } as any,
+          ...(checkoutData.shippingAddress ?? ({} as ShippingAddress)),
+          fullName: `${checkoutData.shippingAddress?.firstName} ${checkoutData.shippingAddress?.lastName}`,
+          apartment: checkoutData.shippingAddress?.address2,
+          zipCode: checkoutData.shippingAddress?.postalCode,
+        } as ShippingAddress,
         billingAddress: checkoutData.sameAsShipping
           ? ({
-              ...checkoutData.shippingAddress!,
-              fullName: `${checkoutData.shippingAddress!.firstName} ${checkoutData.shippingAddress!.lastName}`,
-              apartment: checkoutData.shippingAddress!.address2,
-              zipCode: checkoutData.shippingAddress!.postalCode,
-            } as any)
+              ...(checkoutData.shippingAddress ?? ({} as BillingAddress)),
+              fullName: `${checkoutData.shippingAddress?.firstName} ${checkoutData.shippingAddress?.lastName}`,
+              apartment: checkoutData.shippingAddress?.address2,
+              zipCode: checkoutData.shippingAddress?.postalCode,
+            } as BillingAddress)
           : ({
-              ...checkoutData.billingAddress!,
-              fullName: `${checkoutData.billingAddress!.firstName} ${checkoutData.billingAddress!.lastName}`,
-              apartment: checkoutData.billingAddress!.address2,
-              zipCode: checkoutData.billingAddress!.postalCode,
-            } as any),
+              ...(checkoutData.billingAddress ?? ({} as BillingAddress)),
+              fullName: `${checkoutData.billingAddress?.firstName} ${checkoutData.billingAddress?.lastName}`,
+              apartment: checkoutData.billingAddress?.address2,
+              zipCode: checkoutData.billingAddress?.postalCode,
+            } as BillingAddress),
         paymentMethod: checkoutData.paymentMethod?.type || "card",
         subtotal,
         shipping,
@@ -214,10 +220,7 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
       localStorage.setItem(orderKey, JSON.stringify(existingOrders));
 
       // Save as last order for backwards compatibility
-      localStorage.setItem(
-        "lpx_order_guest_last",
-        JSON.stringify(order),
-      );
+      localStorage.setItem("lpx_order_guest_last", JSON.stringify(order));
 
       // Clear cart
       clearCart();
@@ -230,7 +233,8 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
 
       return orderId;
     } catch (error) {
-      console.error("Error placing order:", error);
+      if (process.env.NODE_ENV !== "production")
+        console.error("Error placing order:", error);
       toast.error("Failed to place order. Please try again.");
       return "";
     } finally {

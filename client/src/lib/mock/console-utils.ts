@@ -1,71 +1,93 @@
 // Browser console utilities for testing mock data
-import { mockUtils, cartMockService, wishlistMockService } from './index';
+import { cartMockService, mockUtils, wishlistMockService } from "./index";
+
+// Extend Window interface for development utilities
+declare global {
+  interface Window {
+    mockUtils: typeof mockUtils & {
+      demo: () => unknown;
+      cart: typeof cartMockService;
+      wishlist: typeof wishlistMockService;
+    };
+    loadMockData: () => unknown;
+    clearMockData: () => void;
+  }
+}
 
 // Make utilities globally available in development
 export const setupGlobalMockUtils = () => {
-  if (typeof window === 'undefined' || process.env.NODE_ENV !== 'development') {
+  if (typeof window === "undefined" || process.env.NODE_ENV !== "development") {
     return;
   }
 
   // Global mock utilities
-  (window as any).mockUtils = {
+  window.mockUtils = {
     ...mockUtils,
 
     // Quick actions
     demo: () => {
-      console.log('🚀 Setting up demo data...');
+      if (process.env.NODE_ENV !== "production")
+        console.log("🚀 Setting up demo data...");
       return mockUtils.quickDemoSetup();
     },
 
     status: () => {
       const status = mockUtils.getSampleDataStatus();
-      console.log('📊 Mock Data Status:');
-      console.table(status);
+      if (process.env.NODE_ENV !== "production")
+        console.log("📊 Mock Data Status:");
+      if (process.env.NODE_ENV !== "production") console.table(status);
       return status;
     },
 
     cart: {
       load: () => {
         const result = mockUtils.loadSampleCart();
-        console.log('🛒', result.message);
+        if (process.env.NODE_ENV !== "production")
+          console.log("🛒", result.message);
         return result;
       },
 
       random: (count = 2) => {
         const result = mockUtils.loadRandomCart(count);
-        console.log('🛒', result.message);
+        if (process.env.NODE_ENV !== "production")
+          console.log("🛒", result.message);
         return result;
       },
 
       clear: () => {
         const result = mockUtils.clearCart();
-        console.log('🛒', result.message);
+        if (process.env.NODE_ENV !== "production")
+          console.log("🛒", result.message);
         return result;
       },
 
       reset: () => {
         const result = mockUtils.resetCartToEmpty();
-        console.log('🛒', result.message);
+        if (process.env.NODE_ENV !== "production")
+          console.log("🛒", result.message);
         return result;
       },
 
       show: () => {
-        console.log('🛒 Current Cart Contents:');
+        if (process.env.NODE_ENV !== "production")
+          console.log("🛒 Current Cart Contents:");
         mockUtils.dev.logCartContents();
       },
 
       summary: () => {
         const summary = cartMockService.getCartSummary();
-        console.log('🛒 Cart Summary:');
-        console.table({
-          'Item Count': summary.itemCount,
-          'Subtotal': `$${summary.subtotal.toFixed(2)}`,
-          'Shipping': `$${summary.shipping.toFixed(2)}`,
-          'Tax': `$${summary.tax.toFixed(2)}`,
-          'Discount': `$${summary.discount.toFixed(2)}`,
-          'Total': `$${summary.total.toFixed(2)}`,
-          'Coupon': summary.couponCode || 'None',
-        });
+        if (process.env.NODE_ENV !== "production")
+          console.log("🛒 Cart Summary:");
+        if (process.env.NODE_ENV !== "production")
+          console.table({
+            "Item Count": summary.itemCount,
+            Subtotal: `$${summary.subtotal.toFixed(2)}`,
+            Shipping: `$${summary.shipping.toFixed(2)}`,
+            Tax: `$${summary.tax.toFixed(2)}`,
+            Discount: `$${summary.discount.toFixed(2)}`,
+            Total: `$${summary.total.toFixed(2)}`,
+            Coupon: summary.couponCode || "None",
+          });
         return summary;
       },
     },
@@ -73,55 +95,64 @@ export const setupGlobalMockUtils = () => {
     wishlist: {
       load: () => {
         const result = mockUtils.loadSampleWishlist();
-        console.log('❤️', result.message);
+        if (process.env.NODE_ENV !== "production")
+          console.log("❤️", result.message);
         return result;
       },
 
       random: (count = 3) => {
         const result = mockUtils.loadRandomWishlist(count);
-        console.log('❤️', result.message);
+        if (process.env.NODE_ENV !== "production")
+          console.log("❤️", result.message);
         return result;
       },
 
       clear: () => {
         const result = mockUtils.clearWishlist();
-        console.log('❤️', result.message);
+        if (process.env.NODE_ENV !== "production")
+          console.log("❤️", result.message);
         return result;
       },
 
       reset: () => {
         const result = mockUtils.resetWishlistToEmpty();
-        console.log('❤️', result.message);
+        if (process.env.NODE_ENV !== "production")
+          console.log("❤️", result.message);
         return result;
       },
 
       show: () => {
-        console.log('❤️ Current Wishlist Contents:');
+        if (process.env.NODE_ENV !== "production")
+          console.log("❤️ Current Wishlist Contents:");
         mockUtils.dev.logWishlistContents();
       },
 
       summary: () => {
         const summary = wishlistMockService.getWishlistSummary();
-        console.log('❤️ Wishlist Summary:');
-        console.table({
-          'Item Count': summary.itemCount,
-          'Total Value': `$${summary.totalValue.toFixed(2)}`,
-          'Average Price': `$${summary.averagePrice.toFixed(2)}`,
-          'Categories': summary.categories.join(', '),
-        });
+        if (process.env.NODE_ENV !== "production")
+          console.log("❤️ Wishlist Summary:");
+        if (process.env.NODE_ENV !== "production")
+          console.table({
+            "Item Count": summary.itemCount,
+            "Total Value": `$${summary.totalValue.toFixed(2)}`,
+            "Average Price": `$${summary.averagePrice.toFixed(2)}`,
+            Categories: summary.categories.join(", "),
+          });
         return summary;
       },
 
       byCategory: (category: string) => {
         const result = mockUtils.loadWishlistByCategory(category);
-        console.log('❤️', result.message);
+        if (process.env.NODE_ENV !== "production")
+          console.log("❤️", result.message);
         return result;
       },
     },
 
     // Help function
     help: () => {
-      console.log(`
+      if (process.env.NODE_ENV !== "production")
+        console.log(`
 🎯 Mock Data Console Utilities
 
 Quick Actions:
@@ -153,13 +184,14 @@ Development:
   };
 
   // Also add shortcuts
-  (window as any).loadMockData = () => (window as any).mockUtils.demo();
-  (window as any).clearMockData = () => {
-    (window as any).mockUtils.cart.clear();
-    (window as any).mockUtils.wishlist.clear();
+  window.loadMockData = () => window.mockUtils.demo();
+  window.clearMockData = () => {
+    window.mockUtils.cart.clear();
+    window.mockUtils.wishlist.clear();
   };
 
-  console.log(`
+  if (process.env.NODE_ENV !== "production")
+    console.log(`
 🎯 Mock Data Utilities Loaded!
 
 Quick start:
@@ -174,7 +206,7 @@ Shortcuts:
 };
 
 // Auto-setup in development
-if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
   // Setup after a short delay to ensure services are initialized
   setTimeout(setupGlobalMockUtils, 100);
 }

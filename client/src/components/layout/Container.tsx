@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { type ContainerSize, designTokens } from "@/design-system/compat";
 import { cn } from "@/lib/utils";
-import { designTokens, type ContainerSize } from "@/lib/design-tokens";
 
 interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: ContainerSize;

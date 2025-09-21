@@ -3,12 +3,13 @@ export const mockVendorProducts = [
   {
     id: "vp-1",
     name: "Charizard VMAX Rainbow Rare - Champions Path",
-    description: "Ultra-rare Charizard VMAX Rainbow Rare card from the Champions Path set. PSA 10 Gem Mint condition with perfect centering and sharp corners.",
+    description:
+      "Ultra-rare Charizard VMAX Rainbow Rare card from the Champions Path set. PSA 10 Gem Mint condition with perfect centering and sharp corners.",
     price: 450,
     originalPrice: 520,
     images: [
       "https://images.pokemontcg.io/swsh45/074_hires.png",
-      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop"
+      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop",
     ],
     category: "Trading Cards",
     status: "active",
@@ -17,17 +18,18 @@ export const mockVendorProducts = [
     wishlistCount: 18,
     dateCreated: "2024-01-10",
     lastUpdated: "2024-01-15",
-    condition: "mint"
+    condition: "mint",
   },
   {
     id: "vp-2",
     name: "Cristiano Ronaldo Rookie Card - Panini 2003",
-    description: "Extremely rare Cristiano Ronaldo rookie card from Panini 2003 Megacracks series. Card #71 featuring CR7 in his first season at Manchester United.",
+    description:
+      "Extremely rare Cristiano Ronaldo rookie card from Panini 2003 Megacracks series. Card #71 featuring CR7 in his first season at Manchester United.",
     price: 750,
     originalPrice: 850,
     images: [
       "https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=400&h=560&fit=crop",
-      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop"
+      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop",
     ],
     category: "Trading Cards",
     status: "active",
@@ -36,16 +38,17 @@ export const mockVendorProducts = [
     wishlistCount: 25,
     dateCreated: "2024-01-08",
     lastUpdated: "2024-01-12",
-    condition: "excellent"
+    condition: "excellent",
   },
   {
     id: "vp-3",
     name: "Blue-Eyes White Dragon - LOB 1st Edition",
-    description: "Iconic Blue-Eyes White Dragon from Legend of Blue Eyes White Dragon (LOB) 1st Edition. Card #LOB-001 in near mint condition.",
+    description:
+      "Iconic Blue-Eyes White Dragon from Legend of Blue Eyes White Dragon (LOB) 1st Edition. Card #LOB-001 in near mint condition.",
     price: 320,
     images: [
       "https://52f4e29a8321344e30ae-0f55c9129972ac85d6b1f4e703468e6b.ssl.cf2.rackcdn.com/4007.jpg",
-      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop"
+      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop",
     ],
     category: "Trading Cards",
     status: "active",
@@ -54,17 +57,18 @@ export const mockVendorProducts = [
     wishlistCount: 12,
     dateCreated: "2024-01-05",
     lastUpdated: "2024-01-10",
-    condition: "near-mint"
+    condition: "near-mint",
   },
   {
     id: "vp-4",
     name: "Pokemon Booster Box - Lost Origin",
-    description: "Sealed Pokemon TCG Lost Origin Booster Box containing 36 booster packs. Features Giratina VSTAR and other amazing cards.",
+    description:
+      "Sealed Pokemon TCG Lost Origin Booster Box containing 36 booster packs. Features Giratina VSTAR and other amazing cards.",
     price: 185,
     originalPrice: 220,
     images: [
       "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop",
-      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=560&fit=crop"
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=560&fit=crop",
     ],
     category: "Trading Cards",
     status: "active",
@@ -73,16 +77,17 @@ export const mockVendorProducts = [
     wishlistCount: 8,
     dateCreated: "2024-01-20",
     lastUpdated: "2024-01-22",
-    condition: "new"
+    condition: "new",
   },
   {
     id: "vp-5",
     name: "Magic The Gathering Alpha Black Lotus",
-    description: "Extremely rare Alpha Black Lotus card. Light play condition. One of the most iconic and valuable cards in MTG history.",
+    description:
+      "Extremely rare Alpha Black Lotus card. Light play condition. One of the most iconic and valuable cards in MTG history.",
     price: 12500,
     images: [
       "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=560&fit=crop&brightness=0.9",
-      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop"
+      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop",
     ],
     category: "Trading Cards",
     status: "draft",
@@ -91,17 +96,18 @@ export const mockVendorProducts = [
     wishlistCount: 67,
     dateCreated: "2024-01-25",
     lastUpdated: "2024-01-28",
-    condition: "light-play"
+    condition: "light-play",
   },
   {
     id: "vp-6",
     name: "Lionel Messi PSG Topps Chrome Card",
-    description: "Limited edition Lionel Messi PSG Topps Chrome card from his first season at Paris Saint-Germain. Perfect condition.",
+    description:
+      "Limited edition Lionel Messi PSG Topps Chrome card from his first season at Paris Saint-Germain. Perfect condition.",
     price: 125,
     originalPrice: 150,
     images: [
       "https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=400&h=560&fit=crop&brightness=1.1",
-      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop"
+      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop",
     ],
     category: "Trading Cards",
     status: "sold",
@@ -110,16 +116,17 @@ export const mockVendorProducts = [
     wishlistCount: 19,
     dateCreated: "2024-01-18",
     lastUpdated: "2024-01-26",
-    condition: "mint"
+    condition: "mint",
   },
   {
     id: "vp-7",
     name: "Yu-Gi-Oh! Dark Magician Girl - MFC 1st Edition",
-    description: "Dark Magician Girl from Magician's Force (MFC) 1st Edition. Ultra Rare card in excellent condition.",
+    description:
+      "Dark Magician Girl from Magician's Force (MFC) 1st Edition. Ultra Rare card in excellent condition.",
     price: 280,
     images: [
       "https://52f4e29a8321344e30ae-0f55c9129972ac85d6b1f4e703468e6b.ssl.cf2.rackcdn.com/4007.jpg",
-      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop"
+      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop",
     ],
     category: "Trading Cards",
     status: "active",
@@ -128,17 +135,18 @@ export const mockVendorProducts = [
     wishlistCount: 15,
     dateCreated: "2024-01-12",
     lastUpdated: "2024-01-15",
-    condition: "excellent"
+    condition: "excellent",
   },
   {
     id: "vp-8",
     name: "One Piece Card Game Starter Deck",
-    description: "One Piece Card Game Starter Deck featuring Monkey D. Luffy. Complete sealed deck ready to play.",
+    description:
+      "One Piece Card Game Starter Deck featuring Monkey D. Luffy. Complete sealed deck ready to play.",
     price: 25,
     originalPrice: 35,
     images: [
       "https://images.unsplash.com/photo-1578663287732-a3985e772b6b?w=400&h=600&fit=crop&brightness=1.2",
-      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop",
     ],
     category: "Trading Cards",
     status: "active",
@@ -147,8 +155,8 @@ export const mockVendorProducts = [
     wishlistCount: 4,
     dateCreated: "2024-01-30",
     lastUpdated: "2024-02-01",
-    condition: "new"
-  }
+    condition: "new",
+  },
 ];
 
 // Mock vendor orders
@@ -159,7 +167,8 @@ export const mockVendorOrders = [
     customer: {
       name: "Ahmed Al Maktoum",
       email: "ahmed.almaktoum@email.ae",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+      avatar:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
     },
     items: [
       {
@@ -167,8 +176,8 @@ export const mockVendorOrders = [
         productName: "Charizard VMAX Rainbow Rare - Champions Path",
         quantity: 1,
         price: 450,
-        image: "https://images.pokemontcg.io/swsh45/074_hires.png"
-      }
+        image: "https://images.pokemontcg.io/swsh45/074_hires.png",
+      },
     ],
     total: 450,
     subtotal: 450,
@@ -183,10 +192,10 @@ export const mockVendorOrders = [
       city: "Dubai",
       state: "Dubai",
       country: "UAE",
-      zipCode: "00000"
+      zipCode: "00000",
     },
     paymentMethod: "Credit Card",
-    trackingNumber: null
+    trackingNumber: null,
   },
   {
     id: "order-002",
@@ -194,7 +203,8 @@ export const mockVendorOrders = [
     customer: {
       name: "Sarah Hassan",
       email: "sarah.hassan@email.ae",
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b9a234dd?w=150&h=150&fit=crop&crop=face"
+      avatar:
+        "https://images.unsplash.com/photo-1494790108755-2616b9a234dd?w=150&h=150&fit=crop&crop=face",
     },
     items: [
       {
@@ -202,15 +212,17 @@ export const mockVendorOrders = [
         productName: "Cristiano Ronaldo Rookie Card - Panini 2003",
         quantity: 1,
         price: 750,
-        image: "https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=400&h=560&fit=crop"
+        image:
+          "https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=400&h=560&fit=crop",
       },
       {
         productId: "vp-8",
         productName: "One Piece Card Game Starter Deck",
         quantity: 2,
         price: 25,
-        image: "https://images.unsplash.com/photo-1578663287732-a3985e772b6b?w=400&h=600&fit=crop&brightness=1.2"
-      }
+        image:
+          "https://images.unsplash.com/photo-1578663287732-a3985e772b6b?w=400&h=600&fit=crop&brightness=1.2",
+      },
     ],
     total: 800,
     subtotal: 800,
@@ -225,10 +237,10 @@ export const mockVendorOrders = [
       city: "Dubai",
       state: "Dubai",
       country: "UAE",
-      zipCode: "00000"
+      zipCode: "00000",
     },
     paymentMethod: "Debit Card",
-    trackingNumber: "DXB1234567890"
+    trackingNumber: "DXB1234567890",
   },
   {
     id: "order-003",
@@ -236,7 +248,8 @@ export const mockVendorOrders = [
     customer: {
       name: "Omar Abdullah",
       email: "omar.abdullah@email.ae",
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+      avatar:
+        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
     },
     items: [
       {
@@ -244,8 +257,9 @@ export const mockVendorOrders = [
         productName: "Blue-Eyes White Dragon - LOB 1st Edition",
         quantity: 1,
         price: 320,
-        image: "https://52f4e29a8321344e30ae-0f55c9129972ac85d6b1f4e703468e6b.ssl.cf2.rackcdn.com/4007.jpg"
-      }
+        image:
+          "https://52f4e29a8321344e30ae-0f55c9129972ac85d6b1f4e703468e6b.ssl.cf2.rackcdn.com/4007.jpg",
+      },
     ],
     total: 320,
     subtotal: 320,
@@ -260,10 +274,10 @@ export const mockVendorOrders = [
       city: "Dubai",
       state: "Dubai",
       country: "UAE",
-      zipCode: "00000"
+      zipCode: "00000",
     },
     paymentMethod: "Cash on Delivery",
-    trackingNumber: "DXB0987654321"
+    trackingNumber: "DXB0987654321",
   },
   {
     id: "order-004",
@@ -271,7 +285,8 @@ export const mockVendorOrders = [
     customer: {
       name: "Fatima Al Zahra",
       email: "fatima.alzahra@email.ae",
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
+      avatar:
+        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
     },
     items: [
       {
@@ -279,8 +294,9 @@ export const mockVendorOrders = [
         productName: "Lionel Messi PSG Topps Chrome Card",
         quantity: 1,
         price: 125,
-        image: "https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=400&h=560&fit=crop&brightness=1.1"
-      }
+        image:
+          "https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=400&h=560&fit=crop&brightness=1.1",
+      },
     ],
     total: 125,
     subtotal: 125,
@@ -295,10 +311,10 @@ export const mockVendorOrders = [
       city: "Dubai",
       state: "Dubai",
       country: "UAE",
-      zipCode: "00000"
+      zipCode: "00000",
     },
     paymentMethod: "PayPal",
-    trackingNumber: "DXB5555666777"
+    trackingNumber: "DXB5555666777",
   },
   {
     id: "order-005",
@@ -306,7 +322,8 @@ export const mockVendorOrders = [
     customer: {
       name: "Mohammad Rashid",
       email: "mohammad.rashid@email.ae",
-      avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face"
+      avatar:
+        "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face",
     },
     items: [
       {
@@ -314,8 +331,9 @@ export const mockVendorOrders = [
         productName: "Pokemon Booster Box - Lost Origin",
         quantity: 2,
         price: 185,
-        image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop"
-      }
+        image:
+          "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop",
+      },
     ],
     total: 370,
     subtotal: 370,
@@ -330,11 +348,11 @@ export const mockVendorOrders = [
       city: "Dubai",
       state: "Dubai",
       country: "UAE",
-      zipCode: "00000"
+      zipCode: "00000",
     },
     paymentMethod: "Bank Transfer",
-    trackingNumber: "DXB9999888777"
-  }
+    trackingNumber: "DXB9999888777",
+  },
 ];
 
 // Mock vendor analytics/stats
@@ -343,46 +361,46 @@ export const mockVendorAnalytics = {
     total: 5240,
     thisMonth: 1665,
     lastMonth: 1450,
-    growth: 14.8
+    growth: 14.8,
   },
   orders: {
     total: 47,
     pending: 1,
     processing: 1,
     shipped: 1,
-    completed: 44
+    completed: 44,
   },
   products: {
     total: 8,
     active: 6,
     draft: 1,
     sold: 1,
-    outOfStock: 0
+    outOfStock: 0,
   },
   customers: {
     total: 32,
     returning: 8,
     new: 24,
-    satisfactionRate: 4.8
+    satisfactionRate: 4.8,
   },
   topProducts: [
     {
       id: "vp-1",
       name: "Charizard VMAX Rainbow Rare",
       sales: 3,
-      revenue: 1350
+      revenue: 1350,
     },
     {
       id: "vp-2",
       name: "Cristiano Ronaldo Rookie Card",
       sales: 2,
-      revenue: 1500
+      revenue: 1500,
     },
     {
       id: "vp-4",
       name: "Pokemon Booster Box - Lost Origin",
       sales: 5,
-      revenue: 925
-    }
-  ]
+      revenue: 925,
+    },
+  ],
 };

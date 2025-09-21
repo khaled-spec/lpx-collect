@@ -1,7 +1,7 @@
 "use client";
 
-import * as React from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -22,7 +22,7 @@ const Slider = React.forwardRef<
     </SliderPrimitive.Track>
     {Array.from({ length: props.value?.length || 1 }).map((_, index) => (
       <SliderPrimitive.Thumb
-        key={index}
+        key={`slider-thumb-${props.value?.[index] || 0}-${index}`}
         className="block h-4 w-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
       />
     ))}

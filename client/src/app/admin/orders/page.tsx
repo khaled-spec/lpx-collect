@@ -1,9 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  CheckCircle,
+  Clock,
+  Download,
+  Eye,
+  MoreHorizontal,
+  Package,
+  Search,
+  ShoppingCart,
+  Store,
+  Truck,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -13,29 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  ShoppingCart,
-  DollarSign,
-  Clock,
-  CheckCircle,
-  Search,
-  MoreHorizontal,
-  Eye,
-  Truck,
-  Package,
-  Download,
-  Store,
-} from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import adminMockService, { AdminOrder } from "@/lib/admin-mock";
+import adminMockService, { type AdminOrder } from "@/lib/admin-mock";
 
 export default function OrdersManagement() {
   const [orders, setOrders] = useState<AdminOrder[]>([]);
@@ -50,7 +49,9 @@ export default function OrdersManagement() {
   // Calculate statistics from actual orders
   const stats = {
     totalOrders: orders.length,
-    pendingOrders: orders.filter((o) => o.status === "pending" || o.status === "processing").length,
+    pendingOrders: orders.filter(
+      (o) => o.status === "pending" || o.status === "processing",
+    ).length,
     completedOrders: orders.filter((o) => o.status === "completed").length,
     totalRevenue: orders.reduce((sum, order) => sum + order.total, 0),
   };
@@ -67,7 +68,10 @@ export default function OrdersManagement() {
   });
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+    const variants: Record<
+      string,
+      "default" | "secondary" | "destructive" | "outline"
+    > = {
       pending: "outline",
       processing: "secondary",
       shipped: "default",
@@ -107,7 +111,9 @@ export default function OrdersManagement() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Order Management</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Order Management
+          </h1>
           <p className="text-muted-foreground">
             Monitor and manage all customer orders across the platform
           </p>
@@ -131,7 +137,9 @@ export default function OrdersManagement() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Pending/Processing</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Pending/Processing
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600">
@@ -148,7 +156,9 @@ export default function OrdersManagement() {
             <div className="text-2xl font-bold text-green-600">
               {stats.completedOrders}
             </div>
-            <p className="text-xs text-muted-foreground">Successfully delivered</p>
+            <p className="text-xs text-muted-foreground">
+              Successfully delivered
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -204,7 +214,9 @@ export default function OrdersManagement() {
                       <ShoppingCart className="h-8 w-8 mx-auto mb-2 opacity-50" />
                       <p>No orders found</p>
                       <p className="text-sm">
-                        {searchQuery ? "Try adjusting your search" : "Orders will appear here as customers place them"}
+                        {searchQuery
+                          ? "Try adjusting your search"
+                          : "Orders will appear here as customers place them"}
                       </p>
                     </div>
                   </TableCell>
@@ -244,7 +256,8 @@ export default function OrdersManagement() {
                     </TableCell>
                     <TableCell>{formatDate(order.orderDate)}</TableCell>
                     <TableCell>
-                      <span className="font-medium">{order.items.length}</span> item
+                      <span className="font-medium">{order.items.length}</span>{" "}
+                      item
                       {order.items.length !== 1 ? "s" : ""}
                     </TableCell>
                     <TableCell className="font-medium">

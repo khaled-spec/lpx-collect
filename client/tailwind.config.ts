@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
-import { tokens } from "./src/lib/tokens";
+import { tokens } from "./src/design-system/tokens";
 
 const config: Config = {
   content: [
@@ -8,6 +8,8 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/lib/**/*.{js,ts,jsx,tsx}",
+    "./src/features/**/*.{ts,tsx}",
+    "./src/design-system/**/*.{ts,tsx,css}",
   ],
   darkMode: ["class"],
   theme: {
@@ -31,10 +33,34 @@ const config: Config = {
         },
 
         // Semantic colors from tokens
-        success: tokens.colors.success,
-        warning: tokens.colors.warning,
-        error: tokens.colors.error,
-        info: tokens.colors.info,
+        success: {
+          50: tokens.colors.primitive.green[50],
+          100: tokens.colors.primitive.green[100],
+          500: tokens.colors.semantic.status.success.DEFAULT,
+          600: tokens.colors.semantic.status.success.dark,
+          900: tokens.colors.primitive.green[900],
+        },
+        warning: {
+          50: tokens.colors.primitive.yellow[50],
+          100: tokens.colors.primitive.yellow[100],
+          500: tokens.colors.semantic.status.warning.DEFAULT,
+          600: tokens.colors.semantic.status.warning.dark,
+          900: tokens.colors.primitive.yellow[900],
+        },
+        error: {
+          50: tokens.colors.primitive.red[50],
+          100: tokens.colors.primitive.red[100],
+          500: tokens.colors.semantic.status.error.DEFAULT,
+          600: tokens.colors.semantic.status.error.dark,
+          900: tokens.colors.primitive.red[900],
+        },
+        info: {
+          50: tokens.colors.primitive.blue[50],
+          100: tokens.colors.primitive.blue[100],
+          500: tokens.colors.semantic.status.info.DEFAULT,
+          600: tokens.colors.semantic.status.info.dark,
+          900: tokens.colors.primitive.blue[900],
+        },
 
         // Base colors
         border: "hsl(var(--border))",
@@ -92,28 +118,34 @@ const config: Config = {
         mono: ["var(--font-geist-mono)", "monospace"],
       },
 
-      fontSize: Object.entries(tokens.typography.fontSize).reduce(
-        (acc, [key, value]) => {
-          acc[key] = value;
+      fontSize: Object.entries(tokens.typography.scale.body).reduce(
+        (acc, [key, config]) => {
+          acc[key] = [config.fontSize, { lineHeight: config.lineHeight }];
+          return acc;
+        },
+        {} as Record<string, [string, { lineHeight: string }]>,
+      ),
+
+      fontWeight: tokens.typography.weight,
+      letterSpacing: tokens.typography.letterSpacing,
+      lineHeight: Object.entries(tokens.typography.scale.body).reduce(
+        (acc, [key, config]) => {
+          acc[key] = config.lineHeight;
           return acc;
         },
         {} as Record<string, string>,
       ),
 
-      fontWeight: tokens.typography.fontWeight,
-      letterSpacing: tokens.typography.letterSpacing,
-      lineHeight: tokens.typography.lineHeight,
-
       // ============================================
       // SPACING - From design tokens
       // ============================================
-      spacing: tokens.spacing,
+      spacing: tokens.spacing.scale,
 
       // ============================================
       // BORDERS & RADIUS - From design tokens
       // ============================================
       borderRadius: {
-        ...tokens.borderRadius,
+        ...tokens.borders.radius,
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
@@ -122,7 +154,7 @@ const config: Config = {
       // ============================================
       // SHADOWS - From design tokens
       // ============================================
-      boxShadow: tokens.shadows,
+      boxShadow: tokens.effects.shadows.elevation,
 
       // ============================================
       // ANIMATION - From design tokens
@@ -206,16 +238,23 @@ const config: Config = {
         },
       },
 
-      animation: Object.entries(tokens.animation).reduce(
-        (acc, [key, value]) => {
-          acc[key] = value;
-          return acc;
-        },
-        {} as Record<string, string>,
-      ),
+      animation: {
+        ...tokens.motion.presets,
+        spin: "spin 1s linear infinite",
+        ping: "ping 1s cubic-bezier(0, 0, 0.2, 1) infinite",
+        pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        bounce: "bounce 1s infinite",
+        fadeIn: "fadeIn 150ms ease-out",
+        slideUp: "slideUp 150ms ease-out",
+        slideDown: "slideDown 150ms ease-out",
+        slideLeft: "slideLeft 150ms ease-out",
+        slideRight: "slideRight 150ms ease-out",
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
 
-      transitionDuration: tokens.transitions.duration,
-      transitionTimingFunction: tokens.transitions.easing,
+      transitionDuration: tokens.motion.duration,
+      transitionTimingFunction: tokens.motion.easing,
 
       // ============================================
       // LAYOUT - From design tokens
@@ -223,25 +262,21 @@ const config: Config = {
       zIndex: tokens.zIndex,
 
       maxWidth: {
-        ...tokens.sizes.container,
+        ...tokens.spacing.container,
         screen: "100vw",
       },
 
-      screens: {
-        xs: tokens.breakpoints.xs,
-        sm: tokens.breakpoints.sm,
-        md: tokens.breakpoints.md,
-        lg: tokens.breakpoints.lg,
-        xl: tokens.breakpoints.xl,
-        "2xl": tokens.breakpoints["2xl"],
-        "3xl": tokens.breakpoints["3xl"],
-      },
+      screens: tokens.breakpoints,
     },
   },
   plugins: [
     tailwindcssAnimate,
     // Custom plugin for additional utilities
-    function ({ addUtilities }: any) {
+    ({
+      addUtilities,
+    }: {
+      addUtilities: (utilities: Record<string, Record<string, string>>) => void;
+    }) => {
       const newUtilities = {
         // Smooth scroll
         ".smooth-scroll": {

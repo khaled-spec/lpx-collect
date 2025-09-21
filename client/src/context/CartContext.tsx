@@ -1,15 +1,16 @@
 "use client";
 
-import React, {
+import type React from "react";
+import {
   createContext,
-  useContext,
-  useState,
-  useEffect,
   useCallback,
+  useContext,
+  useEffect,
+  useState,
 } from "react";
-import { CartItem, Product } from "@/types";
 import { toast } from "sonner";
-import { cartMockService, CartSummary } from "@/lib/mock/cart";
+import { type CartSummary, cartMockService } from "@/lib/mock/cart";
+import type { CartItem, Product } from "@/types";
 
 interface CartContextType {
   items: CartItem[];
@@ -56,55 +57,68 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     // Force load sample data if cart is empty and we're in development
     const currentSummary = cartMockService.getCartSummary();
-    if (currentSummary.itemCount === 0 && process.env.NODE_ENV === 'development') {
-      console.log('🛒 Cart is empty, loading sample data...');
+    if (
+      currentSummary.itemCount === 0 &&
+      process.env.NODE_ENV === "development"
+    ) {
+      if (process.env.NODE_ENV !== "production")
+        console.log("🛒 Cart is empty, loading sample data...");
       cartMockService.loadSampleData();
     }
 
     refreshSummary();
   }, [refreshSummary]);
 
-  const addToCart = useCallback((product: Product, quantity = 1) => {
-    if (!mounted) return;
+  const addToCart = useCallback(
+    (product: Product, quantity = 1) => {
+      if (!mounted) return;
 
-    const result = cartMockService.addToCart(product, quantity);
+      const result = cartMockService.addToCart(product, quantity);
 
-    if (result.success) {
-      toast.success(result.message);
-    } else {
-      toast.error(result.message);
-    }
+      if (result.success) {
+        toast.success(result.message);
+      } else {
+        toast.error(result.message);
+      }
 
-    refreshSummary();
-  }, [refreshSummary, mounted]);
+      refreshSummary();
+    },
+    [refreshSummary, mounted],
+  );
 
-  const removeFromCart = useCallback((itemId: string) => {
-    if (!mounted) return;
+  const removeFromCart = useCallback(
+    (itemId: string) => {
+      if (!mounted) return;
 
-    const result = cartMockService.removeFromCart(itemId);
+      const result = cartMockService.removeFromCart(itemId);
 
-    if (result.success) {
-      toast.success(result.message);
-    } else {
-      toast.error(result.message);
-    }
+      if (result.success) {
+        toast.success(result.message);
+      } else {
+        toast.error(result.message);
+      }
 
-    refreshSummary();
-  }, [refreshSummary, mounted]);
+      refreshSummary();
+    },
+    [refreshSummary, mounted],
+  );
 
-  const updateQuantity = useCallback((itemId: string, quantity: number) => {
-    if (!mounted) return;
+  const updateQuantity = useCallback(
+    (itemId: string, quantity: number) => {
+      if (!mounted) return;
 
-    const result = cartMockService.updateQuantity(itemId, quantity);
+      const result = cartMockService.updateQuantity(itemId, quantity);
 
-    if (result.success) {
-      // Don't show toast for quantity updates unless requested
-    } else {
-      toast.error(result.message);
-    }
+      if (result.success) {
+        // Don't show toast for quantity updates unless requested
+      } else {
+        toast.error(result.message);
+      }
 
-    refreshSummary();
-  }, [refreshSummary, mounted]);
+      refreshSummary();
+    },
+    [refreshSummary, mounted],
+  );
 
   const clearCart = useCallback(() => {
     if (!mounted) return;
@@ -118,30 +132,39 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     refreshSummary();
   }, [refreshSummary, mounted]);
 
-  const isInCart = useCallback((productId: string) => {
-    if (!mounted) return false;
-    return cartMockService.isInCart(productId);
-  }, [mounted]);
+  const isInCart = useCallback(
+    (productId: string) => {
+      if (!mounted) return false;
+      return cartMockService.isInCart(productId);
+    },
+    [mounted],
+  );
 
-  const getItemQuantity = useCallback((productId: string) => {
-    if (!mounted) return 0;
-    return cartMockService.getItemQuantity(productId);
-  }, [mounted]);
+  const getItemQuantity = useCallback(
+    (productId: string) => {
+      if (!mounted) return 0;
+      return cartMockService.getItemQuantity(productId);
+    },
+    [mounted],
+  );
 
-  const applyCoupon = useCallback((code: string) => {
-    if (!mounted) return { valid: false, discount: 0 };
+  const applyCoupon = useCallback(
+    (code: string) => {
+      if (!mounted) return { valid: false, discount: 0 };
 
-    const result = cartMockService.applyCoupon(code);
+      const result = cartMockService.applyCoupon(code);
 
-    if (result.valid) {
-      toast.success(result.message);
-    } else {
-      toast.error(result.message);
-    }
+      if (result.valid) {
+        toast.success(result.message);
+      } else {
+        toast.error(result.message);
+      }
 
-    refreshSummary();
-    return { valid: result.valid, discount: result.discount };
-  }, [refreshSummary, mounted]);
+      refreshSummary();
+      return { valid: result.valid, discount: result.discount };
+    },
+    [refreshSummary, mounted],
+  );
 
   const value: CartContextType = {
     items: summary.items,

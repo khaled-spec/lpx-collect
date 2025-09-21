@@ -1,7 +1,7 @@
 "use client";
 
-import { useTheme } from "@/lib/theme/theme-provider";
 import { Toaster as Sonner } from "sonner";
+import { useTheme } from "@/design-system/theme/theme-provider";
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 

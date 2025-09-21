@@ -1,31 +1,31 @@
 "use client";
 
-import { ReactNode } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import { cn } from "@/lib/utils";
 import {
+  AlertCircle,
+  BarChart3,
+  ChevronLeft,
   LayoutDashboard,
+  Menu,
   Package,
+  Settings,
+  Shield,
   ShoppingCart,
   Store,
-  BarChart3,
-  Settings,
-  ChevronLeft,
-  Shield,
-  AlertCircle,
-  Menu,
   X,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import type { ReactNode } from "react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import ProtectedRoute from "@/features/auth/components/ProtectedRoute";
+import { cn } from "@/lib/utils";
 
 const adminNavItems = [
   {
@@ -91,9 +91,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
                 <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse" />
                 <span className="text-muted-foreground">Admin Mode</span>
               </div>
-              <span className="font-medium">
-                Admin User
-              </span>
+              <span className="font-medium">Admin User</span>
             </div>
             <Button variant="outline" size="sm" asChild>
               <Link href="/">
@@ -110,7 +108,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
         <aside
           className={cn(
             "hidden md:flex flex-col border-r bg-muted/10 transition-all duration-300",
-            sidebarOpen ? "w-64" : "w-16"
+            sidebarOpen ? "w-64" : "w-16",
           )}
         >
           <div className="flex items-center justify-between p-4">
@@ -143,7 +141,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
                           "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors mb-1",
                           isActive
                             ? "bg-primary text-primary-foreground"
-                            : "hover:bg-muted"
+                            : "hover:bg-muted",
                         )}
                       >
                         <item.icon className="h-5 w-5 flex-shrink-0" />
@@ -184,10 +182,13 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
         {/* Mobile Sidebar */}
         {mobileSidebarOpen && (
           <div className="fixed inset-0 z-50 md:hidden">
-            <div
+            <button
+              type="button"
               className="absolute inset-0 bg-background/80 backdrop-blur-sm"
               onClick={() => setMobileSidebarOpen(false)}
-            />
+            >
+              <span className="sr-only">Close navigation overlay</span>
+            </button>
             <aside className="absolute left-0 top-0 h-full w-64 border-r bg-background">
               <div className="flex items-center justify-between p-4 border-b">
                 <h2 className="text-lg font-semibold">Navigation</h2>
@@ -215,7 +216,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
                         "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors mb-1",
                         isActive
                           ? "bg-primary text-primary-foreground"
-                          : "hover:bg-muted"
+                          : "hover:bg-muted",
                       )}
                     >
                       <item.icon className="h-5 w-5" />
@@ -239,8 +240,8 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    // <ProtectedRoute requiredRole="admin" redirectTo="/login">
-    <AdminLayoutContent>{children}</AdminLayoutContent>
-    // </ProtectedRoute>
+    <ProtectedRoute requiredRole="admin" redirectTo="/sign-in">
+      <AdminLayoutContent>{children}</AdminLayoutContent>
+    </ProtectedRoute>
   );
 }

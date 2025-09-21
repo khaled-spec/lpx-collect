@@ -100,3 +100,9 @@ export interface NewBankPaymentMethod {
   accountType: "checking" | "savings";
   setAsDefault?: boolean;
 }
+
+export type NewPaymentMethodUnion =
+  | NewCardPaymentMethod
+  | NewPayPalPaymentMethod
+  | NewCryptoPaymentMethod
+  | NewBankPaymentMethod;

@@ -1,11 +1,12 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Lock } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
@@ -15,6 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -23,11 +25,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import {
-  CreditCard,
-  Lock,
-} from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Validation schema for card
 const cardSchema = z.object({
@@ -55,8 +52,25 @@ const cardSchema = z.object({
   setAsDefault: z.boolean().optional(),
 });
 
+interface PaymentMethod {
+  id: string;
+  type: "card" | "bank";
+  cardNumber?: string;
+  expiryDate?: string;
+  cvv?: string;
+  cardholderName?: string;
+  billingAddress: {
+    street: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+  };
+  setAsDefault?: boolean;
+}
+
 interface AddPaymentMethodFormProps {
-  onAdd: (paymentMethod: any) => Promise<void>;
+  onAdd: (paymentMethod: PaymentMethod) => Promise<void>;
   onCancel: () => void;
 }
 
@@ -95,8 +109,8 @@ export function AddPaymentMethodForm({
         cardDetails: {
           brand: detectCardBrand(values.cardNumber),
           last4: values.cardNumber.slice(-4),
-          expiryMonth: parseInt(values.expiryMonth),
-          expiryYear: parseInt(values.expiryYear),
+          expiryMonth: parseInt(values.expiryMonth, 10),
+          expiryYear: parseInt(values.expiryYear, 10),
           cardholderName: values.cardholderName,
           billingAddress: values.billingAddress,
         },
@@ -118,7 +132,6 @@ export function AddPaymentMethodForm({
 
   return (
     <div className="space-y-6">
-
       <Alert>
         <Lock className="h-4 w-4" />
         <AlertDescription>

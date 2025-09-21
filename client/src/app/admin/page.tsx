@@ -1,34 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
-  Users,
-  Package,
-  ShoppingCart,
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  Store,
   AlertCircle,
+  ArrowDownRight,
+  ArrowUpRight,
+  Ban,
   CheckCircle,
   Clock,
-  Ban,
-  ArrowUpRight,
-  ArrowDownRight,
-  MoreHorizontal,
-  Database,
-  Star,
+  DollarSign,
   Eye,
+  Package,
+  ShoppingCart,
+  Star,
+  Store,
+  Users,
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import {
   Table,
   TableBody,
@@ -37,10 +29,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Progress } from "@/components/ui/progress";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Link from "next/link";
-import adminMockService, { AdminStats, AdminActivity } from "@/lib/admin-mock";
+import adminMockService, {
+  type AdminActivity,
+  type AdminStats,
+} from "@/lib/admin-mock";
+
+interface TopVendor {
+  id: string;
+  name: string;
+  sales: number;
+  revenue: number;
+  rating: number;
+}
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<AdminStats>({
@@ -58,7 +58,7 @@ export default function AdminDashboard() {
     approvalsChange: 0,
   });
   const [recentActivity, setRecentActivity] = useState<AdminActivity[]>([]);
-  const [topVendors, setTopVendors] = useState<any[]>([]);
+  const [topVendors, setTopVendors] = useState<TopVendor[]>([]);
 
   useEffect(() => {
     // Load data from admin mock service
@@ -95,7 +95,7 @@ export default function AdminDashboard() {
     },
   ];
 
-  const getStatusIcon = (status: string) => {
+  const _getStatusIcon = (status: string) => {
     switch (status) {
       case "success":
         return <CheckCircle className="h-4 w-4 text-green-500" />;
@@ -156,7 +156,9 @@ export default function AdminDashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalUsers.toLocaleString()}</div>
+            <div className="text-2xl font-bold">
+              {stats.totalUsers.toLocaleString()}
+            </div>
             <div className="flex items-center text-xs text-muted-foreground">
               {stats.usersChange > 0 ? (
                 <>
@@ -176,21 +178,29 @@ export default function AdminDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Products
+            </CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalProducts.toLocaleString()}</div>
+            <div className="text-2xl font-bold">
+              {stats.totalProducts.toLocaleString()}
+            </div>
             <div className="flex items-center text-xs text-muted-foreground">
               {stats.productsChange > 0 ? (
                 <>
                   <ArrowUpRight className="h-3 w-3 text-green-500 mr-1" />
-                  <span className="text-green-500">+{stats.productsChange}%</span>
+                  <span className="text-green-500">
+                    +{stats.productsChange}%
+                  </span>
                 </>
               ) : (
                 <>
                   <ArrowDownRight className="h-3 w-3 text-red-500 mr-1" />
-                  <span className="text-red-500">{Math.abs(stats.productsChange)}%</span>
+                  <span className="text-red-500">
+                    {Math.abs(stats.productsChange)}%
+                  </span>
                 </>
               )}
               <span className="ml-1">from last month</span>
@@ -204,7 +214,9 @@ export default function AdminDashboard() {
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalOrders.toLocaleString()}</div>
+            <div className="text-2xl font-bold">
+              {stats.totalOrders.toLocaleString()}
+            </div>
             <div className="flex items-center text-xs text-muted-foreground">
               <ArrowUpRight className="h-3 w-3 text-green-500 mr-1" />
               <span className="text-green-500">+{stats.ordersChange}%</span>
@@ -232,7 +244,9 @@ export default function AdminDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Vendors</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Active Vendors
+            </CardTitle>
             <Store className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -247,7 +261,9 @@ export default function AdminDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Approvals</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Pending Approvals
+            </CardTitle>
             <AlertCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -279,7 +295,10 @@ export default function AdminDashboard() {
                 <div className="text-center py-8 text-muted-foreground">
                   <Clock className="h-8 w-8 mx-auto mb-2 opacity-50" />
                   <p>No recent activity</p>
-                  <p className="text-sm">Activity will appear here as users interact with your platform</p>
+                  <p className="text-sm">
+                    Activity will appear here as users interact with your
+                    platform
+                  </p>
                 </div>
               ) : (
                 recentActivity.map((activity) => (
@@ -306,9 +325,7 @@ export default function AdminDashboard() {
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Top Vendors</CardTitle>
             <Button variant="ghost" size="sm" asChild>
-              <Link href="/admin/vendors">
-                View All
-              </Link>
+              <Link href="/admin/vendors">View All</Link>
             </Button>
           </CardHeader>
           <CardContent>
@@ -328,15 +345,21 @@ export default function AdminDashboard() {
                       <div className="text-muted-foreground">
                         <Store className="h-8 w-8 mx-auto mb-2 opacity-50" />
                         <p>No vendors yet</p>
-                        <p className="text-sm">Top performing vendors will appear here</p>
+                        <p className="text-sm">
+                          Top performing vendors will appear here
+                        </p>
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : (
-                  topVendors.map((vendor, index) => (
+                  topVendors.map((vendor, _index) => (
                     <TableRow key={vendor.id}>
-                      <TableCell className="font-medium">{vendor.name}</TableCell>
-                      <TableCell className="text-center">{vendor.sales}</TableCell>
+                      <TableCell className="font-medium">
+                        {vendor.name}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {vendor.sales}
+                      </TableCell>
                       <TableCell className="text-right">
                         ${vendor.revenue.toLocaleString()}
                       </TableCell>
@@ -366,7 +389,7 @@ export default function AdminDashboard() {
               <div key={service.name} className="flex items-center gap-4">
                 <div
                   className={`h-2 w-2 rounded-full ${getHealthColor(
-                    service.status
+                    service.status,
                   )}`}
                 />
                 <div className="flex-1">
@@ -374,7 +397,9 @@ export default function AdminDashboard() {
                     <p className="text-sm font-medium">{service.name}</p>
                     <Badge
                       variant={
-                        service.status === "operational" ? "default" : "destructive"
+                        service.status === "operational"
+                          ? "default"
+                          : "destructive"
                       }
                       className="text-xs"
                     >

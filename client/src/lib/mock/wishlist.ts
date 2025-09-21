@@ -1,11 +1,26 @@
-import { Product } from "@/types";
-import { cartMockService, CartOperationResult } from "./cart";
-import { sampleWishlistItems, mockDataUtils, AUTO_POPULATE_SETTINGS } from "./data";
+import type { CartItem, Product } from "@/types";
+import { cartMockService } from "./cart";
+import { AUTO_POPULATE_SETTINGS, mockDataUtils } from "./data";
+
+interface MoveToCartSuccess {
+  product: Product;
+  cartItem: CartItem;
+}
+
+interface MoveToCartFailure {
+  product: Product;
+  error: string;
+}
+
+interface MoveToCartResults {
+  successful: MoveToCartSuccess[];
+  failed: MoveToCartFailure[];
+}
 
 export interface WishlistOperationResult {
   success: boolean;
   message: string;
-  data?: any;
+  data?: WishlistItem | MoveToCartResults | string;
 }
 
 export interface WishlistItem {
@@ -24,7 +39,7 @@ export interface WishlistSummary {
 }
 
 const WISHLIST_STORAGE_KEY = "lpx-wishlist";
-const USER_WISHLIST_PREFIX = "lpx_wishlist_user_";
+const _USER_WISHLIST_PREFIX = "lpx_wishlist_user_";
 
 interface WishlistData {
   items: WishlistItem[];
@@ -43,14 +58,14 @@ export class WishlistMockService {
     return WishlistMockService.instance;
   }
 
-  private getStorageKey(userId?: string): string {
+  private getStorageKey(_userId?: string): string {
     // For now, always use guest key since no auth is implemented
     // When auth is added, can use: return userId ? `${USER_WISHLIST_PREFIX}${userId}` : WISHLIST_STORAGE_KEY;
     return WISHLIST_STORAGE_KEY;
   }
 
   private loadWishlistData(userId?: string): WishlistData {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return { items: [], lastModified: new Date() };
     }
 
@@ -72,7 +87,8 @@ export class WishlistMockService {
         lastModified: new Date(parsed.lastModified || new Date()),
       };
     } catch (error) {
-      console.error("Failed to load wishlist from localStorage:", error);
+      if (process.env.NODE_ENV !== "production")
+        console.error("Failed to load wishlist from localStorage:", error);
       return { items: [], lastModified: new Date() };
     }
   }
@@ -86,7 +102,7 @@ export class WishlistMockService {
   }
 
   private saveWishlistData(wishlistData: WishlistData, userId?: string): void {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     const storageKey = this.getStorageKey(userId);
 
@@ -97,7 +113,8 @@ export class WishlistMockService {
       };
       localStorage.setItem(storageKey, JSON.stringify(dataToSave));
     } catch (error) {
-      console.error("Failed to save wishlist to localStorage:", error);
+      if (process.env.NODE_ENV !== "production")
+        console.error("Failed to save wishlist to localStorage:", error);
     }
   }
 
@@ -105,17 +122,23 @@ export class WishlistMockService {
     return this.loadWishlistData(userId).items;
   }
 
-  addToWishlist(product: Product, userId?: string, notes?: string): WishlistOperationResult {
+  addToWishlist(
+    product: Product,
+    userId?: string,
+    notes?: string,
+  ): WishlistOperationResult {
     const wishlistData = this.loadWishlistData(userId);
 
     // Check if item already exists
-    const existingItem = wishlistData.items.find(item => item.product.id === product.id);
+    const existingItem = wishlistData.items.find(
+      (item) => item.product.id === product.id,
+    );
 
     if (existingItem) {
       return {
         success: false,
-        message: 'Item already in wishlist',
-        data: existingItem
+        message: "Item already in wishlist",
+        data: existingItem,
       };
     }
 
@@ -133,18 +156,23 @@ export class WishlistMockService {
     return {
       success: true,
       message: `Added ${product.title} to wishlist`,
-      data: newItem
+      data: newItem,
     };
   }
 
-  removeFromWishlist(productId: string, userId?: string): WishlistOperationResult {
+  removeFromWishlist(
+    productId: string,
+    userId?: string,
+  ): WishlistOperationResult {
     const wishlistData = this.loadWishlistData(userId);
-    const itemIndex = wishlistData.items.findIndex(item => item.product.id === productId);
+    const itemIndex = wishlistData.items.findIndex(
+      (item) => item.product.id === productId,
+    );
 
     if (itemIndex === -1) {
       return {
         success: false,
-        message: 'Item not found in wishlist'
+        message: "Item not found in wishlist",
       };
     }
 
@@ -155,18 +183,23 @@ export class WishlistMockService {
     return {
       success: true,
       message: `Removed ${removedItem.product.title} from wishlist`,
-      data: removedItem
+      data: removedItem,
     };
   }
 
-  removeFromWishlistById(itemId: string, userId?: string): WishlistOperationResult {
+  removeFromWishlistById(
+    itemId: string,
+    userId?: string,
+  ): WishlistOperationResult {
     const wishlistData = this.loadWishlistData(userId);
-    const itemIndex = wishlistData.items.findIndex(item => item.id === itemId);
+    const itemIndex = wishlistData.items.findIndex(
+      (item) => item.id === itemId,
+    );
 
     if (itemIndex === -1) {
       return {
         success: false,
-        message: 'Item not found in wishlist'
+        message: "Item not found in wishlist",
       };
     }
 
@@ -177,36 +210,42 @@ export class WishlistMockService {
     return {
       success: true,
       message: `Removed ${removedItem.product.title} from wishlist`,
-      data: removedItem
+      data: removedItem,
     };
   }
 
   isInWishlist(productId: string, userId?: string): boolean {
     const wishlistData = this.loadWishlistData(userId);
-    return wishlistData.items.some(item => item.product.id === productId);
+    return wishlistData.items.some((item) => item.product.id === productId);
   }
 
   clearWishlist(userId?: string): WishlistOperationResult {
     const wishlistData: WishlistData = {
       items: [],
-      lastModified: new Date()
+      lastModified: new Date(),
     };
     this.saveWishlistData(wishlistData, userId);
 
     return {
       success: true,
-      message: 'Wishlist cleared'
+      message: "Wishlist cleared",
     };
   }
 
-  updateNotes(productId: string, notes: string, userId?: string): WishlistOperationResult {
+  updateNotes(
+    productId: string,
+    notes: string,
+    userId?: string,
+  ): WishlistOperationResult {
     const wishlistData = this.loadWishlistData(userId);
-    const item = wishlistData.items.find(item => item.product.id === productId);
+    const item = wishlistData.items.find(
+      (item) => item.product.id === productId,
+    );
 
     if (!item) {
       return {
         success: false,
-        message: 'Item not found in wishlist'
+        message: "Item not found in wishlist",
       };
     }
 
@@ -215,19 +254,25 @@ export class WishlistMockService {
 
     return {
       success: true,
-      message: 'Notes updated',
-      data: item
+      message: "Notes updated",
+      data: item,
     };
   }
 
-  moveToCart(productId: string, quantity: number = 1, userId?: string): WishlistOperationResult {
+  moveToCart(
+    productId: string,
+    quantity: number = 1,
+    userId?: string,
+  ): WishlistOperationResult {
     const wishlistData = this.loadWishlistData(userId);
-    const item = wishlistData.items.find(item => item.product.id === productId);
+    const item = wishlistData.items.find(
+      (item) => item.product.id === productId,
+    );
 
     if (!item) {
       return {
         success: false,
-        message: 'Item not found in wishlist'
+        message: "Item not found in wishlist",
       };
     }
 
@@ -238,7 +283,7 @@ export class WishlistMockService {
       return {
         success: false,
         message: `Failed to move to cart: ${cartResult.message}`,
-        data: cartResult.data
+        data: cartResult.data,
       };
     }
 
@@ -250,8 +295,8 @@ export class WishlistMockService {
       message: `Moved ${item.product.title} to cart`,
       data: {
         cartItem: cartResult.data,
-        removedWishlistItem: removeResult.data
-      }
+        removedWishlistItem: removeResult.data,
+      },
     };
   }
 
@@ -261,13 +306,13 @@ export class WishlistMockService {
     if (wishlistData.items.length === 0) {
       return {
         success: false,
-        message: 'Wishlist is empty'
+        message: "Wishlist is empty",
       };
     }
 
-    const results = {
-      successful: [] as any[],
-      failed: [] as any[],
+    const results: MoveToCartResults = {
+      successful: [],
+      failed: [],
     };
 
     // Attempt to move each item to cart
@@ -289,21 +334,22 @@ export class WishlistMockService {
 
     // Remove successfully moved items from wishlist
     if (results.successful.length > 0) {
-      const successfulProductIds = results.successful.map(r => r.product.id);
+      const successfulProductIds = results.successful.map((r) => r.product.id);
       wishlistData.items = wishlistData.items.filter(
-        item => !successfulProductIds.includes(item.product.id)
+        (item) => !successfulProductIds.includes(item.product.id),
       );
       this.saveWishlistData(wishlistData, userId);
     }
 
-    const message = results.failed.length === 0
-      ? `Moved all ${results.successful.length} items to cart`
-      : `Moved ${results.successful.length} items to cart, ${results.failed.length} failed`;
+    const message =
+      results.failed.length === 0
+        ? `Moved all ${results.successful.length} items to cart`
+        : `Moved ${results.successful.length} items to cart, ${results.failed.length} failed`;
 
     return {
       success: results.successful.length > 0,
       message,
-      data: results
+      data: results,
     };
   }
 
@@ -312,16 +358,17 @@ export class WishlistMockService {
 
     const totalValue = wishlistData.items.reduce(
       (sum, item) => sum + item.product.price,
-      0
+      0,
     );
 
     const categories = Array.from(
-      new Set(wishlistData.items.map(item => item.product.category.name))
+      new Set(wishlistData.items.map((item) => item.product.category.name)),
     );
 
-    const averagePrice = wishlistData.items.length > 0
-      ? totalValue / wishlistData.items.length
-      : 0;
+    const averagePrice =
+      wishlistData.items.length > 0
+        ? totalValue / wishlistData.items.length
+        : 0;
 
     return {
       items: wishlistData.items,
@@ -336,22 +383,27 @@ export class WishlistMockService {
   getItemsByCategory(categoryName: string, userId?: string): WishlistItem[] {
     const wishlistData = this.loadWishlistData(userId);
     return wishlistData.items.filter(
-      item => item.product.category.name === categoryName
+      (item) => item.product.category.name === categoryName,
     );
   }
 
   // Get items by price range
-  getItemsByPriceRange(minPrice: number, maxPrice: number, userId?: string): WishlistItem[] {
+  getItemsByPriceRange(
+    minPrice: number,
+    maxPrice: number,
+    userId?: string,
+  ): WishlistItem[] {
     const wishlistData = this.loadWishlistData(userId);
     return wishlistData.items.filter(
-      item => item.product.price >= minPrice && item.product.price <= maxPrice
+      (item) =>
+        item.product.price >= minPrice && item.product.price <= maxPrice,
     );
   }
 
   // Sort wishlist items
   sortWishlist(
     sortBy: "name" | "price-asc" | "price-desc" | "date-added" | "category",
-    userId?: string
+    userId?: string,
   ): WishlistItem[] {
     const wishlistData = this.loadWishlistData(userId);
 
@@ -382,12 +434,12 @@ export class WishlistMockService {
     if (wishlistData.items.length === 0) {
       return {
         success: false,
-        message: 'Cannot share empty wishlist'
+        message: "Cannot share empty wishlist",
       };
     }
 
     const shareData = {
-      items: wishlistData.items.map(item => ({
+      items: wishlistData.items.map((item) => ({
         id: item.id,
         productId: item.product.id,
         productName: item.product.title,
@@ -403,8 +455,8 @@ export class WishlistMockService {
 
     return {
       success: true,
-      message: 'Wishlist ready to share',
-      data: shareData
+      message: "Wishlist ready to share",
+      data: shareData,
     };
   }
 
@@ -415,13 +467,16 @@ export class WishlistMockService {
 
     return {
       success: true,
-      message: 'Sample wishlist data loaded',
-      data: sampleData
+      message: "Sample wishlist data loaded",
+      data: sampleData,
     };
   }
 
   // Load random sample data
-  loadRandomSampleData(itemCount: number = 3, userId?: string): WishlistOperationResult {
+  loadRandomSampleData(
+    itemCount: number = 3,
+    userId?: string,
+  ): WishlistOperationResult {
     const randomItems = mockDataUtils.generateRandomWishlist(itemCount);
     const wishlistData: WishlistData = {
       items: randomItems,
@@ -433,15 +488,15 @@ export class WishlistMockService {
     return {
       success: true,
       message: `Loaded ${itemCount} random items to wishlist`,
-      data: wishlistData
+      data: wishlistData,
     };
   }
 
   // Check if wishlist has any sample data
   hasSampleData(userId?: string): boolean {
     const wishlistData = this.loadWishlistData(userId);
-    return wishlistData.items.some(item =>
-      item.id.includes('sample') || item.id.includes('random')
+    return wishlistData.items.some(
+      (item) => item.id.includes("sample") || item.id.includes("random"),
     );
   }
 
@@ -449,33 +504,40 @@ export class WishlistMockService {
   resetToEmpty(userId?: string): WishlistOperationResult {
     const wishlistData: WishlistData = {
       items: [],
-      lastModified: new Date()
+      lastModified: new Date(),
     };
     this.saveWishlistData(wishlistData, userId);
 
     return {
       success: true,
-      message: 'Wishlist reset to empty state'
+      message: "Wishlist reset to empty state",
     };
   }
 
   // Load sample data for specific category
-  loadSampleDataByCategory(categorySlug: string, userId?: string): WishlistOperationResult {
+  loadSampleDataByCategory(
+    categorySlug: string,
+    userId?: string,
+  ): WishlistOperationResult {
     const categoryProducts = mockDataUtils.getProductsByCategory(categorySlug);
 
     if (categoryProducts.length === 0) {
       return {
         success: false,
-        message: `No products found for category: ${categorySlug}`
+        message: `No products found for category: ${categorySlug}`,
       };
     }
 
-    const wishlistItems: WishlistItem[] = categoryProducts.map((product, index) => ({
-      id: `wishlist-category-${Date.now()}-${index}`,
-      product,
-      addedAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
-      notes: `From ${categorySlug} category`,
-    }));
+    const wishlistItems: WishlistItem[] = categoryProducts.map(
+      (product, index) => ({
+        id: `wishlist-category-${Date.now()}-${index}`,
+        product,
+        addedAt: new Date(
+          Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000,
+        ),
+        notes: `From ${categorySlug} category`,
+      }),
+    );
 
     const wishlistData: WishlistData = {
       items: wishlistItems,
@@ -487,7 +549,7 @@ export class WishlistMockService {
     return {
       success: true,
       message: `Loaded ${wishlistItems.length} items from ${categorySlug} category`,
-      data: wishlistData
+      data: wishlistData,
     };
   }
 }

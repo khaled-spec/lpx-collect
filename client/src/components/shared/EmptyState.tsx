@@ -1,26 +1,25 @@
 "use client";
 
-import { ReactNode } from "react";
+import {
+  AlertCircle,
+  Bell,
+  BellOff,
+  CreditCard,
+  Heart,
+  type LucideIcon,
+  MapPin,
+  Package,
+  Search,
+  ShoppingBag,
+  ShoppingCart,
+  Store,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { designTokens } from "@/lib/design-tokens";
-import { LucideIcon } from "lucide-react";
-import {
-  Package,
-  ShoppingCart,
-  ShoppingBag,
-  Heart,
-  Bell,
-  Search,
-  AlertCircle,
-  Users,
-  MapPin,
-  CreditCard,
-  BellOff,
-  Store,
-} from "lucide-react";
 
 interface EmptyStateProps {
   icon: LucideIcon;
@@ -119,29 +118,25 @@ export default function EmptyState({
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           {actionLabel &&
             (actionHref ? (
-              <Button asChild size={currentSize.button as any}>
+              <Button asChild size={currentSize.button}>
                 <Link href={actionHref}>{actionLabel}</Link>
               </Button>
             ) : (
-              <Button onClick={onAction} size={currentSize.button as any}>
+              <Button onClick={onAction} size={currentSize.button}>
                 {actionLabel}
               </Button>
             ))}
 
           {secondaryActionLabel &&
             (secondaryActionHref ? (
-              <Button
-                asChild
-                variant="outline"
-                size={currentSize.button as any}
-              >
+              <Button asChild variant="outline" size={currentSize.button}>
                 <Link href={secondaryActionHref}>{secondaryActionLabel}</Link>
               </Button>
             ) : (
               <Button
                 onClick={onSecondaryAction}
                 variant="outline"
-                size={currentSize.button as any}
+                size={currentSize.button}
               >
                 {secondaryActionLabel}
               </Button>

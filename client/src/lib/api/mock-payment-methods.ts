@@ -1,5 +1,8 @@
 // Mock Payment Methods API - follows the same pattern as other mock services
-import type { PaymentMethodUnion } from "@/types/payment";
+import type {
+  NewPaymentMethodUnion,
+  PaymentMethodUnion,
+} from "@/types/payment";
 
 // Mock payment methods data
 const mockPaymentMethods: PaymentMethodUnion[] = [
@@ -22,9 +25,9 @@ const mockPaymentMethods: PaymentMethodUnion[] = [
         city: "San Francisco",
         state: "CA",
         country: "US",
-        postalCode: "94105"
-      }
-    }
+        postalCode: "94105",
+      },
+    },
   },
   {
     id: "pm_mock_mastercard_5678",
@@ -45,10 +48,10 @@ const mockPaymentMethods: PaymentMethodUnion[] = [
         city: "Los Angeles",
         state: "CA",
         country: "US",
-        postalCode: "90210"
-      }
-    }
-  }
+        postalCode: "90210",
+      },
+    },
+  },
 ];
 
 // Storage key for localStorage persistence
@@ -63,7 +66,7 @@ export class MockPaymentMethodsService {
   // Load payment methods from localStorage or return mock data if empty
   async getPaymentMethods(userId: string): Promise<PaymentMethodUnion[]> {
     // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     const stored = localStorage.getItem(this.getStorageKey(userId));
     let methods: PaymentMethodUnion[] = [];
@@ -73,21 +76,25 @@ export class MockPaymentMethodsService {
 
       // Validate the structure of stored data
       if (methods.length > 0 && !this.validatePaymentMethods(methods)) {
-        console.log('Invalid payment methods data found, clearing and reinitializing...');
+        if (process.env.NODE_ENV !== "production")
+          console.log(
+            "Invalid payment methods data found, clearing and reinitializing...",
+          );
         methods = [];
         localStorage.removeItem(this.getStorageKey(userId));
       }
-    } catch (error) {
-      console.log('Corrupted payment methods data found, clearing...');
+    } catch (_error) {
+      if (process.env.NODE_ENV !== "production")
+        console.log("Corrupted payment methods data found, clearing...");
       methods = [];
       localStorage.removeItem(this.getStorageKey(userId));
     }
 
     // If no stored data or corrupted data, initialize with mock data
     if (methods.length === 0) {
-      methods = mockPaymentMethods.map(method => ({
+      methods = mockPaymentMethods.map((method) => ({
         ...method,
-        userId: userId
+        userId: userId,
       }));
       this.saveToStorage(userId, methods);
     }
@@ -96,9 +103,12 @@ export class MockPaymentMethodsService {
   }
 
   // Add a new payment method
-  async addPaymentMethod(userId: string, method: any): Promise<PaymentMethodUnion> {
+  async addPaymentMethod(
+    userId: string,
+    method: NewPaymentMethodUnion,
+  ): Promise<PaymentMethodUnion> {
     // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const currentMethods = await this.getPaymentMethods(userId);
     const now = new Date().toISOString();
@@ -114,9 +124,9 @@ export class MockPaymentMethodsService {
     };
 
     // If setting as default, update other methods
-    const updatedMethods = currentMethods.map(m => ({
+    const updatedMethods = currentMethods.map((m) => ({
       ...m,
-      isDefault: newMethod.isDefault ? false : m.isDefault
+      isDefault: newMethod.isDefault ? false : m.isDefault,
     }));
 
     const allMethods = [...updatedMethods, newMethod];
@@ -129,13 +139,13 @@ export class MockPaymentMethodsService {
   async updatePaymentMethod(
     userId: string,
     id: string,
-    updates: Partial<PaymentMethodUnion>
+    updates: Partial<PaymentMethodUnion>,
   ): Promise<PaymentMethodUnion> {
     // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     const currentMethods = await this.getPaymentMethods(userId);
-    const methodIndex = currentMethods.findIndex(m => m.id === id);
+    const methodIndex = currentMethods.findIndex((m) => m.id === id);
 
     if (methodIndex === -1) {
       throw new Error("Payment method not found");
@@ -144,7 +154,7 @@ export class MockPaymentMethodsService {
     const updatedMethod = {
       ...currentMethods[methodIndex],
       ...updates,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     } as PaymentMethodUnion;
     const updatedMethods = [...currentMethods];
     updatedMethods[methodIndex] = updatedMethod;
@@ -156,17 +166,17 @@ export class MockPaymentMethodsService {
   // Delete a payment method
   async deletePaymentMethod(userId: string, id: string): Promise<void> {
     // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     const currentMethods = await this.getPaymentMethods(userId);
-    const method = currentMethods.find(m => m.id === id);
+    const method = currentMethods.find((m) => m.id === id);
 
     // Prevent deleting the default method if it's the only one
     if (method?.isDefault && currentMethods.length === 1) {
       throw new Error("Cannot delete your only payment method");
     }
 
-    const updatedMethods = currentMethods.filter(m => m.id !== id);
+    const updatedMethods = currentMethods.filter((m) => m.id !== id);
 
     // If deleted method was default and there are other methods, make the first one default
     if (method?.isDefault && updatedMethods.length > 0) {
@@ -179,21 +189,23 @@ export class MockPaymentMethodsService {
   // Set a payment method as default
   async setDefaultPaymentMethod(userId: string, id: string): Promise<void> {
     // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     const currentMethods = await this.getPaymentMethods(userId);
-    const updatedMethods = currentMethods.map(method => ({
+    const updatedMethods = currentMethods.map((method) => ({
       ...method,
-      isDefault: method.id === id
+      isDefault: method.id === id,
     }));
 
     this.saveToStorage(userId, updatedMethods);
   }
 
   // Get the default payment method
-  async getDefaultPaymentMethod(userId: string): Promise<PaymentMethodUnion | undefined> {
+  async getDefaultPaymentMethod(
+    userId: string,
+  ): Promise<PaymentMethodUnion | undefined> {
     const methods = await this.getPaymentMethods(userId);
-    return methods.find(m => m.isDefault);
+    return methods.find((m) => m.isDefault);
   }
 
   // Save methods to localStorage
@@ -203,22 +215,30 @@ export class MockPaymentMethodsService {
 
   // Validate payment methods structure
   private validatePaymentMethods(methods: PaymentMethodUnion[]): boolean {
-    return methods.every(method => {
+    return methods.every((method) => {
       // Check required fields for all payment methods
-      if (!method.id || !method.userId || !method.type || typeof method.isDefault !== 'boolean' || !method.createdAt || !method.updatedAt) {
+      if (
+        !method.id ||
+        !method.userId ||
+        !method.type ||
+        typeof method.isDefault !== "boolean" ||
+        !method.createdAt ||
+        !method.updatedAt
+      ) {
         return false;
       }
 
       // Check type-specific fields
       switch (method.type) {
-        case 'card':
-          return method.cardDetails &&
-                 method.cardDetails.brand &&
-                 method.cardDetails.last4 &&
-                 method.cardDetails.expiryMonth &&
-                 method.cardDetails.expiryYear &&
-                 method.cardDetails.cardholderName &&
-                 method.cardDetails.billingAddress;
+        case "card":
+          return (
+            method.cardDetails?.brand &&
+            method.cardDetails.last4 &&
+            method.cardDetails.expiryMonth &&
+            method.cardDetails.expiryYear &&
+            method.cardDetails.cardholderName &&
+            method.cardDetails.billingAddress
+          );
         default:
           return true;
       }

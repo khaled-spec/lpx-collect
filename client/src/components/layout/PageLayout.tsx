@@ -1,8 +1,8 @@
 "use client";
 
-import React, { ReactNode, Fragment } from "react";
-import Header from "@/components/Header";
+import { Fragment, type ReactNode } from "react";
 import Footer from "@/components/Footer";
+import Header from "@/components/Header";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,10 +11,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { designTokens } from "@/design-system/compat";
 import { cn } from "@/lib/utils";
-import { designTokens } from "@/lib/design-tokens";
 
-export interface BreadcrumbItem {
+export interface BreadcrumbData {
   label: string;
   href?: string;
 }
@@ -23,7 +23,7 @@ interface PageLayoutProps {
   children: ReactNode;
   title?: string;
   description?: string;
-  breadcrumbs?: BreadcrumbItem[];
+  breadcrumbs?: BreadcrumbData[];
   className?: string;
   containerClassName?: string;
   showHeader?: boolean;
@@ -68,7 +68,7 @@ export default function PageLayout({
                 <Breadcrumb className="mb-8">
                   <BreadcrumbList>
                     {allBreadcrumbs.map((crumb, index) => (
-                      <Fragment key={index}>
+                      <Fragment key={`breadcrumb-${crumb.label}-${index}`}>
                         <BreadcrumbItem>
                           {index < allBreadcrumbs.length - 1 ? (
                             <BreadcrumbLink
@@ -116,7 +116,7 @@ export default function PageLayout({
                 <Breadcrumb className="mb-8">
                   <BreadcrumbList>
                     {allBreadcrumbs.map((crumb, index) => (
-                      <Fragment key={index}>
+                      <Fragment key={`breadcrumb-${crumb.label}-${index}`}>
                         <BreadcrumbItem>
                           {index < allBreadcrumbs.length - 1 ? (
                             <BreadcrumbLink

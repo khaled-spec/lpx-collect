@@ -18,7 +18,8 @@ export async function getNavigationCategories() {
       }));
     }
   } catch (error) {
-    console.error("Failed to fetch navigation categories:", error);
+    if (process.env.NODE_ENV !== "production")
+      console.error("Failed to fetch navigation categories:", error);
   }
   return [];
 }
@@ -36,7 +37,8 @@ export async function getFilterCategories() {
       return response.data;
     }
   } catch (error) {
-    console.error("Failed to fetch filter categories:", error);
+    if (process.env.NODE_ENV !== "production")
+      console.error("Failed to fetch filter categories:", error);
   }
   return [];
 }

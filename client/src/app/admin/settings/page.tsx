@@ -1,22 +1,18 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import {
-  Settings,
-  Shield,
-  Bell,
-  CreditCard,
-  Globe,
-  Database,
-  Mail,
-  Key,
-} from "lucide-react";
 
 export default function SystemSettings() {
   return (
@@ -57,7 +53,10 @@ export default function SystemSettings() {
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="support-email">Support Email</Label>
-                  <Input id="support-email" defaultValue="support@lpxcollect.com" />
+                  <Input
+                    id="support-email"
+                    defaultValue="support@lpxcollect.com"
+                  />
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
@@ -149,11 +148,19 @@ export default function SystemSettings() {
               <div className="grid gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="stripe-key">Stripe Public Key</Label>
-                  <Input id="stripe-key" type="password" placeholder="pk_live_..." />
+                  <Input
+                    id="stripe-key"
+                    type="password"
+                    placeholder="pk_live_..."
+                  />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="stripe-secret">Stripe Secret Key</Label>
-                  <Input id="stripe-secret" type="password" placeholder="sk_live_..." />
+                  <Input
+                    id="stripe-secret"
+                    type="password"
+                    placeholder="sk_live_..."
+                  />
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">

@@ -1,5 +1,5 @@
-import { CreditCard, Wallet, Building, Bitcoin } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { Bitcoin, Building, CreditCard, Wallet } from "lucide-react";
 
 /**
  * Format last 4 digits of card number with dots

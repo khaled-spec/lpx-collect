@@ -1,16 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Bitcoin,
+  Building,
+  Check,
+  CreditCard,
+  Edit,
+  Mail,
+  MoreVertical,
+  Star,
+  Trash2,
+} from "lucide-react";
+import { useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,25 +22,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
-  CreditCard,
-  MoreVertical,
-  Star,
-  Trash2,
-  Edit,
-  Check,
-  Building,
-  Bitcoin,
-  Mail,
-} from "lucide-react";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
+import { designTokens } from "@/design-system/compat";
+import { formatCardNumber, formatExpiryDate } from "@/lib/payment-utils";
 import { cn } from "@/lib/utils";
-import { designTokens } from "@/lib/design-tokens";
 import type { PaymentMethodUnion } from "@/types/payment";
-import {
-  formatCardNumber,
-  formatExpiryDate,
-  getPaymentMethodIcon,
-} from "@/lib/payment-utils";
 
 interface PaymentMethodCardProps {
   paymentMethod: PaymentMethodUnion;
@@ -251,7 +247,9 @@ export function PaymentMethodCard({
   return (
     <>
       <Card className="overflow-hidden hover:shadow-lg transition-shadow h-64 flex flex-col">
-        <CardContent className="pt-6 flex-1">{renderPaymentDetails()}</CardContent>
+        <CardContent className="pt-6 flex-1">
+          {renderPaymentDetails()}
+        </CardContent>
         <CardFooter className="bg-muted/50 px-6 py-4">
           <div className="flex items-center justify-between w-full">
             <p className="text-xs text-muted-foreground">

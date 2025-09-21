@@ -1,16 +1,16 @@
 "use client";
 
 import {
-  ReactNode,
   createContext,
-  useContext,
-  useState,
-  useEffect,
+  type ReactNode,
   useCallback,
+  useContext,
+  useEffect,
+  useState,
 } from "react";
-import { Product } from "@/types";
 import { toast } from "sonner";
 import { wishlistMockService } from "@/lib/mock/wishlist";
+import type { Product } from "@/types";
 
 interface WishlistContextType {
   items: Product[];
@@ -33,7 +33,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const refreshItems = useCallback(() => {
     if (!mounted) return;
     const wishlistItems = wishlistMockService.getWishlist();
-    const products = wishlistItems.map(item => item.product);
+    const products = wishlistItems.map((item) => item.product);
     setItems(products);
   }, [mounted]);
 
@@ -43,44 +43,54 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
 
     // Force load sample data if wishlist is empty and we're in development
     const currentItems = wishlistMockService.getWishlist();
-    if (currentItems.length === 0 && process.env.NODE_ENV === 'development') {
-      console.log('❤️ Wishlist is empty, loading sample data...');
+    if (currentItems.length === 0 && process.env.NODE_ENV === "development") {
+      if (process.env.NODE_ENV !== "production")
+        console.log("❤️ Wishlist is empty, loading sample data...");
       wishlistMockService.loadSampleData();
     }
 
     refreshItems();
   }, [refreshItems]);
 
-  const addToWishlist = useCallback((product: Product) => {
-    if (!mounted) return;
+  const addToWishlist = useCallback(
+    (product: Product) => {
+      if (!mounted) return;
 
-    const result = wishlistMockService.addToWishlist(product);
+      const result = wishlistMockService.addToWishlist(product);
 
-    if (result.success) {
-      toast.success(result.message);
-    } else {
-      toast.info(result.message);
-    }
+      if (result.success) {
+        toast.success(result.message);
+      } else {
+        toast.info(result.message);
+      }
 
-    refreshItems();
-  }, [refreshItems, mounted]);
+      refreshItems();
+    },
+    [refreshItems, mounted],
+  );
 
-  const removeFromWishlist = useCallback((productId: string) => {
-    if (!mounted) return;
+  const removeFromWishlist = useCallback(
+    (productId: string) => {
+      if (!mounted) return;
 
-    const result = wishlistMockService.removeFromWishlist(productId);
+      const result = wishlistMockService.removeFromWishlist(productId);
 
-    if (result.success) {
-      toast.success(result.message);
-    }
+      if (result.success) {
+        toast.success(result.message);
+      }
 
-    refreshItems();
-  }, [refreshItems, mounted]);
+      refreshItems();
+    },
+    [refreshItems, mounted],
+  );
 
-  const isInWishlist = useCallback((productId: string) => {
-    if (!mounted) return false;
-    return wishlistMockService.isInWishlist(productId);
-  }, [mounted]);
+  const isInWishlist = useCallback(
+    (productId: string) => {
+      if (!mounted) return false;
+      return wishlistMockService.isInWishlist(productId);
+    },
+    [mounted],
+  );
 
   const clearWishlist = useCallback(() => {
     if (!mounted) return;

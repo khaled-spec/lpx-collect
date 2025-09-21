@@ -1,12 +1,12 @@
 "use client";
 
 import {
-  ReactNode,
   createContext,
-  useContext,
-  useState,
-  useEffect,
+  type ReactNode,
   useCallback,
+  useContext,
+  useEffect,
+  useState,
 } from "react";
 
 export type NotificationType =
@@ -144,11 +144,7 @@ const generateMockNotifications = (): Notification[] => {
   ];
 };
 
-export function NotificationProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export function NotificationProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   // Load notifications from localStorage on mount
@@ -162,7 +158,8 @@ export function NotificationProvider({
           const parsed = JSON.parse(stored);
           setNotifications(parsed);
         } catch (error) {
-          console.error("Failed to parse notifications:", error);
+          if (process.env.NODE_ENV !== "production")
+            console.error("Failed to parse notifications:", error);
           // Load mock notifications for first-time users
           const mockNotifications = generateMockNotifications();
           setNotifications(mockNotifications);

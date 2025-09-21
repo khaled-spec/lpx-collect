@@ -1,23 +1,24 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import Link from "next/link";
-import { useUser, useClerk } from "@/context/AuthContext";
-import { useCart } from "@/context/CartContext";
-import { useWishlist } from "@/context/WishlistContext";
-import { useNotifications } from "@/context/NotificationContext";
-import { getNavigationCategories } from "@/lib/categories";
-import { Button } from "@/components/ui/button";
-import { IconButton } from "@/components/custom/button-variants";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+  Bell,
+  Heart,
+  LogIn,
+  LogOut,
+  Menu,
+  Package,
+  Settings,
+  Shield,
+  ShoppingBag,
+  ShoppingCart,
+  Store,
+} from "lucide-react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/button.variants";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,24 +28,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-import { designTokens } from "@/lib/design-tokens";
 import {
-  ShoppingCart,
-  User,
-  Menu,
-  X,
-  Package,
-  Heart,
-  Bell,
-  LogIn,
-  LogOut,
-  Settings,
-  Store,
-  ShoppingBag,
-  CreditCard,
-  Shield,
-} from "lucide-react";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { useClerk, useUser } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
+import { useNotifications } from "@/context/NotificationContext";
+import { useWishlist } from "@/context/WishlistContext";
+import { designTokens } from "@/design-system/compat";
+import { getNavigationCategories } from "@/lib/categories";
+import { cn } from "@/lib/utils";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -196,9 +193,16 @@ export default function Header() {
                         className="relative h-10 w-10 rounded-full"
                       >
                         <Avatar className="h-10 w-10">
-                          <AvatarImage src={user?.imageUrl} alt={user?.firstName || "User"} />
+                          <AvatarImage
+                            src={user?.imageUrl}
+                            alt={user?.firstName || "User"}
+                          />
                           <AvatarFallback>
-                            {user?.firstName?.charAt(0).toUpperCase() || user?.emailAddresses?.[0]?.emailAddress?.charAt(0).toUpperCase() || "U"}
+                            {user?.firstName?.charAt(0).toUpperCase() ||
+                              user?.emailAddresses?.[0]?.emailAddress
+                                ?.charAt(0)
+                                .toUpperCase() ||
+                              "U"}
                           </AvatarFallback>
                         </Avatar>
                       </Button>
@@ -234,10 +238,7 @@ export default function Header() {
                       )}
                       {user?.role === "admin" && (
                         <DropdownMenuItem asChild>
-                          <Link
-                            href="/admin"
-                            className="cursor-pointer"
-                          >
+                          <Link href="/admin" className="cursor-pointer">
                             <Shield className="mr-2 h-4 w-4" />
                             Admin Panel
                           </Link>
@@ -280,7 +281,11 @@ export default function Header() {
                   </DropdownMenu>
                 ) : (
                   <div className="flex items-center gap-2">
-                    <Button asChild variant="ghost" className="flex items-center gap-2">
+                    <Button
+                      asChild
+                      variant="ghost"
+                      className="flex items-center gap-2"
+                    >
                       <Link href="/sign-in">
                         <LogIn className="h-4 w-4" />
                         <span>Sign In</span>
@@ -357,13 +362,18 @@ export default function Header() {
                         <Separator className="my-2" />
                         <div className="flex items-center gap-3 py-2">
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={user?.imageUrl} alt={user?.firstName || "User"} />
+                            <AvatarImage
+                              src={user?.imageUrl}
+                              alt={user?.firstName || "User"}
+                            />
                             <AvatarFallback>
                               {user?.firstName?.charAt(0).toUpperCase() || "U"}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="font-medium">{user?.fullName || user?.firstName || "User"}</p>
+                            <p className="font-medium">
+                              {user?.fullName || user?.firstName || "User"}
+                            </p>
                             <p className="text-xs text-muted-foreground">
                               {user?.primaryEmailAddress?.emailAddress}
                             </p>
@@ -416,6 +426,7 @@ export default function Header() {
                         )}
                         <Separator className="my-2" />
                         <button
+                          type="button"
                           onClick={() => {
                             signOut();
                             setIsMenuOpen(false);

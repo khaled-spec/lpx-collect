@@ -1,17 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import {
+  Eye,
+  Heart,
+  Package,
+  Share2,
+  ShoppingCart,
+  Store,
+  Zap,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
 import {
-  SealedBadge,
-  GradingBadge,
   ConditionBadge,
-} from "@/components/custom/badge-variants";
-import { useWishlist } from "@/context/WishlistContext";
+  GradingBadge,
+  SealedBadge,
+} from "@/components/ui/badge.variants";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
@@ -19,23 +26,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useWishlist } from "@/context/WishlistContext";
+import { designTokens } from "@/design-system/compat";
+import type { Product } from "@/lib/api/types";
 import { cn } from "@/lib/utils";
-import { designTokens } from "@/lib/design-tokens";
-import { Product } from "@/lib/api/types";
-import {
-  Heart,
-  ShoppingCart,
-  Eye,
-  Shield,
-  Package,
-  Sparkles,
-  Share2,
-  Zap,
-  Store,
-} from "lucide-react";
 
 // Standard button action order: Cart > Buy > Wishlist > Share
-const ACTION_ORDER = ["cart", "buy", "wishlist", "share"] as const;
+const _ACTION_ORDER = ["cart", "buy", "wishlist", "share"] as const;
 
 interface ProductCardProps {
   product: Product;
@@ -160,7 +157,7 @@ export function ProductCard({
             <div className="relative w-48 h-48 flex-shrink-0 bg-muted">
               {(product.image || product.images?.[0]) && (
                 <Image
-                  src={product.image || product.images?.[0] || ''}
+                  src={product.image || product.images?.[0] || ""}
                   alt={product.name}
                   fill
                   className={cn(
@@ -175,7 +172,6 @@ export function ProductCard({
                   <Package className="h-12 w-12 text-muted-foreground/30" />
                 </div>
               )}
-
             </div>
 
             {/* Content Section */}
@@ -190,10 +186,12 @@ export function ProductCard({
                     <Store className="h-4 w-4 text-muted-foreground" />
                     {getVendorLink() ? (
                       <button
+                        type="button"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          window.location.href = getVendorLink()!;
+                          const link = getVendorLink();
+                          if (link) window.location.href = link;
                         }}
                         className="typography-body-sm text-muted-foreground hover:text-primary transition-colors text-left"
                       >
@@ -223,9 +221,11 @@ export function ProductCard({
                         grade={product.grading.grade}
                       />
                     )}
-                    {product.state === "open" && !product.grading && product.condition && (
-                      <ConditionBadge condition={product.condition} />
-                    )}
+                    {product.state === "open" &&
+                      !product.grading &&
+                      product.condition && (
+                        <ConditionBadge condition={product.condition} />
+                      )}
                   </div>
                 </div>
 
@@ -281,7 +281,6 @@ export function ProductCard({
                   <Zap className="h-4 w-4 mr-2" />
                   Buy Now
                 </Button>
-
               </div>
             </div>
           </div>
@@ -308,7 +307,7 @@ export function ProductCard({
           <div className="absolute inset-0 bg-muted" />
           {(product.image || product.images?.[0]) && (
             <Image
-              src={product.image || product.images?.[0] || ''}
+              src={product.image || product.images?.[0] || ""}
               alt={product.name}
               fill
               className={cn(
@@ -369,7 +368,9 @@ export function ProductCard({
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    {isProductInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+                    {isProductInWishlist
+                      ? "Remove from Wishlist"
+                      : "Add to Wishlist"}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -394,7 +395,6 @@ export function ProductCard({
               </TooltipProvider>
             </div>
           )}
-
         </div>
       </Link>
 
@@ -413,10 +413,12 @@ export function ProductCard({
 
         {getVendorLink() ? (
           <button
+            type="button"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              window.location.href = getVendorLink()!;
+              const link = getVendorLink();
+              if (link) window.location.href = link;
             }}
             className="text-sm text-muted-foreground hover:text-primary transition-colors h-5 block text-left"
           >
@@ -440,25 +442,33 @@ export function ProductCard({
               className="text-xs"
             />
           )}
-          {product.state === "open" && !product.grading && product.condition && (
-            <ConditionBadge condition={product.condition} className="text-xs" />
-          )}
+          {product.state === "open" &&
+            !product.grading &&
+            product.condition && (
+              <ConditionBadge
+                condition={product.condition}
+                className="text-xs"
+              />
+            )}
         </div>
 
         <div className="mt-auto">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <p className="text-xl font-bold">
-                {formatPrice(product.price)}
-              </p>
+              <p className="text-xl font-bold">{formatPrice(product.price)}</p>
               <div className="h-4 mt-1">
                 {product.stock === 0 ? (
-                  <p className={cn("text-xs", designTokens.colors.status.error)}>
+                  <p
+                    className={cn("text-xs", designTokens.colors.status.error)}
+                  >
                     Out of Stock
                   </p>
                 ) : product.stock <= 5 ? (
                   <p
-                    className={cn("text-xs", designTokens.colors.status.warning)}
+                    className={cn(
+                      "text-xs",
+                      designTokens.colors.status.warning,
+                    )}
                   >
                     Only {product.stock} left
                   </p>

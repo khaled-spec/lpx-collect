@@ -4,14 +4,15 @@ export const mockProducts = [
     id: "prod-1",
     name: "Charizard VMAX Rainbow Rare - Champions Path",
     slug: "charizard-vmax-rainbow-rare",
-    description: "Ultra-rare Charizard VMAX Rainbow Rare card from the Champions Path set. PSA 10 Gem Mint condition with perfect centering and sharp corners. A must-have for serious Pokémon collectors.",
+    description:
+      "Ultra-rare Charizard VMAX Rainbow Rare card from the Champions Path set. PSA 10 Gem Mint condition with perfect centering and sharp corners. A must-have for serious Pokémon collectors.",
     price: 450,
     originalPrice: 520,
     image: "https://images.pokemontcg.io/swsh45/074_hires.png",
     images: [
       "https://images.pokemontcg.io/swsh45/074_hires.png",
       "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop",
-      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=560&fit=crop"
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=560&fit=crop",
     ],
     category: "Trading Cards",
     categorySlug: "trading-cards",
@@ -22,7 +23,7 @@ export const mockProducts = [
     grading: {
       company: "PSA",
       grade: "10",
-      certificate: "PSA-10-GEM-MINT"
+      certificate: "PSA-10-GEM-MINT",
     },
     cardNumber: "074/073",
     views: 245,
@@ -34,31 +35,33 @@ export const mockProducts = [
       verified: true,
       certificate: "PSA-10-GEM-MINT",
       verifiedBy: "PSA Grading",
-      verificationDate: "2023-11-15"
+      verificationDate: "2023-11-15",
     },
     specifications: {
-      "Set": "Champions Path",
+      Set: "Champions Path",
       "Card Number": "074/073",
-      "Rarity": "Rainbow Rare",
-      "Condition": "PSA 10 Gem Mint",
-      "Language": "English"
+      Rarity: "Rainbow Rare",
+      Condition: "PSA 10 Gem Mint",
+      Language: "English",
     },
     tags: ["Pokémon", "Charizard", "Rainbow Rare", "PSA 10", "Champions Path"],
     featured: true,
     createdAt: "2024-01-10",
-    updatedAt: "2024-01-15"
+    updatedAt: "2024-01-15",
   },
   {
     id: "prod-2",
     name: "Cristiano Ronaldo Rookie Card - Panini 2003",
     slug: "ronaldo-rookie-card-2003",
-    description: "Extremely rare Cristiano Ronaldo rookie card from Panini 2003 Megacracks series. Card #71 featuring CR7 in his first season at Manchester United. Excellent condition with sharp corners.",
+    description:
+      "Extremely rare Cristiano Ronaldo rookie card from Panini 2003 Megacracks series. Card #71 featuring CR7 in his first season at Manchester United. Excellent condition with sharp corners.",
     price: 750,
     originalPrice: 850,
-    image: "https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=400&h=560&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=400&h=560&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=400&h=560&fit=crop",
-      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop"
+      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop",
     ],
     category: "Trading Cards",
     categorySlug: "trading-cards",
@@ -77,30 +80,38 @@ export const mockProducts = [
       verified: true,
       certificate: "ECE-AUTH-2024-001",
       verifiedBy: "Emirates Card Exchange",
-      verificationDate: "2024-01-08"
+      verificationDate: "2024-01-08",
     },
     specifications: {
-      "Set": "Panini Megacracks 2003",
+      Set: "Panini Megacracks 2003",
       "Card Number": "#71",
-      "Player": "Cristiano Ronaldo",
-      "Team": "Manchester United",
-      "Condition": "Excellent"
+      Player: "Cristiano Ronaldo",
+      Team: "Manchester United",
+      Condition: "Excellent",
     },
-    tags: ["Football", "Cristiano Ronaldo", "Rookie Card", "Panini", "Manchester United"],
+    tags: [
+      "Football",
+      "Cristiano Ronaldo",
+      "Rookie Card",
+      "Panini",
+      "Manchester United",
+    ],
     featured: false,
     createdAt: "2024-01-08",
-    updatedAt: "2024-01-12"
+    updatedAt: "2024-01-12",
   },
   {
     id: "prod-3",
     name: "Blue-Eyes White Dragon - LOB 1st Edition",
     slug: "blue-eyes-white-dragon-lob-1st",
-    description: "Iconic Blue-Eyes White Dragon from Legend of Blue Eyes White Dragon (LOB) 1st Edition. Card #LOB-001 in near mint condition. A classic Yu-Gi-Oh! card that defined a generation of duelists.",
+    description:
+      "Iconic Blue-Eyes White Dragon from Legend of Blue Eyes White Dragon (LOB) 1st Edition. Card #LOB-001 in near mint condition. A classic Yu-Gi-Oh! card that defined a generation of duelists.",
     price: 320,
-    image: "https://52f4e29a8321344e30ae-0f55c9129972ac85d6b1f4e703468e6b.ssl.cf2.rackcdn.com/4007.jpg",
+    image:
+      "https://52f4e29a8321344e30ae-0f55c9129972ac85d6b1f4e703468e6b.ssl.cf2.rackcdn.com/4007.jpg",
     images: [
       "https://52f4e29a8321344e30ae-0f55c9129972ac85d6b1f4e703468e6b.ssl.cf2.rackcdn.com/4007.jpg",
-      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop"
+      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=560&fit=crop",
     ],
     category: "Trading Cards",
     categorySlug: "trading-cards",
@@ -118,32 +129,40 @@ export const mockProducts = [
       verified: true,
       certificate: "ECE-AUTH-2024-002",
       verifiedBy: "Emirates Card Exchange",
-      verificationDate: "2024-01-05"
+      verificationDate: "2024-01-05",
     },
     specifications: {
-      "Set": "Legend of Blue Eyes White Dragon",
+      Set: "Legend of Blue Eyes White Dragon",
       "Card Number": "LOB-001",
-      "Edition": "1st Edition",
-      "Rarity": "Ultra Rare",
-      "Condition": "Near Mint"
+      Edition: "1st Edition",
+      Rarity: "Ultra Rare",
+      Condition: "Near Mint",
     },
-    tags: ["Yu-Gi-Oh!", "Blue-Eyes White Dragon", "1st Edition", "LOB", "Ultra Rare"],
+    tags: [
+      "Yu-Gi-Oh!",
+      "Blue-Eyes White Dragon",
+      "1st Edition",
+      "LOB",
+      "Ultra Rare",
+    ],
     featured: true,
     createdAt: "2024-01-05",
-    updatedAt: "2024-01-10"
+    updatedAt: "2024-01-10",
   },
   {
     id: "prod-4",
     name: "Amazing Spider-Man #1 (1963) - Stan Lee Signature",
     slug: "amazing-spiderman-1-1963-stan-lee",
-    description: "Holy grail of comic collecting! Amazing Spider-Man #1 from 1963, signed by the legendary Stan Lee. CGC 7.5 graded with yellow label authentication. Features the first appearance of J. Jonah Jameson.",
+    description:
+      "Holy grail of comic collecting! Amazing Spider-Man #1 from 1963, signed by the legendary Stan Lee. CGC 7.5 graded with yellow label authentication. Features the first appearance of J. Jonah Jameson.",
     price: 2800,
     originalPrice: 3200,
-    image: "https://images.unsplash.com/photo-1578663287732-a3985e772b6b?w=400&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1578663287732-a3985e772b6b?w=400&h=600&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1578663287732-a3985e772b6b?w=400&h=600&fit=crop",
       "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop&brightness=0.8"
+      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop&brightness=0.8",
     ],
     category: "Comics",
     categorySlug: "comics",
@@ -154,7 +173,7 @@ export const mockProducts = [
     grading: {
       company: "CGC",
       grade: "7.5",
-      certificate: "CGC-7.5-YL-STAN-LEE"
+      certificate: "CGC-7.5-YL-STAN-LEE",
     },
     views: 312,
     rating: 5.0,
@@ -165,32 +184,34 @@ export const mockProducts = [
       verified: true,
       certificate: "CGC-7.5-YL-STAN-LEE",
       verifiedBy: "CGC Comics",
-      verificationDate: "2023-09-20"
+      verificationDate: "2023-09-20",
     },
     specifications: {
-      "Title": "The Amazing Spider-Man",
-      "Issue": "#1",
-      "Publisher": "Marvel Comics",
-      "Year": "1963",
-      "Grade": "CGC 7.5 VF-",
-      "Signature": "Stan Lee (Yellow Label)"
+      Title: "The Amazing Spider-Man",
+      Issue: "#1",
+      Publisher: "Marvel Comics",
+      Year: "1963",
+      Grade: "CGC 7.5 VF-",
+      Signature: "Stan Lee (Yellow Label)",
     },
     tags: ["Marvel", "Spider-Man", "Stan Lee", "CGC", "1963", "Silver Age"],
     featured: true,
     createdAt: "2023-12-28",
-    updatedAt: "2024-01-03"
+    updatedAt: "2024-01-03",
   },
   {
     id: "prod-5",
     name: "Batman: The Killing Joke - First Print (1988)",
     slug: "batman-killing-joke-first-print",
-    description: "Alan Moore's masterpiece 'The Killing Joke' first print from 1988. Features the definitive Joker origin story and Barbara Gordon's transformation. Near mint condition with bright colors and sharp spine.",
+    description:
+      "Alan Moore's masterpiece 'The Killing Joke' first print from 1988. Features the definitive Joker origin story and Barbara Gordon's transformation. Near mint condition with bright colors and sharp spine.",
     price: 180,
     originalPrice: 220,
-    image: "https://images.unsplash.com/photo-1578663287732-a3985e772b6b?w=400&h=600&fit=crop&brightness=0.7",
+    image:
+      "https://images.unsplash.com/photo-1578663287732-a3985e772b6b?w=400&h=600&fit=crop&brightness=0.7",
     images: [
       "https://images.unsplash.com/photo-1578663287732-a3985e772b6b?w=400&h=600&fit=crop&brightness=0.7",
-      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop",
     ],
     category: "Comics",
     categorySlug: "comics",
@@ -208,32 +229,34 @@ export const mockProducts = [
       verified: true,
       certificate: "DCV-AUTH-2024-003",
       verifiedBy: "Dubai Comic Vault",
-      verificationDate: "2024-01-12"
+      verificationDate: "2024-01-12",
     },
     specifications: {
-      "Title": "Batman: The Killing Joke",
-      "Publisher": "DC Comics",
-      "Year": "1988",
-      "Writer": "Alan Moore",
-      "Artist": "Brian Bolland",
-      "Print": "First Print"
+      Title: "Batman: The Killing Joke",
+      Publisher: "DC Comics",
+      Year: "1988",
+      Writer: "Alan Moore",
+      Artist: "Brian Bolland",
+      Print: "First Print",
     },
     tags: ["DC Comics", "Batman", "Joker", "Alan Moore", "First Print", "1988"],
     featured: false,
     createdAt: "2024-01-12",
-    updatedAt: "2024-01-14"
+    updatedAt: "2024-01-14",
   },
   {
     id: "prod-6",
     name: "One Piece Volume 1 - First Japanese Edition",
     slug: "one-piece-volume-1-japanese",
-    description: "Original Japanese first edition of One Piece Volume 1 by Eiichiro Oda. Published by Shueisha in 1997. Excellent condition with minimal shelf wear. A must-have for manga collectors and One Piece fans.",
+    description:
+      "Original Japanese first edition of One Piece Volume 1 by Eiichiro Oda. Published by Shueisha in 1997. Excellent condition with minimal shelf wear. A must-have for manga collectors and One Piece fans.",
     price: 95,
     originalPrice: 120,
-    image: "https://images.unsplash.com/photo-1578663287732-a3985e772b6b?w=400&h=600&fit=crop&brightness=1.2",
+    image:
+      "https://images.unsplash.com/photo-1578663287732-a3985e772b6b?w=400&h=600&fit=crop&brightness=1.2",
     images: [
       "https://images.unsplash.com/photo-1578663287732-a3985e772b6b?w=400&h=600&fit=crop&brightness=1.2",
-      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop",
     ],
     category: "Comics",
     categorySlug: "comics",
@@ -250,19 +273,26 @@ export const mockProducts = [
       verified: true,
       certificate: "DCV-AUTH-2024-004",
       verifiedBy: "Dubai Comic Vault",
-      verificationDate: "2024-01-06"
+      verificationDate: "2024-01-06",
     },
     specifications: {
-      "Title": "One Piece",
-      "Volume": "1",
-      "Language": "Japanese",
-      "Publisher": "Shueisha",
-      "Year": "1997",
-      "Author": "Eiichiro Oda"
+      Title: "One Piece",
+      Volume: "1",
+      Language: "Japanese",
+      Publisher: "Shueisha",
+      Year: "1997",
+      Author: "Eiichiro Oda",
     },
-    tags: ["Manga", "One Piece", "Eiichiro Oda", "Japanese", "First Edition", "Shueisha"],
+    tags: [
+      "Manga",
+      "One Piece",
+      "Eiichiro Oda",
+      "Japanese",
+      "First Edition",
+      "Shueisha",
+    ],
     featured: true,
     createdAt: "2024-01-06",
-    updatedAt: "2024-01-11"
-  }
+    updatedAt: "2024-01-11",
+  },
 ];

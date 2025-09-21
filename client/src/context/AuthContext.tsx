@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import {
+  createContext,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 // Types
 export interface User {
@@ -11,7 +17,7 @@ export interface User {
   fullName?: string;
   phone?: string;
   imageUrl?: string;
-  role: 'customer' | 'vendor' | 'admin';
+  role: "customer" | "vendor" | "admin";
   primaryEmailAddress?: {
     emailAddress: string;
   };
@@ -19,7 +25,7 @@ export interface User {
     emailAddress: string;
   }>;
   publicMetadata?: {
-    role: 'customer' | 'vendor' | 'admin';
+    role: "customer" | "vendor" | "admin";
   };
 }
 
@@ -33,55 +39,62 @@ interface AuthContextType {
   login: (email: string, password: string) => boolean;
   logout: () => void;
   signOut: () => void;
-  requestPasswordReset: (email: string) => Promise<{ success: boolean; message: string }>;
-  verifyEmail: (email: string, code: string) => Promise<{ success: boolean; message: string }>;
-  resendVerificationEmail: (email: string) => Promise<{ success: boolean; message: string }>;
+  requestPasswordReset: (
+    email: string,
+  ) => Promise<{ success: boolean; message: string }>;
+  verifyEmail: (
+    email: string,
+    code: string,
+  ) => Promise<{ success: boolean; message: string }>;
+  resendVerificationEmail: (
+    email: string,
+  ) => Promise<{ success: boolean; message: string }>;
 }
 
 // Demo verification codes for testing
-const DEMO_VERIFICATION_CODES = ['123456', '000000', '111111', '999999'];
+const DEMO_VERIFICATION_CODES = ["123456", "000000", "111111", "999999"];
 
 // Default users for testing
 const DEFAULT_USERS: User[] = [
   {
-    id: '1',
-    email: 'test@gmail.com',
-    firstName: 'Test',
-    lastName: 'User',
-    fullName: 'Test User',
-    phone: '+1 (555) 123-4567',
-    imageUrl: '',
-    role: 'customer',
-    primaryEmailAddress: { emailAddress: 'test@gmail.com' },
-    emailAddresses: [{ emailAddress: 'test@gmail.com' }],
-    publicMetadata: { role: 'customer' }
+    id: "1",
+    email: "test@gmail.com",
+    firstName: "Test",
+    lastName: "User",
+    fullName: "Test User",
+    phone: "+1 (555) 123-4567",
+    imageUrl: "",
+    role: "customer",
+    primaryEmailAddress: { emailAddress: "test@gmail.com" },
+    emailAddresses: [{ emailAddress: "test@gmail.com" }],
+    publicMetadata: { role: "customer" },
   },
   {
-    id: '2',
-    email: 'vendor@gmail.com',
-    firstName: 'Vendor',
-    lastName: 'User',
-    fullName: 'Vendor User',
-    phone: '+1 (555) 987-6543',
-    imageUrl: '',
-    role: 'vendor',
-    primaryEmailAddress: { emailAddress: 'vendor@gmail.com' },
-    emailAddresses: [{ emailAddress: 'vendor@gmail.com' }],
-    publicMetadata: { role: 'vendor' }
+    id: "2",
+    email: "vendor@gmail.com",
+    firstName: "Vendor",
+    lastName: "User",
+    fullName: "Vendor User",
+    phone: "+1 (555) 987-6543",
+    imageUrl: "",
+    role: "vendor",
+    primaryEmailAddress: { emailAddress: "vendor@gmail.com" },
+    emailAddresses: [{ emailAddress: "vendor@gmail.com" }],
+    publicMetadata: { role: "vendor" },
   },
   {
-    id: '3',
-    email: 'admin@gmail.com',
-    firstName: 'Admin',
-    lastName: 'User',
-    fullName: 'Admin User',
-    phone: '+1 (555) 555-0123',
-    imageUrl: '',
-    role: 'admin',
-    primaryEmailAddress: { emailAddress: 'admin@gmail.com' },
-    emailAddresses: [{ emailAddress: 'admin@gmail.com' }],
-    publicMetadata: { role: 'admin' }
-  }
+    id: "3",
+    email: "admin@gmail.com",
+    firstName: "Admin",
+    lastName: "User",
+    fullName: "Admin User",
+    phone: "+1 (555) 555-0123",
+    imageUrl: "",
+    role: "admin",
+    primaryEmailAddress: { emailAddress: "admin@gmail.com" },
+    emailAddresses: [{ emailAddress: "admin@gmail.com" }],
+    publicMetadata: { role: "admin" },
+  },
 ];
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -95,65 +108,72 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Load user from localStorage on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem('dummy-auth-user');
+    const storedUser = localStorage.getItem("dummy-auth-user");
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
       } catch (error) {
-        console.error('Error parsing stored user:', error);
-        localStorage.removeItem('dummy-auth-user');
+        if (process.env.NODE_ENV !== "production")
+          console.error("Error parsing stored user:", error);
+        localStorage.removeItem("dummy-auth-user");
       }
     }
     setIsLoaded(true);
   }, []);
 
-  const requestPasswordReset = async (email: string): Promise<{ success: boolean; message: string }> => {
+  const requestPasswordReset = async (
+    email: string,
+  ): Promise<{ success: boolean; message: string }> => {
     setIsResettingPassword(true);
 
     // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 2500));
+    await new Promise((resolve) => setTimeout(resolve, 2500));
 
     try {
       // Check if email exists in our demo users
-      const userExists = DEFAULT_USERS.some(u => u.email === email);
+      const userExists = DEFAULT_USERS.some((u) => u.email === email);
 
       if (userExists) {
         setIsResettingPassword(false);
         return {
           success: true,
-          message: 'Password reset link has been sent to your email address.'
+          message: "Password reset link has been sent to your email address.",
         };
       } else {
         setIsResettingPassword(false);
         return {
           success: false,
-          message: 'No account found with this email address.'
+          message: "No account found with this email address.",
         };
       }
-    } catch (error) {
+    } catch (_error) {
       setIsResettingPassword(false);
       return {
         success: false,
-        message: 'An error occurred while processing your request. Please try again.'
+        message:
+          "An error occurred while processing your request. Please try again.",
       };
     }
   };
 
-  const verifyEmail = async (email: string, code: string): Promise<{ success: boolean; message: string }> => {
+  const verifyEmail = async (
+    email: string,
+    code: string,
+  ): Promise<{ success: boolean; message: string }> => {
     setIsVerifyingEmail(true);
 
     // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     try {
       // Check if email exists in our demo users
-      const userExists = DEFAULT_USERS.some(u => u.email === email);
+      const userExists = DEFAULT_USERS.some((u) => u.email === email);
 
       if (!userExists) {
         setIsVerifyingEmail(false);
         return {
           success: false,
-          message: 'Invalid email address.'
+          message: "Invalid email address.",
         };
       }
 
@@ -162,63 +182,68 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsVerifyingEmail(false);
         return {
           success: true,
-          message: 'Email verified successfully! You can now sign in.'
+          message: "Email verified successfully! You can now sign in.",
         };
       } else {
         setIsVerifyingEmail(false);
         return {
           success: false,
-          message: 'Invalid verification code. Please check your code and try again.'
+          message:
+            "Invalid verification code. Please check your code and try again.",
         };
       }
-    } catch (error) {
+    } catch (_error) {
       setIsVerifyingEmail(false);
       return {
         success: false,
-        message: 'An error occurred while verifying your email. Please try again.'
+        message:
+          "An error occurred while verifying your email. Please try again.",
       };
     }
   };
 
-  const resendVerificationEmail = async (email: string): Promise<{ success: boolean; message: string }> => {
+  const resendVerificationEmail = async (
+    email: string,
+  ): Promise<{ success: boolean; message: string }> => {
     setIsResendingCode(true);
 
     // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     try {
       // Check if email exists in our demo users
-      const userExists = DEFAULT_USERS.some(u => u.email === email);
+      const userExists = DEFAULT_USERS.some((u) => u.email === email);
 
       if (userExists) {
         setIsResendingCode(false);
         return {
           success: true,
-          message: 'Verification code has been resent to your email address.'
+          message: "Verification code has been resent to your email address.",
         };
       } else {
         setIsResendingCode(false);
         return {
           success: false,
-          message: 'No account found with this email address.'
+          message: "No account found with this email address.",
         };
       }
-    } catch (error) {
+    } catch (_error) {
       setIsResendingCode(false);
       return {
         success: false,
-        message: 'An error occurred while resending the verification code. Please try again.'
+        message:
+          "An error occurred while resending the verification code. Please try again.",
       };
     }
   };
 
   const login = (email: string, password: string): boolean => {
     // Simple hardcoded authentication check
-    if (password === 'password') {
-      const foundUser = DEFAULT_USERS.find(u => u.email === email);
+    if (password === "password") {
+      const foundUser = DEFAULT_USERS.find((u) => u.email === email);
       if (foundUser) {
         setUser(foundUser);
-        localStorage.setItem('dummy-auth-user', JSON.stringify(foundUser));
+        localStorage.setItem("dummy-auth-user", JSON.stringify(foundUser));
         return true;
       }
     }
@@ -227,7 +252,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('dummy-auth-user');
+    localStorage.removeItem("dummy-auth-user");
   };
 
   const signOut = logout; // Alias for compatibility
@@ -244,21 +269,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signOut,
     requestPasswordReset,
     verifyEmail,
-    resendVerificationEmail
+    resendVerificationEmail,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 // Hook to use auth context
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }
@@ -275,10 +296,22 @@ export function useClerk() {
 }
 
 // Compatibility components
-export function SignInButton({ children, mode }: { children: ReactNode; mode?: string }) {
+export function SignInButton({
+  children,
+  mode: _mode,
+}: {
+  children: ReactNode;
+  mode?: string;
+}) {
   return <>{children}</>;
 }
 
-export function SignUpButton({ children, mode }: { children: ReactNode; mode?: string }) {
+export function SignUpButton({
+  children,
+  mode: _mode,
+}: {
+  children: ReactNode;
+  mode?: string;
+}) {
   return <>{children}</>;
 }

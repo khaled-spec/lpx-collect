@@ -1,10 +1,5 @@
 // Admin Mock Library - Centralized mock data service for admin interface
-import {
-  mockProducts,
-  mockVendors,
-  mockVendorOrders,
-  mockCategories,
-} from "./api/mock";
+import { mockProducts, mockVendorOrders, mockVendors } from "./api/mock";
 
 // Admin-specific interfaces
 export interface AdminStats {
@@ -98,7 +93,7 @@ class AdminMockService {
   // Get all products from all vendors
   getAllProducts(): AdminProduct[] {
     return mockProducts.map((product) => {
-      const vendor = mockVendors.find(v => v.id === product.vendorId);
+      const vendor = mockVendors.find((v) => v.id === product.vendorId);
 
       return {
         id: product.id,
@@ -119,7 +114,8 @@ class AdminMockService {
   // Get all orders from all vendors
   getAllOrders(): AdminOrder[] {
     return mockVendorOrders.map((order) => {
-      const vendor = mockVendors.find(v => v.id === "vendor-1") || mockVendors[0];
+      const vendor =
+        mockVendors.find((v) => v.id === "vendor-1") || mockVendors[0];
 
       return {
         id: order.id,
@@ -144,8 +140,10 @@ class AdminMockService {
   // Get all vendors
   getAllVendors(): AdminVendor[] {
     return mockVendors.map((vendor) => {
-      const vendorProducts = mockProducts.filter(p => p.vendorId === vendor.id);
-      const vendorOrders = mockVendorOrders.filter(() => Math.random() > 0.3); // Simulate some orders for each vendor
+      const vendorProducts = mockProducts.filter(
+        (p) => p.vendorId === vendor.id,
+      );
+      const _vendorOrders = mockVendorOrders.filter(() => Math.random() > 0.3); // Simulate some orders for each vendor
 
       return {
         id: vendor.id,
@@ -174,10 +172,14 @@ class AdminMockService {
     const vendors = this.getAllVendors();
 
     const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
-    const activeProducts = products.filter(p => p.status === "active").length;
-    const pendingProducts = products.filter(p => p.status === "pending").length;
-    const activeVendors = vendors.filter(v => v.status === "verified").length;
-    const pendingVendors = vendors.filter(v => v.status === "pending").length;
+    const _activeProducts = products.filter(
+      (p) => p.status === "active",
+    ).length;
+    const pendingProducts = products.filter(
+      (p) => p.status === "pending",
+    ).length;
+    const activeVendors = vendors.filter((v) => v.status === "verified").length;
+    const pendingVendors = vendors.filter((v) => v.status === "pending").length;
 
     return {
       totalUsers: 127, // Mock user count
@@ -202,7 +204,7 @@ class AdminMockService {
     const products = this.getAllProducts();
 
     // Add order activities
-    orders.slice(0, 3).forEach((order, index) => {
+    orders.slice(0, 3).forEach((order, _index) => {
       activities.push({
         id: `activity-order-${order.id}`,
         action: `New order ${order.orderNumber}`,
@@ -215,7 +217,7 @@ class AdminMockService {
     });
 
     // Add product activities
-    products.slice(0, 2).forEach((product, index) => {
+    products.slice(0, 2).forEach((product, _index) => {
       activities.push({
         id: `activity-product-${product.id}`,
         action: `Product listed`,
@@ -241,10 +243,13 @@ class AdminMockService {
       });
     });
 
-    return activities.sort((a, b) =>
-      new Date(this.parseRelativeTime(b.time)).getTime() -
-      new Date(this.parseRelativeTime(a.time)).getTime()
-    ).slice(0, 5);
+    return activities
+      .sort(
+        (a, b) =>
+          new Date(this.parseRelativeTime(b.time)).getTime() -
+          new Date(this.parseRelativeTime(a.time)).getTime(),
+      )
+      .slice(0, 5);
   }
 
   // Get top performing vendors
@@ -258,7 +263,7 @@ class AdminMockService {
     return this.getAllVendors()
       .sort((a, b) => b.revenue - a.revenue)
       .slice(0, 5)
-      .map(vendor => ({
+      .map((vendor) => ({
         id: vendor.id,
         name: vendor.name,
         sales: vendor.sales,
@@ -292,7 +297,9 @@ class AdminMockService {
   private getRelativeTime(dateString: string): string {
     const date = new Date(dateString);
     const now = new Date();
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    const diffInHours = Math.floor(
+      (now.getTime() - date.getTime()) / (1000 * 60 * 60),
+    );
 
     if (diffInHours < 1) return "Just now";
     if (diffInHours < 24) return `${diffInHours}h ago`;
@@ -312,23 +319,27 @@ class AdminMockService {
     const now = new Date();
 
     if (relativeTime.includes("h ago")) {
-      const hours = parseInt(relativeTime);
+      const hours = parseInt(relativeTime, 10);
       return new Date(now.getTime() - hours * 60 * 60 * 1000).toISOString();
     }
 
     if (relativeTime.includes("d ago")) {
-      const days = parseInt(relativeTime);
+      const days = parseInt(relativeTime, 10);
       return new Date(now.getTime() - days * 24 * 60 * 60 * 1000).toISOString();
     }
 
     if (relativeTime.includes("w ago")) {
-      const weeks = parseInt(relativeTime);
-      return new Date(now.getTime() - weeks * 7 * 24 * 60 * 60 * 1000).toISOString();
+      const weeks = parseInt(relativeTime, 10);
+      return new Date(
+        now.getTime() - weeks * 7 * 24 * 60 * 60 * 1000,
+      ).toISOString();
     }
 
     if (relativeTime.includes("mo ago")) {
-      const months = parseInt(relativeTime);
-      return new Date(now.getTime() - months * 30 * 24 * 60 * 60 * 1000).toISOString();
+      const months = parseInt(relativeTime, 10);
+      return new Date(
+        now.getTime() - months * 30 * 24 * 60 * 60 * 1000,
+      ).toISOString();
     }
 
     return now.toISOString();
