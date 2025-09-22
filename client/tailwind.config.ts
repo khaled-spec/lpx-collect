@@ -126,7 +126,7 @@ const config: Config = {
         {} as Record<string, [string, { lineHeight: string }]>,
       ),
 
-      fontWeight: tokens.typography.weight,
+      fontWeight: tokens.typography.fontWeight,
       letterSpacing: tokens.typography.letterSpacing,
       lineHeight: Object.entries(tokens.typography.scale.body).reduce(
         (acc, [key, config]) => {
@@ -145,7 +145,6 @@ const config: Config = {
       // BORDERS & RADIUS - From design tokens
       // ============================================
       borderRadius: {
-        ...tokens.borders.radius,
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
@@ -239,7 +238,6 @@ const config: Config = {
       },
 
       animation: {
-        ...tokens.motion.presets,
         spin: "spin 1s linear infinite",
         ping: "ping 1s cubic-bezier(0, 0, 0.2, 1) infinite",
         pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
@@ -259,10 +257,14 @@ const config: Config = {
       // ============================================
       // LAYOUT - From design tokens
       // ============================================
-      zIndex: tokens.zIndex,
+      zIndex: Object.fromEntries(
+        Object.entries(tokens.zIndex).map(([key, value]) => [
+          key,
+          String(value),
+        ]),
+      ),
 
       maxWidth: {
-        ...tokens.spacing.container,
         screen: "100vw",
       },
 
@@ -272,11 +274,8 @@ const config: Config = {
   plugins: [
     tailwindcssAnimate,
     // Custom plugin for additional utilities
-    ({
-      addUtilities,
-    }: {
-      addUtilities: (utilities: Record<string, Record<string, string>>) => void;
-    }) => {
+    // biome-ignore lint/suspicious/noExplicitAny: Tailwind plugin API requires flexible typing
+    ({ addUtilities }: any) => {
       const newUtilities = {
         // Smooth scroll
         ".smooth-scroll": {

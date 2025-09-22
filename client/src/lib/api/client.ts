@@ -3,9 +3,12 @@
 import { MockCategoryAPI, MockProductAPI, MockVendorAPI } from "./mock";
 import type {
   IAPIFactory,
+  ICartAPI,
   ICategoryAPI,
+  IPaymentMethodsAPI,
   IProductAPI,
   IVendorAPI,
+  IWishlistAPI,
 } from "./types";
 
 // Mock API Factory - Uses mock data instead of HTTP calls
@@ -20,6 +23,18 @@ class MockAPIFactory implements IAPIFactory {
 
   createVendorAPI(): IVendorAPI {
     return new MockVendorAPI();
+  }
+
+  createCartAPI(): ICartAPI {
+    throw new Error("Cart API not implemented in mock factory");
+  }
+
+  createWishlistAPI(): IWishlistAPI {
+    throw new Error("Wishlist API not implemented in mock factory");
+  }
+
+  createPaymentMethodsAPI(): IPaymentMethodsAPI {
+    throw new Error("Payment Methods API not implemented in mock factory");
   }
 }
 

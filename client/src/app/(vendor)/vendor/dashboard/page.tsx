@@ -42,7 +42,12 @@ interface Analytics {
 interface Dashboard {
   analytics: Analytics;
   recentOrders: Order[];
-  topProducts: Product[];
+  topProducts: Array<{
+    id: string;
+    name: string;
+    sales: number;
+    revenue: number;
+  }>;
 }
 
 import {
@@ -105,7 +110,12 @@ import { SORT_OPTIONS, type SortOption } from "@/lib/browse-utils";
 
 const initialDashboardData = {
   analytics: mockVendorAnalytics,
-  recentOrders: mockVendorOrders.slice(0, 5), // Get the 5 most recent orders
+  recentOrders: mockVendorOrders.slice(0, 5).map((order) => ({
+    ...order,
+    createdAt: order.orderDate,
+    updatedAt: order.orderDate,
+    orderNumber: order.orderNumber,
+  })), // Get the 5 most recent orders
   topProducts: mockVendorAnalytics.topProducts,
   messages: [],
 };
@@ -275,15 +285,15 @@ function ProductTable({
                 <div>
                   <p className="font-medium">{product.name}</p>
                   <p className="text-sm text-muted-foreground truncate max-w-[200px]">
-                    {product.description}
+                    ID: {product.id}
                   </p>
                 </div>
               </TableCell>
-              <TableCell>{product.category}</TableCell>
+              <TableCell>N/A</TableCell>
               <TableCell className="font-medium">${product.price}</TableCell>
-              <TableCell>{product.stock || 0}</TableCell>
-              <TableCell>{getStatusBadge(product.status)}</TableCell>
-              <TableCell>{product.views || 0}</TableCell>
+              <TableCell>0</TableCell>
+              <TableCell>{getStatusBadge("open")}</TableCell>
+              <TableCell>0</TableCell>
               <TableCell className="text-right">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -393,12 +403,10 @@ function OrdersTable({ orders }: { orders: Order[] }) {
             <TableRow key={order.id}>
               <TableCell>
                 <div>
-                  <p className="font-medium">{order.orderNumber}</p>
-                  {order.trackingNumber && (
-                    <p className="text-sm text-muted-foreground">
-                      Track: {order.trackingNumber}
-                    </p>
-                  )}
+                  <p className="font-medium">{order.id}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Order #{order.id}
+                  </p>
                 </div>
               </TableCell>
               <TableCell>
@@ -412,19 +420,15 @@ function OrdersTable({ orders }: { orders: Order[] }) {
                   />
                   <div>
                     <p className="font-medium">{order.customer.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {order.customer.email}
-                    </p>
+                    <p className="text-sm text-muted-foreground">Customer</p>
                   </div>
                 </div>
               </TableCell>
               <TableCell>
                 <div>
-                  <p className="font-medium">{order.items.length} item(s)</p>
+                  <p className="font-medium">Order Items</p>
                   <p className="text-sm text-muted-foreground truncate max-w-[200px]">
-                    {order.items[0].productName}
-                    {order.items.length > 1 &&
-                      ` +${order.items.length - 1} more`}
+                    Order Details
                   </p>
                 </div>
               </TableCell>
@@ -433,7 +437,7 @@ function OrdersTable({ orders }: { orders: Order[] }) {
               </TableCell>
               <TableCell>{getStatusBadge(order.status)}</TableCell>
               <TableCell className="text-sm">
-                {formatDate(order.orderDate)}
+                {formatDate(order.createdAt)}
               </TableCell>
               <TableCell className="text-right">
                 <DropdownMenu>
@@ -452,12 +456,6 @@ function OrdersTable({ orders }: { orders: Order[] }) {
                       <Edit2 className="mr-2 h-4 w-4" />
                       Update Status
                     </DropdownMenuItem>
-                    {order.trackingNumber && (
-                      <DropdownMenuItem>
-                        <Package className="mr-2 h-4 w-4" />
-                        Track Package
-                      </DropdownMenuItem>
-                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
@@ -582,6 +580,12 @@ export default function VendorDashboardPage() {
         {/* Action Buttons */}
         <div className="flex justify-end gap-3 mb-6">
           <Button variant="outline" asChild>
+            <Link href="/vendor/payment-requests">
+              <DollarSign className="h-4 w-4 mr-2" />
+              Payment Requests
+            </Link>
+          </Button>
+          <Button variant="outline" asChild>
             <Link href="/vendor/products/new">
               <Plus className="h-4 w-4 mr-2" />
               Add Product
@@ -630,6 +634,12 @@ export default function VendorDashboardPage() {
                     <Link href="/vendor/products/new">
                       <Plus className="h-4 w-4 mr-2" />
                       Add New Product
+                    </Link>
+                  </Button>
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link href="/vendor/payment-requests">
+                      <DollarSign className="h-4 w-4 mr-2" />
+                      Payment Requests
                     </Link>
                   </Button>
                   <Button
@@ -709,7 +719,7 @@ export default function VendorDashboardPage() {
                                   {order.customer.name}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                  {order.orderNumber}
+                                  {order.id}
                                 </p>
                               </div>
                             </div>
@@ -764,35 +774,33 @@ export default function VendorDashboardPage() {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {dashboard.topProducts.map(
-                      (product: Product, index: number) => (
-                        <div
-                          key={product.id}
-                          className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                              <span className="text-sm font-bold text-primary">
-                                #{index + 1}
-                              </span>
-                            </div>
-                            <div>
-                              <p className="font-medium text-sm">
-                                {product.name}
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {product.sales} sales
-                              </p>
-                            </div>
+                    {dashboard.topProducts.map((product, index: number) => (
+                      <div
+                        key={product.id}
+                        className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                            <span className="text-sm font-bold text-primary">
+                              #{index + 1}
+                            </span>
                           </div>
-                          <div className="text-right">
+                          <div>
                             <p className="font-medium text-sm">
-                              AED {product.revenue}
+                              {product.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {product.sales} sales
                             </p>
                           </div>
                         </div>
-                      ),
-                    )}
+                        <div className="text-right">
+                          <p className="font-medium text-sm">
+                            AED {product.revenue}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </CardContent>
@@ -806,7 +814,7 @@ export default function VendorDashboardPage() {
                 <CardDescription>Latest customer orders</CardDescription>
               </CardHeader>
               <CardContent>
-                <OrdersTable orders={mockVendorOrders} />
+                <OrdersTable orders={dashboard.recentOrders} />
               </CardContent>
             </Card>
           </TabsContent>

@@ -19,6 +19,7 @@ export const mockVendorProducts = [
     dateCreated: "2024-01-10",
     lastUpdated: "2024-01-15",
     condition: "mint",
+    sales: 25,
   },
   {
     id: "vp-2",
@@ -39,6 +40,7 @@ export const mockVendorProducts = [
     dateCreated: "2024-01-08",
     lastUpdated: "2024-01-12",
     condition: "excellent",
+    sales: 15,
   },
   {
     id: "vp-3",
@@ -58,6 +60,7 @@ export const mockVendorProducts = [
     dateCreated: "2024-01-05",
     lastUpdated: "2024-01-10",
     condition: "near-mint",
+    sales: 18,
   },
   {
     id: "vp-4",
@@ -78,6 +81,7 @@ export const mockVendorProducts = [
     dateCreated: "2024-01-20",
     lastUpdated: "2024-01-22",
     condition: "new",
+    sales: 32,
   },
   {
     id: "vp-5",
@@ -97,6 +101,7 @@ export const mockVendorProducts = [
     dateCreated: "2024-01-25",
     lastUpdated: "2024-01-28",
     condition: "light-play",
+    sales: 8,
   },
   {
     id: "vp-6",
@@ -117,6 +122,7 @@ export const mockVendorProducts = [
     dateCreated: "2024-01-18",
     lastUpdated: "2024-01-26",
     condition: "mint",
+    sales: 22,
   },
   {
     id: "vp-7",
@@ -136,6 +142,7 @@ export const mockVendorProducts = [
     dateCreated: "2024-01-12",
     lastUpdated: "2024-01-15",
     condition: "excellent",
+    sales: 12,
   },
   {
     id: "vp-8",
@@ -156,6 +163,7 @@ export const mockVendorProducts = [
     dateCreated: "2024-01-30",
     lastUpdated: "2024-02-01",
     condition: "new",
+    sales: 5,
   },
 ];
 

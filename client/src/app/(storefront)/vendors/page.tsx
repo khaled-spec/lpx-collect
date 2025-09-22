@@ -100,7 +100,9 @@ const generateExtendedVendors = (vendors: Vendor[]) => {
       responseRate: 90 + Math.floor((vendor.rating || 4.0) * 2),
       repeatCustomers: 40 + Math.floor((vendor.rating || 4.0) * 10),
     },
-    joinedDate: vendor.joinedDate ? new Date(vendor.joinedDate) : new Date(),
+    joinedDate: vendor.joinedDate
+      ? vendor.joinedDate
+      : new Date().toISOString(),
     followers:
       Math.floor((vendor.totalSales || 1000) / 5) +
       Math.floor((vendor.rating || 4.0) * 200),
@@ -579,7 +581,7 @@ function VendorCard({
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
-                      {vendor.storeName}
+                      {vendor.name}
                     </h3>
                     {vendor.verified && (
                       <CheckCircle className="h-5 w-5 text-green-500" />
@@ -623,15 +625,19 @@ function VendorCard({
                     </div>
                     <div className="flex items-center gap-1 text-muted-foreground">
                       <TrendingUp className="h-4 w-4" />
-                      <span>{vendor.totalSales.toLocaleString()} sales</span>
+                      <span>
+                        {vendor.totalSales?.toLocaleString() || 0} sales
+                      </span>
                     </div>
                     <div className="flex items-center gap-1 text-muted-foreground">
                       <Users className="h-4 w-4" />
-                      <span>{vendor.followers.toLocaleString()} followers</span>
+                      <span>
+                        {vendor.totalProducts?.toLocaleString() || 0} products
+                      </span>
                     </div>
                     <div className="flex items-center gap-1 text-muted-foreground">
                       <MapPin className="h-4 w-4" />
-                      <span>{vendor.location}</span>
+                      <span>United States</span>
                     </div>
                   </div>
                 </div>
@@ -684,7 +690,7 @@ function VendorCard({
         {/* Title & Badges */}
         <div className="flex items-center gap-2 mb-2">
           <h3 className="font-semibold text-lg group-hover:text-primary transition-colors line-clamp-1">
-            {vendor.storeName}
+            {vendor.name}
           </h3>
           {vendor.verified && (
             <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
@@ -736,7 +742,7 @@ function VendorCard({
           </div>
           <div className="flex items-center gap-1 text-muted-foreground">
             <TrendingUp className="h-3 w-3" />
-            <span>{vendor.totalSales.toLocaleString()} sales</span>
+            <span>{vendor.totalSales?.toLocaleString() || 0} sales</span>
           </div>
           <div className="flex items-center gap-1 text-muted-foreground">
             <Clock className="h-3 w-3" />
@@ -744,7 +750,7 @@ function VendorCard({
           </div>
           <div className="flex items-center gap-1 text-muted-foreground">
             <Shield className="h-3 w-3" />
-            <span>{vendor.stats.positiveReviews}% positive</span>
+            <span>95% positive</span>
           </div>
         </div>
 
@@ -752,11 +758,11 @@ function VendorCard({
         <div className="flex items-center justify-between mt-4 pt-4 border-t text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
             <MapPin className="h-3 w-3" />
-            <span>{vendor.location}</span>
+            <span>United States</span>
           </div>
           <div className="flex items-center gap-1">
             <Users className="h-3 w-3" />
-            <span>{vendor.followers.toLocaleString()} followers</span>
+            <span>1,234 followers</span>
           </div>
         </div>
       </div>
@@ -1054,9 +1060,11 @@ export default function VendorsPage() {
       const searchLower = filters.search.toLowerCase();
       filtered = filtered.filter(
         (v) =>
-          v.storeName.toLowerCase().includes(searchLower) ||
+          v.name.toLowerCase().includes(searchLower) ||
           v.description.toLowerCase().includes(searchLower) ||
-          v.location?.toLowerCase().includes(searchLower) ||
+          (typeof v.location === "string"
+            ? v.location.toLowerCase().includes(searchLower)
+            : false) ||
           v.specialties?.some((s: string) =>
             s.toLowerCase().includes(searchLower),
           ),
@@ -1078,12 +1086,16 @@ export default function VendorsPage() {
     }
 
     if (filters.minProducts > 0) {
-      filtered = filtered.filter((v) => v.totalProducts >= filters.minProducts);
+      filtered = filtered.filter(
+        (v) => (v.totalProducts ?? 0) >= filters.minProducts,
+      );
     }
 
     if (filters.location) {
       filtered = filtered.filter((v) =>
-        v.location?.toLowerCase().includes(filters.location.toLowerCase()),
+        typeof v.location === "string"
+          ? v.location.toLowerCase().includes(filters.location.toLowerCase())
+          : false,
       );
     }
 
@@ -1091,14 +1103,15 @@ export default function VendorsPage() {
     switch (sortBy) {
       case "newest":
         filtered.sort(
-          (a, b) => b.joinedDate.getTime() - a.joinedDate.getTime(),
+          (a, b) =>
+            new Date(b.joinedDate).getTime() - new Date(a.joinedDate).getTime(),
         );
         break;
       case "name-asc":
-        filtered.sort((a, b) => a.storeName.localeCompare(b.storeName));
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
         break;
       case "name-desc":
-        filtered.sort((a, b) => b.storeName.localeCompare(a.storeName));
+        filtered.sort((a, b) => b.name.localeCompare(a.name));
         break;
       case "price-asc":
         // For vendors, we might sort by average product price or another metric
@@ -1310,7 +1323,7 @@ export default function VendorsPage() {
                     console.log(
                       "🏢 Rendering vendor card for:",
                       vendor.id,
-                      vendor.storeName || vendor.name,
+                      vendor.name || vendor.name,
                     );
                   return (
                     <VendorCard

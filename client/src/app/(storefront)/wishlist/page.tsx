@@ -32,17 +32,33 @@ function WishlistContent() {
   const products = items.map((item: Product) => ({
     ...item,
     image: item.images?.[0] || "",
-    categorySlug: item.categorySlug || "uncategorized",
+    categorySlug:
+      typeof item.category === "object"
+        ? item.category?.slug || "uncategorized"
+        : item.category || "uncategorized",
     vendor:
       typeof item.vendor === "object"
         ? item.vendor?.storeName || "Unknown Vendor"
         : item.vendor || "Unknown Vendor",
-    vendorId: typeof item.vendor === "object" ? item.vendor?.id : undefined,
-    name: item.title || item.name || "Untitled",
+    vendorId:
+      typeof item.vendor === "object"
+        ? item.vendor?.id || "unknown"
+        : "unknown",
+    name: item.title || "Untitled",
     category:
       typeof item.category === "object"
         ? item.category?.name || "Uncategorized"
         : item.category || "Uncategorized",
+    originalPrice: item.compareAtPrice || 0,
+    state: "open" as const,
+    rating: 0,
+    reviewCount: 0,
+    isActive: true,
+    tags: item.tags || [],
+    year: new Date().getFullYear(),
+    manufacturer: "Unknown",
+    createdAt: item.createdAt.toISOString(),
+    updatedAt: item.updatedAt.toISOString(),
   }));
 
   return (

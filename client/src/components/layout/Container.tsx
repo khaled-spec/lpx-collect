@@ -1,8 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { type ContainerSize, designTokens } from "@/design-system/compat";
 import { cn } from "@/lib/utils";
+
+type ContainerSize = "sm" | "md" | "lg" | "xl" | "full";
 
 interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: ContainerSize;
@@ -14,7 +15,7 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
   (
     {
       className,
-      size = "default",
+      size = "lg",
       as: Component = "div",
       noPadding = false,
       children,
@@ -22,12 +23,20 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
     },
     ref,
   ) => {
+    const sizeClasses = {
+      sm: "max-w-sm",
+      md: "max-w-md",
+      lg: "max-w-4xl",
+      xl: "max-w-6xl",
+      full: "max-w-full",
+    };
+
     return (
       <Component
         ref={ref}
         className={cn(
           "mx-auto w-full",
-          designTokens.container[size],
+          sizeClasses[size],
           !noPadding && "px-4 sm:px-6 lg:px-8",
           className,
         )}
@@ -42,10 +51,10 @@ Container.displayName = "Container";
 
 // Section Container with consistent spacing
 interface SectionProps extends React.HTMLAttributes<HTMLElement> {
-  size?: keyof typeof designTokens.spacing.page.section;
+  size?: "sm" | "md" | "lg" | "xl";
   background?: "default" | "muted" | "primary" | "dark";
   containerSize?: ContainerSize;
-  paddingSize?: keyof typeof designTokens.spacing.page.padding;
+  paddingSize?: "sm" | "md" | "lg" | "xl";
 }
 
 export const Section = React.forwardRef<HTMLElement, SectionProps>(
@@ -54,13 +63,27 @@ export const Section = React.forwardRef<HTMLElement, SectionProps>(
       className,
       size = "md",
       background = "default",
-      containerSize = "default",
+      containerSize = "lg",
       paddingSize = "md",
       children,
       ...props
     },
     ref,
   ) => {
+    const sectionSizeClasses = {
+      sm: "py-8",
+      md: "py-12",
+      lg: "py-16",
+      xl: "py-20",
+    };
+
+    const paddingSizeClasses = {
+      sm: "px-4",
+      md: "px-6",
+      lg: "px-8",
+      xl: "px-10",
+    };
+
     const backgroundClasses = {
       default: "",
       muted: "bg-gray-50 dark:bg-gray-800",
@@ -72,8 +95,10 @@ export const Section = React.forwardRef<HTMLElement, SectionProps>(
       <section
         ref={ref}
         className={cn(
-          designTokens.spacing.page.section[size],
-          designTokens.spacing.page.padding[paddingSize],
+          sectionSizeClasses[size as keyof typeof sectionSizeClasses] ||
+            sectionSizeClasses.md,
+          paddingSizeClasses[paddingSize as keyof typeof paddingSizeClasses] ||
+            paddingSizeClasses.md,
           backgroundClasses[background],
           className,
         )}
@@ -90,21 +115,33 @@ Section.displayName = "Section";
 
 // Grid Layout Component
 interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
-  cols?: keyof typeof designTokens.grid.cols;
-  gap?: keyof typeof designTokens.spacing.component.gap;
+  cols?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
+  gap?: "sm" | "md" | "lg" | "xl";
 }
 
 export const Grid = React.forwardRef<HTMLDivElement, GridProps>(
   ({ className, cols = 3, gap = "md", children, ...props }, ref) => {
+    const colsClasses = {
+      1: "grid-cols-1",
+      2: "grid-cols-2",
+      3: "grid-cols-3",
+      4: "grid-cols-4",
+      5: "grid-cols-5",
+      6: "grid-cols-6",
+      12: "grid-cols-12",
+    };
+
+    const gapClasses = {
+      sm: "gap-2",
+      md: "gap-4",
+      lg: "gap-6",
+      xl: "gap-8",
+    };
+
     return (
       <div
         ref={ref}
-        className={cn(
-          "grid",
-          designTokens.grid.cols[cols],
-          designTokens.spacing.component.gap[gap],
-          className,
-        )}
+        className={cn("grid", colsClasses[cols], gapClasses[gap], className)}
         {...props}
       >
         {children}
@@ -120,7 +157,7 @@ interface FlexProps extends React.HTMLAttributes<HTMLDivElement> {
   justify?: "start" | "end" | "center" | "between" | "around" | "evenly";
   align?: "start" | "end" | "center" | "baseline" | "stretch";
   wrap?: boolean;
-  gap?: keyof typeof designTokens.spacing.component.gap;
+  gap?: "sm" | "md" | "lg" | "xl";
 }
 
 export const Flex = React.forwardRef<HTMLDivElement, FlexProps>(
@@ -161,6 +198,13 @@ export const Flex = React.forwardRef<HTMLDivElement, FlexProps>(
       stretch: "items-stretch",
     };
 
+    const gapClasses = {
+      sm: "gap-2",
+      md: "gap-4",
+      lg: "gap-6",
+      xl: "gap-8",
+    };
+
     return (
       <div
         ref={ref}
@@ -170,7 +214,7 @@ export const Flex = React.forwardRef<HTMLDivElement, FlexProps>(
           justifyClasses[justify],
           alignClasses[align],
           wrap && "flex-wrap",
-          designTokens.spacing.component.gap[gap],
+          gapClasses[gap],
           className,
         )}
         {...props}
@@ -184,7 +228,7 @@ Flex.displayName = "Flex";
 
 // Stack Component (vertical flex with gap)
 interface StackProps extends React.HTMLAttributes<HTMLDivElement> {
-  gap?: keyof typeof designTokens.spacing.component.gap;
+  gap?: "sm" | "md" | "lg" | "xl";
   align?: "start" | "end" | "center" | "stretch";
 }
 
@@ -213,12 +257,20 @@ interface CenterProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Center = React.forwardRef<HTMLDivElement, CenterProps>(
   ({ className, maxWidth, children, ...props }, ref) => {
+    const maxWidthClasses = {
+      sm: "max-w-sm",
+      md: "max-w-md",
+      lg: "max-w-4xl",
+      xl: "max-w-6xl",
+      full: "max-w-full",
+    };
+
     return (
       <div
         ref={ref}
         className={cn(
           "flex items-center justify-center",
-          maxWidth && designTokens.container[maxWidth],
+          maxWidth && maxWidthClasses[maxWidth],
           className,
         )}
         {...props}

@@ -80,6 +80,13 @@ export interface Order {
   notes?: string;
   createdAt: Date;
   updatedAt: Date;
+  orderNumber?: string;
+  customer?: {
+    id: string;
+    name: string;
+    email?: string;
+    avatar?: string;
+  };
 }
 
 export interface OrderItem {

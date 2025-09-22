@@ -82,7 +82,7 @@ export class MockVendorAPI implements IVendorAPI {
           filteredVendors,
         );
 
-      const response = {
+      const response: ApiResponse<Vendor[]> = {
         success: true,
         data: filteredVendors,
       };
@@ -183,9 +183,12 @@ export class MockVendorAPI implements IVendorAPI {
         (product) => product.vendorId === vendorId,
       );
 
-      let filteredProducts = vendorProducts;
+      let filteredProducts: Product[] = vendorProducts as unknown as Product[];
       if (filter) {
-        filteredProducts = filterProducts(vendorProducts, filter);
+        filteredProducts = filterProducts(
+          vendorProducts as unknown as Product[],
+          filter,
+        );
       }
 
       const page = filter?.page || 1;

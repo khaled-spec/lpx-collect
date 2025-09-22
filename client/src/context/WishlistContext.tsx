@@ -43,9 +43,8 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
 
     // Force load sample data if wishlist is empty and we're in development
     const currentItems = wishlistMockService.getWishlist();
-    if (currentItems.length === 0 && process.env.NODE_ENV === "development") {
-      if (process.env.NODE_ENV !== "production")
-        console.log("❤️ Wishlist is empty, loading sample data...");
+    if (currentItems.length === 0 && process.env.NODE_ENV !== "production") {
+      console.log("❤️ Wishlist is empty, loading sample data...");
       wishlistMockService.loadSampleData();
     }
 

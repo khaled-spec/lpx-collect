@@ -283,20 +283,25 @@ export class WishlistMockService {
       return {
         success: false,
         message: `Failed to move to cart: ${cartResult.message}`,
-        data: cartResult.data,
+        data: cartResult.data as string,
       };
     }
 
     // Remove from wishlist if successfully added to cart
-    const removeResult = this.removeFromWishlist(productId, userId);
+    const _removeResult = this.removeFromWishlist(productId, userId);
 
     return {
       success: true,
       message: `Moved ${item.product.title} to cart`,
       data: {
-        cartItem: cartResult.data,
-        removedWishlistItem: removeResult.data,
-      },
+        successful: [
+          {
+            product: item.product,
+            cartItem: cartResult.data as CartItem,
+          },
+        ],
+        failed: [],
+      } as MoveToCartResults,
     };
   }
 
@@ -322,7 +327,7 @@ export class WishlistMockService {
       if (cartResult.success) {
         results.successful.push({
           product: item.product,
-          cartItem: cartResult.data,
+          cartItem: cartResult.data as CartItem,
         });
       } else {
         results.failed.push({
@@ -456,7 +461,7 @@ export class WishlistMockService {
     return {
       success: true,
       message: "Wishlist ready to share",
-      data: shareData,
+      data: JSON.stringify(shareData),
     };
   }
 
@@ -468,7 +473,7 @@ export class WishlistMockService {
     return {
       success: true,
       message: "Sample wishlist data loaded",
-      data: sampleData,
+      data: `Loaded ${sampleData.items.length} sample items`,
     };
   }
 
@@ -488,7 +493,7 @@ export class WishlistMockService {
     return {
       success: true,
       message: `Loaded ${itemCount} random items to wishlist`,
-      data: wishlistData,
+      data: `Loaded ${wishlistData.items.length} random items`,
     };
   }
 
@@ -549,7 +554,7 @@ export class WishlistMockService {
     return {
       success: true,
       message: `Loaded ${wishlistItems.length} items from ${categorySlug} category`,
-      data: wishlistData,
+      data: `Loaded ${wishlistItems.length} items from ${categorySlug}`,
     };
   }
 }

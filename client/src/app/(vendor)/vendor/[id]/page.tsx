@@ -125,7 +125,14 @@ export default function VendorStorefrontPage() {
 
         const response = await vendorAPI.getVendorProducts(vendor.id, {
           search: searchQuery || undefined,
-          sortBy: sortBy,
+          sortBy: sortBy as
+            | "featured"
+            | "newest"
+            | "price-asc"
+            | "price-desc"
+            | "rating"
+            | "popular"
+            | "name",
         });
 
         if (response.success) {
@@ -280,9 +287,7 @@ export default function VendorStorefrontPage() {
                     <Store className="h-10 w-10 text-muted-foreground" />
                   )}
                 </div>
-                <h1 className={cn(designTokens.typography.h4)}>
-                  {vendor.name}
-                </h1>
+                <h1 className="text-2xl font-bold">{vendor.name}</h1>
                 {vendor.verified && (
                   <div className="inline-flex items-center gap-1 text-xs text-green-600 mt-1">
                     <CheckCircle className="h-3 w-3" />
@@ -426,7 +431,7 @@ export default function VendorStorefrontPage() {
             {/* Main Content Area - Products */}
             <div className="flex-1">
               <div id="products" className="space-y-6">
-                <h2 className={cn(designTokens.typography.h3)}>Products</h2>
+                <h2 className="text-xl font-semibold">Products</h2>
 
                 {/* Compact Filter Bar - Matching Browse Page */}
                 <div className="mb-6">
@@ -770,9 +775,7 @@ export default function VendorStorefrontPage() {
         <div className="flex-1 space-y-6">
           {/* About Section */}
           <div className="bg-card rounded-lg border p-6">
-            <h2 className={cn(designTokens.typography.h4, "mb-4")}>
-              About {vendor.name}
-            </h2>
+            <h2 className="text-lg font-semibold mb-4">About {vendor.name}</h2>
             <p className="text-muted-foreground leading-relaxed">
               {vendor.description}
             </p>
@@ -781,9 +784,7 @@ export default function VendorStorefrontPage() {
           {/* Policies Section */}
           {vendor.policies && (
             <div className="bg-card rounded-lg border p-6">
-              <h2 className={cn(designTokens.typography.h4, "mb-4")}>
-                Policies
-              </h2>
+              <h2 className="text-lg font-semibold mb-4">Policies</h2>
               <div className="space-y-4">
                 {vendor.policies.shipping && (
                   <div>
@@ -885,7 +886,7 @@ function VendorPageSkeleton() {
 
                 <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                   {Array.from({ length: 6 }, (_, index) => ({
-                    id: `vendor-${vendorId}-gallery-skeleton-${index}-${Math.random().toString(36).substr(2, 9)}`,
+                    id: `vendor-gallery-skeleton-${index}-${Math.random().toString(36).substr(2, 9)}`,
                     index,
                   })).map((item) => (
                     <Skeleton key={item.id} className="h-64 rounded-lg" />

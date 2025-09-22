@@ -2,7 +2,7 @@
 // Helper functions for working with design tokens
 
 import { cn } from "@/lib/utils";
-import { tokens } from "./tokens";
+import { tokens } from "../../lib/tokens";
 
 // ============================================
 // COLOR UTILITIES
@@ -108,8 +108,8 @@ export const fluidText = (
  * Get spacing value from tokens
  * @param size - Spacing size key
  */
-export const getSpacing = (size: keyof typeof tokens.spacing.scale): string => {
-  return tokens.spacing.scale[size];
+export const getSpacing = (size: keyof typeof tokens.spacing): string => {
+  return tokens.spacing[size];
 };
 
 /**
@@ -149,10 +149,10 @@ export const containerPadding = (): string => {
  * @param options - Animation options
  */
 export const getAnimation = (
-  animation: keyof typeof tokens.motion.animations,
+  animation: keyof typeof tokens.animation,
   options?: {
-    duration?: keyof typeof tokens.motion.duration;
-    easing?: keyof typeof tokens.motion.easing;
+    duration?: keyof typeof tokens.transitions.duration;
+    easing?: string;
     delay?: string;
     iterationCount?: string | number;
   },
@@ -190,17 +190,15 @@ export const staggerAnimation = (count: number, baseDelay = 100): string[] => {
 export const transition = (
   properties: string | string[],
   options?: {
-    duration?: keyof typeof tokens.motion.duration;
-    easing?: keyof typeof tokens.motion.easing;
+    duration?: keyof typeof tokens.transitions.duration;
+    easing?: string;
   },
 ): string => {
   const props = Array.isArray(properties) ? properties.join(", ") : properties;
   const duration = options?.duration
-    ? tokens.motion.duration[options.duration]
+    ? tokens.transitions.duration[options.duration]
     : "200ms";
-  const easing = options?.easing
-    ? tokens.motion.easing[options.easing]
-    : tokens.motion.easing.standard;
+  const easing = options?.easing || "ease";
 
   return `${props} ${duration} ${easing}`;
 };
@@ -215,16 +213,14 @@ export const transition = (
  * @param color - Optional shadow color
  */
 export const getShadow = (
-  elevation: keyof typeof tokens.effects.shadows.elevation,
+  elevation: keyof typeof tokens.shadows,
   color?: string,
 ): string => {
-  if (color) {
-    return tokens.effects.shadows.elevation[elevation].replace(
-      /rgb\(0 0 0/g,
-      color,
-    );
+  const shadow = tokens.shadows[elevation];
+  if (color && typeof shadow === "string") {
+    return shadow.replace(/rgb\(0 0 0/g, color);
   }
-  return tokens.effects.shadows.elevation[elevation];
+  return shadow;
 };
 
 /**
@@ -234,7 +230,21 @@ export const getShadow = (
 export const glassMorphism = (
   variant: "light" | "dark" | "colored" = "light",
 ): object => {
-  return tokens.effects.glass.surface[variant];
+  const variants = {
+    light: {
+      backdropFilter: "blur(10px)",
+      backgroundColor: "rgba(255, 255, 255, 0.1)",
+    },
+    dark: {
+      backdropFilter: "blur(10px)",
+      backgroundColor: "rgba(0, 0, 0, 0.1)",
+    },
+    colored: {
+      backdropFilter: "blur(10px)",
+      backgroundColor: "rgba(59, 130, 246, 0.1)",
+    },
+  };
+  return variants[variant];
 };
 
 /**
@@ -243,7 +253,7 @@ export const glassMorphism = (
  * @param backdrop - Whether to apply backdrop blur
  */
 export const blur = (
-  amount: keyof typeof tokens.effects.blur,
+  amount: "sm" | "md" | "lg" | "xl",
   backdrop = false,
 ): string => {
   return backdrop ? `backdrop-blur-${amount}` : `blur-${amount}`;
@@ -259,7 +269,7 @@ export const blur = (
  * @param corners - Specific corners to apply (optional)
  */
 export const getRadius = (
-  size: keyof typeof tokens.borders.radius,
+  size: keyof typeof tokens.borderRadius,
   corners?: ("tl" | "tr" | "bl" | "br")[],
 ): string => {
   if (!corners) {
@@ -274,21 +284,16 @@ export const getRadius = (
  * @param options - Border options
  */
 export const border = (options: {
-  width?: keyof typeof tokens.borders.width;
-  style?: keyof typeof tokens.borders.style;
+  width?: "0" | "1" | "2" | "4" | "8";
+  style?: "solid" | "dashed" | "dotted";
   color?: string;
   sides?: ("t" | "r" | "b" | "l")[];
 }): string => {
-  const {
-    width = "DEFAULT",
-    style = "solid",
-    color = "border",
-    sides,
-  } = options;
+  const { width = "1", style = "solid", color = "border", sides } = options;
 
   if (!sides) {
     return cn(
-      `border-${width === "DEFAULT" ? "" : width}`,
+      `border-${width}`,
       style !== "solid" && `border-${style}`,
       color !== "border" && `border-${color}`,
     );
@@ -297,7 +302,7 @@ export const border = (options: {
   return sides
     .map((side) =>
       cn(
-        `border-${side}-${width === "DEFAULT" ? "" : width}`,
+        `border-${side}-${width}`,
         style !== "solid" && `border-${side}-${style}`,
         color !== "border" && `border-${side}-${color}`,
       ),
@@ -375,7 +380,7 @@ export const showAt = (
  */
 export const grid = (
   cols: number | { base?: number; sm?: number; md?: number; lg?: number },
-  gap?: keyof typeof tokens.spacing.scale,
+  gap?: keyof typeof tokens.spacing,
 ): string => {
   const classes = ["grid"];
 
@@ -404,7 +409,7 @@ export const flex = (options?: {
   justify?: "start" | "end" | "center" | "between" | "around" | "evenly";
   align?: "start" | "end" | "center" | "stretch" | "baseline";
   wrap?: boolean | "reverse";
-  gap?: keyof typeof tokens.spacing.scale;
+  gap?: keyof typeof tokens.spacing;
 }): string => {
   const classes = ["flex"];
 
@@ -445,9 +450,9 @@ export const flex = (options?: {
 export const card = (
   variant: "default" | "hover" | "featured" = "default",
   options?: {
-    padding?: keyof typeof tokens.spacing.scale;
-    radius?: keyof typeof tokens.borders.radius;
-    shadow?: keyof typeof tokens.effects.shadows.elevation;
+    padding?: keyof typeof tokens.spacing;
+    radius?: keyof typeof tokens.borderRadius;
+    shadow?: keyof typeof tokens.shadows;
   },
 ): string => {
   const base = ["bg-card", "text-card-foreground", "border", "border-border"];

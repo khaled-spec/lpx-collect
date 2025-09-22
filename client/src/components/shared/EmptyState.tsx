@@ -61,7 +61,7 @@ export default function EmptyState({
       icon: "h-8 w-8",
       title: "text-lg",
       description: "text-sm",
-      button: "sm",
+      button: "sm" as const,
     },
     md: {
       container: "py-12",
@@ -69,7 +69,7 @@ export default function EmptyState({
       icon: "h-12 w-12",
       title: "text-xl",
       description: "text-base",
-      button: "default",
+      button: "default" as const,
     },
     lg: {
       container: "py-16",
@@ -77,7 +77,7 @@ export default function EmptyState({
       icon: "h-16 w-16",
       title: "text-2xl",
       description: "text-lg",
-      button: "lg",
+      button: "lg" as const,
     },
   };
 

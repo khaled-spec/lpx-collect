@@ -2,6 +2,7 @@
 // This will implement the real HTTP calls to the backend
 
 import type {
+  ApiResponse,
   IProductAPI,
   PaginatedResponse,
   Product,
@@ -12,56 +13,79 @@ export class HttpProductAPI implements IProductAPI {
   private baseUrl =
     process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001/api";
 
-  async getAll(filters?: ProductFilter): Promise<PaginatedResponse<Product>> {
+  async getProducts(
+    filter?: ProductFilter,
+  ): Promise<ApiResponse<PaginatedResponse<Product>>> {
     if (process.env.NODE_ENV !== "production") {
-      if (process.env.NODE_ENV !== "production")
-        console.log(
-          "🌐 HttpProductAPI.getAll() - would make HTTP call to:",
-          `${this.baseUrl}/products`,
-          filters,
-        );
+      console.log(
+        "🌐 HttpProductAPI.getProducts() - would make HTTP call to:",
+        `${this.baseUrl}/products`,
+        filter,
+      );
     }
-
-    // TODO: Replace with actual HTTP call
     throw new Error("HTTP API not implemented yet. Using mock data instead.");
   }
 
-  async getById(id: string): Promise<Product> {
+  async getProductById(id: string): Promise<ApiResponse<Product>> {
     if (process.env.NODE_ENV !== "production") {
-      if (process.env.NODE_ENV !== "production")
-        console.log(
-          "🌐 HttpProductAPI.getById() - would make HTTP call to:",
-          `${this.baseUrl}/products/${id}`,
-        );
+      console.log(
+        "🌐 HttpProductAPI.getProductById() - would make HTTP call to:",
+        `${this.baseUrl}/products/${id}`,
+      );
     }
-
-    // TODO: Replace with actual HTTP call
     throw new Error("HTTP API not implemented yet. Using mock data instead.");
   }
 
-  async getFeatured(): Promise<Product[]> {
+  async getProductsByCategory(
+    categorySlug: string,
+    filter?: ProductFilter,
+  ): Promise<ApiResponse<PaginatedResponse<Product>>> {
     if (process.env.NODE_ENV !== "production") {
-      if (process.env.NODE_ENV !== "production")
-        console.log(
-          "🌐 HttpProductAPI.getFeatured() - would make HTTP call to:",
-          `${this.baseUrl}/products/featured`,
-        );
+      console.log(
+        "🌐 HttpProductAPI.getProductsByCategory() - would make HTTP call to:",
+        `${this.baseUrl}/categories/${categorySlug}/products`,
+        filter,
+      );
     }
-
-    // TODO: Replace with actual HTTP call
     throw new Error("HTTP API not implemented yet. Using mock data instead.");
   }
 
-  async getBySeller(sellerId: string, _limit?: number): Promise<Product[]> {
+  async getFeaturedProducts(limit?: number): Promise<ApiResponse<Product[]>> {
     if (process.env.NODE_ENV !== "production") {
-      if (process.env.NODE_ENV !== "production")
-        console.log(
-          "🌐 HttpProductAPI.getBySeller() - would make HTTP call to:",
-          `${this.baseUrl}/sellers/${sellerId}/products`,
-        );
+      console.log(
+        "🌐 HttpProductAPI.getFeaturedProducts() - would make HTTP call to:",
+        `${this.baseUrl}/products/featured`,
+        { limit },
+      );
     }
+    throw new Error("HTTP API not implemented yet. Using mock data instead.");
+  }
 
-    // TODO: Replace with actual HTTP call
+  async getRelatedProducts(
+    productId: string,
+    limit?: number,
+  ): Promise<ApiResponse<Product[]>> {
+    if (process.env.NODE_ENV !== "production") {
+      console.log(
+        "🌐 HttpProductAPI.getRelatedProducts() - would make HTTP call to:",
+        `${this.baseUrl}/products/${productId}/related`,
+        { limit },
+      );
+    }
+    throw new Error("HTTP API not implemented yet. Using mock data instead.");
+  }
+
+  async searchProducts(
+    query: string,
+    filter?: ProductFilter,
+  ): Promise<ApiResponse<PaginatedResponse<Product>>> {
+    if (process.env.NODE_ENV !== "production") {
+      console.log(
+        "🌐 HttpProductAPI.searchProducts() - would make HTTP call to:",
+        `${this.baseUrl}/products/search`,
+        { query, filter },
+      );
+    }
     throw new Error("HTTP API not implemented yet. Using mock data instead.");
   }
 }

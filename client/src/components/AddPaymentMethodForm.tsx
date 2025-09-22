@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import type { CardBrand, NewPaymentMethodUnion } from "@/types/payment";
 
 // Validation schema for card
 const cardSchema = z.object({
@@ -52,25 +53,8 @@ const cardSchema = z.object({
   setAsDefault: z.boolean().optional(),
 });
 
-interface PaymentMethod {
-  id: string;
-  type: "card" | "bank";
-  cardNumber?: string;
-  expiryDate?: string;
-  cvv?: string;
-  cardholderName?: string;
-  billingAddress: {
-    street: string;
-    city: string;
-    state: string;
-    postalCode: string;
-    country: string;
-  };
-  setAsDefault?: boolean;
-}
-
 interface AddPaymentMethodFormProps {
-  onAdd: (paymentMethod: PaymentMethod) => Promise<void>;
+  onAdd: (paymentMethod: NewPaymentMethodUnion) => Promise<void>;
   onCancel: () => void;
 }
 
@@ -122,7 +106,7 @@ export function AddPaymentMethodForm({
   };
 
   // Helper function to detect card brand
-  const detectCardBrand = (cardNumber: string): string => {
+  const detectCardBrand = (cardNumber: string): CardBrand => {
     const firstDigit = cardNumber[0];
     if (firstDigit === "4") return "visa";
     if (firstDigit === "5") return "mastercard";

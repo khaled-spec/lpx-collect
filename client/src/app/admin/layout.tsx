@@ -4,6 +4,7 @@ import {
   AlertCircle,
   BarChart3,
   ChevronLeft,
+  DollarSign,
   LayoutDashboard,
   Menu,
   Package,
@@ -48,6 +49,11 @@ const adminNavItems = [
     title: "Vendors",
     href: "/admin/vendors",
     icon: Store,
+  },
+  {
+    title: "Payments",
+    href: "/admin/payments",
+    icon: DollarSign,
   },
   {
     title: "Analytics",

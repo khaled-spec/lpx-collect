@@ -16,10 +16,15 @@ export class MockProductAPI implements IProductAPI {
       // Simulate async operation
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      let filteredProducts = mockProducts;
+      let filteredProducts: Product[] = [
+        ...mockProducts,
+      ] as unknown as Product[];
 
       if (filter) {
-        filteredProducts = filterProducts(mockProducts, filter);
+        filteredProducts = filterProducts(
+          mockProducts as unknown as Product[],
+          filter,
+        );
 
         // Apply sorting
         if (filter.sortBy) {
@@ -97,7 +102,7 @@ export class MockProductAPI implements IProductAPI {
 
       return {
         success: true,
-        data: product,
+        data: product as unknown as Product,
       };
     } catch (_error) {
       return {
@@ -132,7 +137,7 @@ export class MockProductAPI implements IProductAPI {
 
       return {
         success: true,
-        data: featuredProducts,
+        data: featuredProducts as unknown as Product[],
       };
     } catch (_error) {
       return {
@@ -168,7 +173,7 @@ export class MockProductAPI implements IProductAPI {
 
       return {
         success: true,
-        data: relatedProducts,
+        data: relatedProducts as unknown as Product[],
       };
     } catch (_error) {
       return {

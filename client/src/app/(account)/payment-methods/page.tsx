@@ -20,7 +20,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePaymentMethods } from "@/context/PaymentMethodsContext";
-import type { PaymentMethodUnion } from "@/types/payment";
+import type { NewPaymentMethodUnion } from "@/types/payment";
 
 export default function PaymentMethodsPage() {
   const router = useRouter();
@@ -57,7 +57,7 @@ export default function PaymentMethodsPage() {
     }
   }, [successMessage]);
 
-  const handleAddMethod = async (method: PaymentMethodUnion) => {
+  const handleAddMethod = async (method: NewPaymentMethodUnion) => {
     try {
       await addMethod(method);
       setShowAddForm(false);

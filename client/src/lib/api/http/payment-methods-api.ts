@@ -7,23 +7,21 @@ export class HttpPaymentMethodsAPI implements IPaymentMethodsAPI {
 
   async getPaymentMethods(userId: string): Promise<PaymentMethod[]> {
     if (process.env.NODE_ENV !== "production") {
-      if (process.env.NODE_ENV !== "production")
-        console.log(
-          "🌐 HttpPaymentMethodsAPI.getPaymentMethods() - would make HTTP call to:",
-          `${this.baseUrl}/users/${userId}/payment-methods`,
-        );
+      console.log(
+        "🌐 HttpPaymentMethodsAPI.getPaymentMethods() - would make HTTP call to:",
+        `${this.baseUrl}/users/${userId}/payment-methods`,
+      );
     }
     throw new Error("HTTP API not implemented yet. Using mock data instead.");
   }
 
   async addPaymentMethod(userId: string, method: PaymentMethod): Promise<void> {
     if (process.env.NODE_ENV !== "production") {
-      if (process.env.NODE_ENV !== "production")
-        console.log(
-          "🌐 HttpPaymentMethodsAPI.addPaymentMethod() - would make HTTP call to:",
-          `${this.baseUrl}/users/${userId}/payment-methods`,
-          method,
-        );
+      console.log(
+        "🌐 HttpPaymentMethodsAPI.addPaymentMethod() - would make HTTP call to:",
+        `${this.baseUrl}/users/${userId}/payment-methods`,
+        method,
+      );
     }
     throw new Error("HTTP API not implemented yet. Using mock data instead.");
   }
@@ -34,23 +32,21 @@ export class HttpPaymentMethodsAPI implements IPaymentMethodsAPI {
     method: Partial<PaymentMethod>,
   ): Promise<void> {
     if (process.env.NODE_ENV !== "production") {
-      if (process.env.NODE_ENV !== "production")
-        console.log(
-          "🌐 HttpPaymentMethodsAPI.updatePaymentMethod() - would make HTTP call to:",
-          `${this.baseUrl}/users/${userId}/payment-methods/${methodId}`,
-          method,
-        );
+      console.log(
+        "🌐 HttpPaymentMethodsAPI.updatePaymentMethod() - would make HTTP call to:",
+        `${this.baseUrl}/users/${userId}/payment-methods/${methodId}`,
+        method,
+      );
     }
     throw new Error("HTTP API not implemented yet. Using mock data instead.");
   }
 
   async removePaymentMethod(userId: string, methodId: string): Promise<void> {
     if (process.env.NODE_ENV !== "production") {
-      if (process.env.NODE_ENV !== "production")
-        console.log(
-          "🌐 HttpPaymentMethodsAPI.removePaymentMethod() - would make HTTP call to:",
-          `${this.baseUrl}/users/${userId}/payment-methods/${methodId}`,
-        );
+      console.log(
+        "🌐 HttpPaymentMethodsAPI.removePaymentMethod() - would make HTTP call to:",
+        `${this.baseUrl}/users/${userId}/payment-methods/${methodId}`,
+      );
     }
     throw new Error("HTTP API not implemented yet. Using mock data instead.");
   }
@@ -60,11 +56,10 @@ export class HttpPaymentMethodsAPI implements IPaymentMethodsAPI {
     methodId: string,
   ): Promise<void> {
     if (process.env.NODE_ENV !== "production") {
-      if (process.env.NODE_ENV !== "production")
-        console.log(
-          "🌐 HttpPaymentMethodsAPI.setDefaultPaymentMethod() - would make HTTP call to:",
-          `${this.baseUrl}/users/${userId}/payment-methods/${methodId}/default`,
-        );
+      console.log(
+        "🌐 HttpPaymentMethodsAPI.setDefaultPaymentMethod() - would make HTTP call to:",
+        `${this.baseUrl}/users/${userId}/payment-methods/${methodId}/default`,
+      );
     }
     throw new Error("HTTP API not implemented yet. Using mock data instead.");
   }

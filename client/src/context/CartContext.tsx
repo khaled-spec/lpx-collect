@@ -59,10 +59,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const currentSummary = cartMockService.getCartSummary();
     if (
       currentSummary.itemCount === 0 &&
-      process.env.NODE_ENV === "development"
+      process.env.NODE_ENV !== "production"
     ) {
-      if (process.env.NODE_ENV !== "production")
-        console.log("🛒 Cart is empty, loading sample data...");
+      console.log("🛒 Cart is empty, loading sample data...");
       cartMockService.loadSampleData();
     }
 

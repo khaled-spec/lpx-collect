@@ -113,15 +113,66 @@ export class MockPaymentMethodsService {
     const currentMethods = await this.getPaymentMethods(userId);
     const now = new Date().toISOString();
 
-    const newMethod: PaymentMethodUnion = {
-      id: `pm_${Date.now()}`,
-      userId: userId,
-      type: method.type,
-      isDefault: method.setAsDefault || currentMethods.length === 0,
-      createdAt: now,
-      updatedAt: now,
-      ...method,
-    };
+    let newMethod: PaymentMethodUnion;
+
+    if ("type" in method && method.type === "card") {
+      newMethod = {
+        id: `pm_${Date.now()}`,
+        userId: userId,
+        type: "card",
+        isDefault: method.setAsDefault || currentMethods.length === 0,
+        createdAt: now,
+        updatedAt: now,
+        cardDetails: method.cardDetails,
+      };
+    } else if ("email" in method) {
+      // PayPal payment method
+      newMethod = {
+        id: `pm_${Date.now()}`,
+        userId: userId,
+        type: "paypal",
+        isDefault: method.setAsDefault || currentMethods.length === 0,
+        createdAt: now,
+        updatedAt: now,
+        paypalDetails: {
+          email: method.email,
+          accountId: `pp_${Date.now()}`,
+        },
+      };
+    } else if ("cryptoType" in method) {
+      // Crypto payment method
+      newMethod = {
+        id: `pm_${Date.now()}`,
+        userId: userId,
+        type: "crypto",
+        isDefault: method.setAsDefault || currentMethods.length === 0,
+        createdAt: now,
+        updatedAt: now,
+        cryptoDetails: {
+          cryptoType: method.cryptoType,
+          walletAddress: method.walletAddress,
+          network: method.network,
+        },
+      };
+    } else if ("accountHolderName" in method) {
+      // Bank payment method
+      newMethod = {
+        id: `pm_${Date.now()}`,
+        userId: userId,
+        type: "bank",
+        isDefault: method.setAsDefault || currentMethods.length === 0,
+        createdAt: now,
+        updatedAt: now,
+        bankDetails: {
+          accountHolderName: method.accountHolderName,
+          bankName: method.bankName,
+          last4: method.accountNumber.slice(-4),
+          accountType: method.accountType,
+        },
+      };
+    } else {
+      throw new Error(`Unsupported payment method type`);
+    }
 
     // If setting as default, update other methods
     const updatedMethods = currentMethods.map((m) => ({

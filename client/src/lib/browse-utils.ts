@@ -24,7 +24,7 @@ export interface FilterQuery {
   vendor?: string;
   tags?: string | string[];
   categories?: string[];
-  [key: string]: string | string[] | number | boolean | undefined;
+  [key: string]: string | string[] | number | boolean | null | undefined;
 }
 
 export interface PriceRangeValidation extends PriceRange {
@@ -306,7 +306,7 @@ export function parseFilterQuery(query: string): FilterQuery {
       if (Array.isArray(filters[key])) {
         filters[key].push(value);
       } else {
-        filters[key] = [filters[key], value];
+        filters[key] = [filters[key] as string, value];
       }
     } else {
       filters[key] = value;
@@ -387,16 +387,21 @@ export function getUniqueValues(
     // Handle nested properties
     const fieldParts = field.split(".");
     for (const part of fieldParts) {
-      // @ts-expect-error index dynamic access through parts
       value = (value as Record<string, unknown>)?.[part];
     }
 
     if (value !== null && value !== undefined) {
       // Handle both object and string values
-      if (typeof value === "object" && value.slug) {
-        values.add(value.slug);
-      } else if (typeof value === "object" && value.name) {
-        values.add(value.name);
+      if (
+        typeof value === "object" &&
+        (value as Record<string, unknown>).slug
+      ) {
+        values.add(String((value as Record<string, unknown>).slug));
+      } else if (
+        typeof value === "object" &&
+        (value as Record<string, unknown>).name
+      ) {
+        values.add(String((value as Record<string, unknown>).name));
       } else {
         values.add(String(value));
       }

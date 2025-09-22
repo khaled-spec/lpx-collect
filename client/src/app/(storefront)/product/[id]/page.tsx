@@ -76,7 +76,7 @@ export default function ProductDetailsPage({
           <p className={cn(designTokens.typography.bodySmall, "mb-6")}>
             The product you're looking for doesn't exist or has been removed.
           </p>
-          <Link href="/browse" className={cn(designTokens.typography.link)}>
+          <Link href="/browse" className="text-primary hover:underline">
             Back to Browse
           </Link>
         </div>

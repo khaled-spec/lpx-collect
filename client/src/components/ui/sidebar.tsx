@@ -91,6 +91,7 @@ const SidebarProvider = React.forwardRef<
         // Set cookie using a safer approach for UI state persistence
         try {
           const cookieValue = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}; SameSite=Strict`;
+          // biome-ignore lint/suspicious/noDocumentCookie: Direct cookie setting needed for sidebar state
           document.cookie = cookieValue;
         } catch (_error) {
           // Fallback for environments where cookie setting might fail

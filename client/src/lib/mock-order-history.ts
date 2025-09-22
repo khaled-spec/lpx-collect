@@ -208,8 +208,8 @@ export function calculateOrderAnalytics(orders: Order[]): OrderAnalytics {
     if (stats) {
       stats.orders++;
       stats.revenue += order.total;
+      stats.averageValue = stats.revenue / stats.orders;
     }
-    stats.averageValue = stats.revenue / stats.orders;
   });
 
   const monthlyStats = Array.from(monthlyStatsMap.values()).sort((a, b) => {
@@ -248,8 +248,8 @@ export function calculateOrderAnalytics(orders: Order[]): OrderAnalytics {
       if (product) {
         product.totalSold += item.quantity;
         product.totalRevenue += item.price * item.quantity;
+        product.averagePrice = product.totalRevenue / product.totalSold;
       }
-      product.averagePrice = product.totalRevenue / product.totalSold;
     });
   });
 

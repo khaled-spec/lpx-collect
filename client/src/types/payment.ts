@@ -64,18 +64,21 @@ export type PaymentMethodUnion =
   | BankPaymentMethod;
 
 export interface NewCardPaymentMethod {
-  cardNumber: string;
-  expiryMonth: string;
-  expiryYear: string;
-  cvv: string;
-  cardholderName: string;
-  billingAddress: {
-    line1: string;
-    line2?: string;
-    city: string;
-    state: string;
-    country: string;
-    postalCode: string;
+  type: "card";
+  cardDetails: {
+    brand: CardBrand;
+    last4: string;
+    expiryMonth: number;
+    expiryYear: number;
+    cardholderName: string;
+    billingAddress: {
+      line1: string;
+      line2?: string;
+      city: string;
+      state: string;
+      country: string;
+      postalCode: string;
+    };
   };
   setAsDefault?: boolean;
 }

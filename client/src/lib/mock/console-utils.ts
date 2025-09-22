@@ -6,8 +6,25 @@ declare global {
   interface Window {
     mockUtils: typeof mockUtils & {
       demo: () => unknown;
-      cart: typeof cartMockService;
-      wishlist: typeof wishlistMockService;
+      status: () => unknown;
+      cart: {
+        load: () => unknown;
+        random: (count?: number) => unknown;
+        clear: () => unknown;
+        reset: () => unknown;
+        show: () => void;
+        summary: () => unknown;
+      };
+      wishlist: {
+        load: () => unknown;
+        random: (count?: number) => unknown;
+        clear: () => unknown;
+        reset: () => unknown;
+        show: () => void;
+        summary: () => unknown;
+        byCategory: (category: string) => unknown;
+      };
+      help: () => void;
     };
     loadMockData: () => unknown;
     clearMockData: () => void;
@@ -190,7 +207,7 @@ Development:
     window.mockUtils.wishlist.clear();
   };
 
-  if (process.env.NODE_ENV !== "production")
+  if (process.env.NODE_ENV === "development")
     console.log(`
 🎯 Mock Data Utilities Loaded!
 
