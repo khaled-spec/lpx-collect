@@ -57,8 +57,8 @@ function WishlistContent() {
     tags: item.tags || [],
     year: new Date().getFullYear(),
     manufacturer: "Unknown",
-    createdAt: item.createdAt.toISOString(),
-    updatedAt: item.updatedAt.toISOString(),
+    createdAt: item.createdAt instanceof Date ? item.createdAt.toISOString() : item.createdAt,
+    updatedAt: item.updatedAt instanceof Date ? item.updatedAt.toISOString() : item.updatedAt,
   }));
 
   return (
